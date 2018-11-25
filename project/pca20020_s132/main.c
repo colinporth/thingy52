@@ -1,3 +1,4 @@
+//{{{
 /*
   Copyright (c) 2010 - 2017, Nordic Semiconductor ASA
   All rights reserved.
@@ -35,14 +36,8 @@
   LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
   OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
-/** @file
- *
- * @brief    Thingy application main file.
- *
- * This file contains the source code for the Thingy application that uses the Weather Station service.
- */
-
+//}}}
+//{{{  includes
 #include <stdint.h>
 #include <float.h>
 #include <string.h>
@@ -73,6 +68,7 @@
 #define  NRF_LOG_MODULE_NAME "main          "
 #include "nrf_log.h"
 #include "nrf_log_ctrl.h"
+//}}}
 
 #define DEAD_BEEF   0xDEADBEEF          /**< Value used as error code on stack dump, can be used to identify stack location on stack unwind. */
 #define SCHED_MAX_EVENT_DATA_SIZE   MAX(APP_TIMER_SCHED_EVENT_DATA_SIZE, BLE_STACK_HANDLER_SCHED_EVT_SIZE) /**< Maximum size of scheduler events. */
@@ -81,6 +77,7 @@
 static const nrf_drv_twi_t     m_twi_sensors = NRF_DRV_TWI_INSTANCE(TWI_SENSOR_INSTANCE);
 static m_ble_service_handle_t  m_ble_service_handles[THINGY_SERVICES_MAX];
 
+//{{{
 void app_error_fault_handler(uint32_t id, uint32_t pc, uint32_t info)
 {
     #if NRF_LOG_ENABLED
@@ -88,11 +85,11 @@ void app_error_fault_handler(uint32_t id, uint32_t pc, uint32_t info)
         NRF_LOG_ERROR(" id = %d, pc = %d, file = %s, line number: %d, error code = %d = %s \r\n", \
         id, pc, nrf_log_push((char*)err_info->p_file_name), err_info->line_num, err_info->err_code, nrf_log_push((char*)nrf_strerror_find(err_info->err_code)));
     #endif
-    
+
     (void)m_ui_led_set_event(M_UI_ERROR);
     NRF_LOG_FINAL_FLUSH();
     nrf_delay_ms(5);
-    
+
     // On assert, the system can only recover with a reset.
     #ifndef DEBUG
         NVIC_SystemReset();
@@ -100,8 +97,8 @@ void app_error_fault_handler(uint32_t id, uint32_t pc, uint32_t info)
 
     app_error_save_and_stop(id, pc, info);
 }
-
-
+//}}}
+//{{{
 /**@brief Function for assert macro callback.
  *
  * @details This function will be called in case of an assert in the SoftDevice.
@@ -115,7 +112,9 @@ void assert_nrf_callback(uint16_t line_num, const uint8_t * p_file_name)
 {
     app_error_handler(DEAD_BEEF, line_num, p_file_name);
 }
+//}}}
 
+//{{{
 /**@brief Function for putting Thingy into sleep mode.
  *
  * @note This function will not return.
@@ -130,19 +129,19 @@ static void sleep_mode_enter(void)
 
     err_code = support_func_configure_io_shutdown();
     APP_ERROR_CHECK(err_code);
-    
+
     // Enable wake on button press.
     nrf_gpio_cfg_sense_input(BUTTON, NRF_GPIO_PIN_PULLUP, NRF_GPIO_PIN_SENSE_LOW);
     // Enable wake on low power accelerometer.
     nrf_gpio_cfg_sense_input(LIS_INT1, NRF_GPIO_PIN_NOPULL, NRF_GPIO_PIN_SENSE_HIGH);
-   
+
     NRF_LOG_FLUSH();
     nrf_delay_ms(5);
     // Go to system-off (sd_power_system_off() will not return; wakeup will cause a reset). When debugging, this function may return and code execution will continue.
     err_code = sd_power_system_off();
     NRF_LOG_WARNING("sd_power_system_off() returned. -Probably due to debugger being used. Instructions will still run. \r\n");
     NRF_LOG_FLUSH();
-    
+
     #ifdef DEBUG
         if(!support_func_sys_halt_debug_enabled())
         {
@@ -152,7 +151,7 @@ static void sleep_mode_enter(void)
         {
             NRF_LOG_WARNING("Exec stopped, busy wait \r\n");
             NRF_LOG_FLUSH();
-            
+
             while(true) // Only reachable when entering emulated system off.
             {
                 // Infinte loop to ensure that code stops in debug mode.
@@ -162,13 +161,13 @@ static void sleep_mode_enter(void)
         APP_ERROR_CHECK(err_code);
     #endif
 }
-
-
+//}}}
+//{{{
 /**@brief Function for placing the application in low power state while waiting for events.
  */
-#define FPU_EXCEPTION_MASK 0x0000009F
 static void power_manage(void)
 {
+#define FPU_EXCEPTION_MASK 0x0000009F
     __set_FPSCR(__get_FPSCR()  & ~(FPU_EXCEPTION_MASK));
     (void) __get_FPSCR();
     NVIC_ClearPendingIRQ(FPU_IRQn);
@@ -176,15 +175,15 @@ static void power_manage(void)
     uint32_t err_code = sd_app_evt_wait();
     APP_ERROR_CHECK(err_code);
 }
-
-
+//}}}
+//{{{
 /**@brief Battery module data handler.
  */
 static void m_batt_meas_handler(m_batt_meas_event_t const * p_batt_meas_event)
 {
     NRF_LOG_INFO("Voltage: %d V, Charge: %d %%, Event type: %d \r\n",
                 p_batt_meas_event->voltage_mv, p_batt_meas_event->level_percent, p_batt_meas_event->type);
-   
+
     if (p_batt_meas_event != NULL)
     {
         if( p_batt_meas_event->type == M_BATT_MEAS_EVENT_LOW)
@@ -193,7 +192,7 @@ static void m_batt_meas_handler(m_batt_meas_event_t const * p_batt_meas_event)
 
             err_code = support_func_configure_io_shutdown();
             APP_ERROR_CHECK(err_code);
-            
+
             // Enable wake on USB detect only.
             nrf_gpio_cfg_sense_input(USB_DETECT, NRF_GPIO_PIN_NOPULL, NRF_GPIO_PIN_SENSE_HIGH);
 
@@ -222,8 +221,9 @@ static void m_batt_meas_handler(m_batt_meas_event_t const * p_batt_meas_event)
         }
     }
 }
+//}}}
 
-
+//{{{
 /**@brief Function for handling BLE events.
  */
 static void thingy_ble_evt_handler(m_ble_evt_t * p_evt)
@@ -248,8 +248,8 @@ static void thingy_ble_evt_handler(m_ble_evt_t * p_evt)
             break;
     }
 }
-
-
+//}}}
+//{{{
 /**@brief Function for initializing the Thingy.
  */
 static void thingy_init(void)
@@ -306,8 +306,8 @@ static void thingy_init(void)
     err_code = m_ui_led_set_event(M_UI_BLE_DISCONNECTED);
     APP_ERROR_CHECK(err_code);
 }
-
-
+//}}}
+//{{{
 static void board_init(void)
 {
     uint32_t            err_code;
@@ -337,16 +337,14 @@ static void board_init(void)
     };
 
     ext_gpio_init.p_cfg = &sx1509_cfg;
-    
+
     err_code = support_func_configure_io_startup(&ext_gpio_init);
     APP_ERROR_CHECK(err_code);
 
     nrf_delay_ms(100);
 }
+//}}}
 
-
-/**@brief Application main function.
- */
 int main(void)
 {
     uint32_t err_code;
@@ -354,7 +352,7 @@ int main(void)
     APP_ERROR_CHECK(err_code);
 
     NRF_LOG_INFO(NRF_LOG_COLOR_CODE_GREEN"===== Thingy started! =====\r\n");
-    
+
     // Initialize.
     APP_SCHED_INIT(SCHED_MAX_EVENT_DATA_SIZE, SCHED_QUEUE_SIZE);
     err_code = app_timer_init();
@@ -366,9 +364,9 @@ int main(void)
     for (;;)
     {
         app_sched_execute();
-        
+
         if (!NRF_LOG_PROCESS()) // Process logs
-        { 
+        {
             power_manage();
         }
     }
