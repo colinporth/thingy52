@@ -10,6 +10,3 @@
 *.lib
 
 *.out
-*.bin
-*.hex
-*.map
