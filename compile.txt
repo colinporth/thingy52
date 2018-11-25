@@ -1,2 +1,0 @@
-move micro-ecc to external
-move make to gcc path
