@@ -41,22 +41,27 @@
 #include <stdint.h>
 #include <float.h>
 #include <string.h>
+
 #include "nordic_common.h"
 #include "nrf.h"
+
 #include "ble_hci.h"
 #include "ble_advdata.h"
 #include "ble_advertising.h"
 #include "ble_conn_params.h"
 #include "softdevice_handler.h"
+
 #include "app_scheduler.h"
 #include "app_button.h"
 #include "app_util_platform.h"
+
 #include "m_ble.h"
 #include "m_environment.h"
 #include "m_sound.h"
 #include "m_motion.h"
 #include "m_ui.h"
 #include "m_batt_meas.h"
+
 #include "drv_ext_light.h"
 #include "drv_ext_gpio.h"
 #include "nrf_delay.h"
