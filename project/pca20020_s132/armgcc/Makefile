@@ -323,8 +323,8 @@ all: clean
 #target for printing all targets
 help:
 	@echo following targets are available:
-	@echo 	nrf52832_xxaa_s132
-	@echo 	flash_softdevice
+	@echo   nrf52832_xxaa_s132
+	@echo   flash_softdevice
 
 C_SOURCE_FILE_NAMES = $(notdir $(C_SOURCE_FILES))
 C_PATHS = $(call remduplicates, $(dir $(C_SOURCE_FILES) ) )
@@ -408,3 +408,8 @@ flash_softdevice:
 	@echo Flashing: s132_nrf52_4.0.2_softdevice.hex
 	nrfjprog --program ../../../sdk_components/softdevice/s132/hex/s132_nrf52_4.0.2_softdevice.hex -f nrf52 --chiperase
 	nrfjprog --reset -f nrf52
+
+ocd: nrf52832_xxaa_s132
+	@echo ocd Flashing: $(OUTPUT_BINARY_DIRECTORY)/$<.hex
+	../../../openOCD/bin/openocd -c "exit" -d 3
+#        ../../../openOCD/bin/openocd -c "program $(OUTPUT_BINARY_DIRECTORY)/$<.hex verify reset exit"
