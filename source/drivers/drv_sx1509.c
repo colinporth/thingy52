@@ -1,3 +1,4 @@
+//{{{  copyright
 /*
   Copyright (c) 2010 - 2017, Nordic Semiconductor ASA
   All rights reserved.
@@ -35,11 +36,14 @@
   LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
   OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
+//}}}
+//{{{  includes
 #include <drv_sx1509.h>
 #include "twi_manager.h"
 #include "nrf_delay.h"
 
+//}}}
+//{{{  defines
 #define M_REGINPBUFDISABLEB     (0x00)
 #define M_REGINPBUFDISABLEA     (0x01)
 #define M_REGLONGSLEWRATEB      (0x02)
@@ -101,16 +105,20 @@
 #define M_TWI_STOP false
 #define M_TWI_SUSPEND true
 #define RESET_TIME_MS   3       ///< SX1509 time it takes to reset the device.
+//}}}
 
+//{{{  struct m_drv_sx1509
 static struct
 {
     drv_sx1509_cfg_t const *p_cfg;
 } m_drv_sx1509;
+//}}}
 
 #define  NRF_LOG_MODULE_NAME "drv_sx1509    "
 #include "nrf_log.h"
 #include "macros_common.h"
 
+//{{{
 static __INLINE uint8_t  m_onoffcfgx_base_addr_get(uint8_t pin_no)
 {
 
@@ -138,8 +146,8 @@ static __INLINE uint8_t  m_onoffcfgx_base_addr_get(uint8_t pin_no)
 
     return ( M_INVALID_DEV_REG );
 }
-
-
+//}}}
+//{{{
 static __INLINE uint8_t  m_risefallcfgx_base_addr_get(uint8_t pin_no)
 {
     if ( (4 <= pin_no) && (pin_no <= 7) )
@@ -153,8 +161,8 @@ static __INLINE uint8_t  m_risefallcfgx_base_addr_get(uint8_t pin_no)
 
     return ( M_INVALID_DEV_REG );
 }
-
-
+//}}}
+//{{{
 static bool reg_set(uint8_t reg_addr, uint8_t value)
 {
     if ( m_drv_sx1509.p_cfg != NULL )
@@ -168,8 +176,8 @@ static bool reg_set(uint8_t reg_addr, uint8_t value)
 
     return ( false );
 }
-
-
+//}}}
+//{{{
 static bool reg_get(uint8_t reg_addr, uint8_t *p_value)
 {
     if ( m_drv_sx1509.p_cfg != NULL )
@@ -186,8 +194,8 @@ static bool reg_get(uint8_t reg_addr, uint8_t *p_value)
 
     return ( false );
 }
-
-
+//}}}
+//{{{
 static bool register_bits_modify(uint8_t reg, uint8_t set_mask, uint8_t clear_mask)
 {
     bool     masks_are_clear = ((set_mask | clear_mask) == 0);
@@ -208,8 +216,8 @@ static bool register_bits_modify(uint8_t reg, uint8_t set_mask, uint8_t clear_ma
 
     return ( masks_are_clear );
 }
-
-
+//}}}
+//{{{
 static bool two_registers_get(uint8_t reg_a, uint8_t reg_b, uint16_t *value)
 {
     uint8_t  tmp_u8;
@@ -228,8 +236,8 @@ static bool two_registers_get(uint8_t reg_a, uint8_t reg_b, uint16_t *value)
 
     return ( false );
 }
-
-
+//}}}
+//{{{
 static bool multi_byte_register_set(uint8_t length, uint8_t *p_write_descr)
 {
     if ( m_drv_sx1509.p_cfg != NULL )
@@ -242,13 +250,15 @@ static bool multi_byte_register_set(uint8_t length, uint8_t *p_write_descr)
 
     return ( false );
 }
+//}}}
 
-
+//{{{
 void drv_sx1509_init(void)
 {
     m_drv_sx1509.p_cfg = NULL;
 }
-
+//}}}
+//{{{
 uint32_t drv_sx1509_reg_get(uint8_t reg_addr, uint8_t *p_value)
 {
 
@@ -260,7 +270,8 @@ uint32_t drv_sx1509_reg_get(uint8_t reg_addr, uint8_t *p_value)
     return ( DRV_SX1509_STATUS_CODE_DISALLOWED );
 
 }
-
+//}}}
+//{{{
 uint32_t drv_sx1509_open(drv_sx1509_cfg_t const * const p_drv_sx1509_cfg)
 {
     if ( (m_drv_sx1509.p_cfg == NULL)
@@ -274,8 +285,9 @@ uint32_t drv_sx1509_open(drv_sx1509_cfg_t const * const p_drv_sx1509_cfg)
 
     return ( DRV_SX1509_STATUS_CODE_DISALLOWED );
 }
+//}}}
 
-
+//{{{
 uint32_t drv_sx1509_inpbufdisable_get(uint16_t *p_inputdisable)
 {
     if ( two_registers_get(M_REGINPBUFDISABLEA, M_REGINPBUFDISABLEB, p_inputdisable) )
@@ -285,8 +297,8 @@ uint32_t drv_sx1509_inpbufdisable_get(uint16_t *p_inputdisable)
 
     return ( DRV_SX1509_STATUS_CODE_DISALLOWED );
 }
-
-
+//}}}
+//{{{
 uint32_t drv_sx1509_inpbufdisable_modify(uint16_t set_mask, uint16_t clr_mask)
 {
     if ( (set_mask & clr_mask) != 0 )
@@ -308,8 +320,8 @@ uint32_t drv_sx1509_inpbufdisable_modify(uint16_t set_mask, uint16_t clr_mask)
 
     return ( DRV_SX1509_STATUS_CODE_SUCCESS );
 }
-
-
+//}}}
+//{{{
 uint32_t drv_sx1509_longslewrate_get(uint16_t *p_longslewrate)
 {
     if ( two_registers_get(M_REGLONGSLEWRATEA, M_REGLONGSLEWRATEB, p_longslewrate) )
@@ -319,8 +331,8 @@ uint32_t drv_sx1509_longslewrate_get(uint16_t *p_longslewrate)
 
     return ( DRV_SX1509_STATUS_CODE_DISALLOWED );
 }
-
-
+//}}}
+//{{{
 uint32_t drv_sx1509_longslewrate_modify(uint16_t set_mask, uint16_t clr_mask)
 {
     if ( (set_mask & clr_mask) != 0 )
@@ -343,8 +355,8 @@ uint32_t drv_sx1509_longslewrate_modify(uint16_t set_mask, uint16_t clr_mask)
 
     return ( DRV_SX1509_STATUS_CODE_SUCCESS );
 }
-
-
+//}}}
+//{{{
 uint32_t drv_sx1509_lowdrive_get(uint16_t *p_lowdrive)
 {
     if ( two_registers_get(M_REGLOWDRIVEA, M_REGLOWDRIVEB, p_lowdrive) )
@@ -354,8 +366,8 @@ uint32_t drv_sx1509_lowdrive_get(uint16_t *p_lowdrive)
 
     return ( DRV_SX1509_STATUS_CODE_DISALLOWED );
 }
-
-
+//}}}
+//{{{
 uint32_t drv_sx1509_lowdrive_modify(uint16_t set_mask, uint16_t clr_mask)
 {
     if ( (set_mask & clr_mask) != 0 )
@@ -377,8 +389,8 @@ uint32_t drv_sx1509_lowdrive_modify(uint16_t set_mask, uint16_t clr_mask)
 
     return ( DRV_SX1509_STATUS_CODE_SUCCESS );
 }
-
-
+//}}}
+//{{{
 uint32_t drv_sx1509_pullup_get(uint16_t *p_pullup)
 {
     if ( two_registers_get(M_REGPULLUPA, M_REGPULLUPB, p_pullup) )
@@ -388,8 +400,8 @@ uint32_t drv_sx1509_pullup_get(uint16_t *p_pullup)
 
     return ( DRV_SX1509_STATUS_CODE_DISALLOWED );
 }
-
-
+//}}}
+//{{{
 uint32_t drv_sx1509_pullup_modify(uint16_t set_mask, uint16_t clr_mask)
 {
     if ( (set_mask & clr_mask) != 0 )
@@ -411,8 +423,8 @@ uint32_t drv_sx1509_pullup_modify(uint16_t set_mask, uint16_t clr_mask)
 
     return ( DRV_SX1509_STATUS_CODE_SUCCESS );
 }
-
-
+//}}}
+//{{{
 uint32_t drv_sx1509_pulldown_get(uint16_t *p_pulldown)
 {
     if ( two_registers_get(M_REGPULLDOWNA, M_REGPULLDOWNB, p_pulldown) )
@@ -422,8 +434,8 @@ uint32_t drv_sx1509_pulldown_get(uint16_t *p_pulldown)
 
     return ( DRV_SX1509_STATUS_CODE_DISALLOWED );
 }
-
-
+//}}}
+//{{{
 uint32_t drv_sx1509_pulldown_modify(uint16_t set_mask, uint16_t clr_mask)
 {
     if ( (set_mask & clr_mask) != 0 )
@@ -445,8 +457,8 @@ uint32_t drv_sx1509_pulldown_modify(uint16_t set_mask, uint16_t clr_mask)
 
     return ( DRV_SX1509_STATUS_CODE_SUCCESS );
 }
-
-
+//}}}
+//{{{
 uint32_t drv_sx1509_opendrain_get(uint16_t *p_opendrain)
 {
     if ( two_registers_get(M_REGOPENDRAINA, M_REGOPENDRAINB, p_opendrain) )
@@ -456,8 +468,8 @@ uint32_t drv_sx1509_opendrain_get(uint16_t *p_opendrain)
 
     return ( DRV_SX1509_STATUS_CODE_DISALLOWED );
 }
-
-
+//}}}
+//{{{
 uint32_t drv_sx1509_opendrain_modify(uint16_t set_mask, uint16_t clr_mask)
 {
     if ( (set_mask & clr_mask) != 0 )
@@ -479,8 +491,8 @@ uint32_t drv_sx1509_opendrain_modify(uint16_t set_mask, uint16_t clr_mask)
 
     return ( DRV_SX1509_STATUS_CODE_SUCCESS );
 }
-
-
+//}}}
+//{{{
 uint32_t drv_sx1509_polarity_get(uint16_t *p_polarity)
 {
     if ( two_registers_get(M_REGPOLARITYA, M_REGPOLARITYB, p_polarity) )
@@ -490,8 +502,8 @@ uint32_t drv_sx1509_polarity_get(uint16_t *p_polarity)
 
     return ( DRV_SX1509_STATUS_CODE_DISALLOWED );
 }
-
-
+//}}}
+//{{{
 uint32_t drv_sx1509_polarity_modify(uint16_t set_mask, uint16_t clr_mask)
 {
     if ( (set_mask & clr_mask) != 0 )
@@ -513,8 +525,9 @@ uint32_t drv_sx1509_polarity_modify(uint16_t set_mask, uint16_t clr_mask)
 
     return ( DRV_SX1509_STATUS_CODE_SUCCESS );
 }
+//}}}
 
-
+//{{{
 uint32_t drv_sx1509_dir_get(uint16_t *p_dir)
 {
     if ( two_registers_get(M_REGDIRA, M_REGDIRB, p_dir) )
@@ -524,8 +537,8 @@ uint32_t drv_sx1509_dir_get(uint16_t *p_dir)
 
     return ( DRV_SX1509_STATUS_CODE_DISALLOWED );
 }
-
-
+//}}}
+//{{{
 uint32_t drv_sx1509_dir_modify(uint16_t set_mask, uint16_t clr_mask)
 {
     if ( (set_mask & clr_mask) != 0 )
@@ -547,8 +560,8 @@ uint32_t drv_sx1509_dir_modify(uint16_t set_mask, uint16_t clr_mask)
 
     return ( DRV_SX1509_STATUS_CODE_SUCCESS );
 }
-
-
+//}}}
+//{{{
 uint32_t drv_sx1509_data_get(uint16_t *p_data)
 {
     if ( two_registers_get(M_REGDATAA, M_REGDATAB, p_data) )
@@ -558,20 +571,20 @@ uint32_t drv_sx1509_data_get(uint16_t *p_data)
 
     return ( DRV_SX1509_STATUS_CODE_DISALLOWED );
 }
-
-
+//}}}
+//{{{
 uint32_t drv_sx1509_data_set(uint16_t data)
 {
-    if ( !reg_set(M_REGDATAB, (data >> DRV_SX1509_DIR_PIN8_Pos) & 0xFF) 
+    if ( !reg_set(M_REGDATAB, (data >> DRV_SX1509_DIR_PIN8_Pos) & 0xFF)
     ||   !reg_set(M_REGDATAA, (data >> DRV_SX1509_DIR_PIN0_Pos) & 0xFF) )
     {
         return ( DRV_SX1509_STATUS_CODE_DISALLOWED );
     }
-    
+
     return ( DRV_SX1509_STATUS_CODE_SUCCESS );
-} 
-
-
+}
+//}}}
+//{{{
 uint32_t drv_sx1509_data_modify(uint16_t set_mask, uint16_t clr_mask)
 {
     if ( (set_mask & clr_mask) != 0 )
@@ -593,8 +606,8 @@ uint32_t drv_sx1509_data_modify(uint16_t set_mask, uint16_t clr_mask)
 
     return ( DRV_SX1509_STATUS_CODE_SUCCESS );
 }
-
-
+//}}}
+//{{{
 uint32_t drv_sx1509_interruptmask_get(uint16_t *p_interruptmask)
 {
     if ( two_registers_get(M_REGINTERRUPTMASKA, M_REGINTERRUPTMASKB, p_interruptmask) )
@@ -604,8 +617,8 @@ uint32_t drv_sx1509_interruptmask_get(uint16_t *p_interruptmask)
 
     return ( DRV_SX1509_STATUS_CODE_DISALLOWED );
 }
-
-
+//}}}
+//{{{
 uint32_t drv_sx1509_interruptmask_modify(uint16_t set_mask, uint16_t clr_mask)
 {
     if ( !register_bits_modify(M_REGINTERRUPTMASKB, (set_mask >> DRV_SX1509_INTERRUPTMASK_PIN8_Pos) & 0xFF,
@@ -622,8 +635,8 @@ uint32_t drv_sx1509_interruptmask_modify(uint16_t set_mask, uint16_t clr_mask)
 
     return ( DRV_SX1509_STATUS_CODE_SUCCESS );
 }
-
-
+//}}}
+//{{{
 uint32_t drv_sx1509_sense_get(uint32_t *p_sense)
 {
     uint8_t       tmp_u8;
@@ -660,8 +673,8 @@ uint32_t drv_sx1509_sense_get(uint32_t *p_sense)
 
     return ( DRV_SX1509_STATUS_CODE_SUCCESS );
 }
-
-
+//}}}
+//{{{
 uint32_t drv_sx1509_sense_modify(uint32_t set_mask, uint32_t clr_mask)
 {
     uint32_t const clr_mask_mod  = (~set_mask) & (clr_mask); // Allow masks to overlap for multi-bit fields (See API doc).
@@ -694,8 +707,8 @@ uint32_t drv_sx1509_sense_modify(uint32_t set_mask, uint32_t clr_mask)
 
     return ( DRV_SX1509_STATUS_CODE_SUCCESS );
 }
-
-
+//}}}
+//{{{
 uint32_t drv_sx1509_interruptsource_get(uint16_t *p_interruptsource)
 {
     if ( two_registers_get(M_REGINTERRUPTSOURCEA, M_REGINTERRUPTSOURCEB, p_interruptsource) )
@@ -705,8 +718,8 @@ uint32_t drv_sx1509_interruptsource_get(uint16_t *p_interruptsource)
 
     return ( DRV_SX1509_STATUS_CODE_DISALLOWED );
 }
-
-
+//}}}
+//{{{
 uint32_t drv_sx1509_interruptsource_clr(uint16_t clr_mask)
 {
     if ( ((clr_mask & (0xFF << DRV_SX1509_INTERRUPTSOURCE_PIN8_Pos)) != 0)
@@ -723,8 +736,8 @@ uint32_t drv_sx1509_interruptsource_clr(uint16_t clr_mask)
 
     return ( DRV_SX1509_STATUS_CODE_SUCCESS );
 }
-
-
+//}}}
+//{{{
 uint32_t drv_sx1509_eventstatus_get(uint16_t *p_eventstatus)
 {
     if ( two_registers_get(M_REGEVENTSTATUSA, M_REGEVENTSTATUSB, p_eventstatus) )
@@ -734,8 +747,8 @@ uint32_t drv_sx1509_eventstatus_get(uint16_t *p_eventstatus)
 
     return ( DRV_SX1509_STATUS_CODE_DISALLOWED );
 }
-
-
+//}}}
+//{{{
 uint32_t drv_sx1509_eventstatus_clr(uint16_t clr_mask)
 {
     if ( ((clr_mask & (0xFF << DRV_SX1509_EVENTSTATUS_PIN8_Pos)) != 0)
@@ -752,8 +765,8 @@ uint32_t drv_sx1509_eventstatus_clr(uint16_t clr_mask)
 
     return ( DRV_SX1509_STATUS_CODE_SUCCESS );
 }
-
-
+//}}}
+//{{{
 uint32_t drv_sx1509_levelshifter_get(uint16_t *p_levelshifter)
 {
     uint8_t       tmp_u8;
@@ -778,8 +791,8 @@ uint32_t drv_sx1509_levelshifter_get(uint16_t *p_levelshifter)
 
     return ( DRV_SX1509_STATUS_CODE_SUCCESS );
 }
-
-
+//}}}
+//{{{
 uint32_t drv_sx1509_levelshifter_modify(uint16_t set_mask, uint16_t clr_mask)
 {
     uint16_t const clr_mask_mod  = (~set_mask) & (clr_mask); // Allow masks to overlap for multi-bit fields (See API doc).
@@ -802,8 +815,8 @@ uint32_t drv_sx1509_levelshifter_modify(uint16_t set_mask, uint16_t clr_mask)
 
     return ( DRV_SX1509_STATUS_CODE_SUCCESS );
 }
-
-
+//}}}
+//{{{
 uint32_t drv_sx1509_clock_get(uint8_t *p_clock)
 {
     if ( !reg_get(M_REGCLOCK, p_clock) )
@@ -813,8 +826,8 @@ uint32_t drv_sx1509_clock_get(uint8_t *p_clock)
 
     return ( DRV_SX1509_STATUS_CODE_SUCCESS );
 }
-
-
+//}}}
+//{{{
 uint32_t drv_sx1509_clock_modify(uint8_t set_mask, uint8_t clr_mask)
 {
     uint8_t const clr_mask_mod  =
@@ -861,8 +874,8 @@ uint32_t drv_sx1509_clock_modify(uint8_t set_mask, uint8_t clr_mask)
 
     return ( DRV_SX1509_STATUS_CODE_SUCCESS );
 }
-
-
+//}}}
+//{{{
 uint32_t drv_sx1509_misc_get(uint8_t *p_misc)
 {
     if ( !reg_get(M_REGMISC, p_misc) )
@@ -872,8 +885,8 @@ uint32_t drv_sx1509_misc_get(uint8_t *p_misc)
 
     return ( DRV_SX1509_STATUS_CODE_SUCCESS );
 }
-
-
+//}}}
+//{{{
 uint32_t drv_sx1509_misc_modify(uint8_t set_mask, uint8_t clr_mask)
 {
     uint8_t const clr_mask_mod  = (~set_mask) & (clr_mask); // Allow masks to overlap for multi-bit fields (See API doc).
@@ -890,8 +903,9 @@ uint32_t drv_sx1509_misc_modify(uint8_t set_mask, uint8_t clr_mask)
 
     return ( DRV_SX1509_STATUS_CODE_SUCCESS );
 }
+//}}}
 
-
+//{{{
 uint32_t drv_sx1509_leddriverenable_get(uint16_t *p_leddriverenable)
 {
     if ( two_registers_get(M_REGLEDDRIVERENABLEA, M_REGLEDDRIVERENABLEB, p_leddriverenable) )
@@ -901,8 +915,8 @@ uint32_t drv_sx1509_leddriverenable_get(uint16_t *p_leddriverenable)
 
     return ( DRV_SX1509_STATUS_CODE_DISALLOWED );
 }
-
-
+//}}}
+//{{{
 uint32_t drv_sx1509_leddriverenable_modify(uint16_t set_mask, uint16_t clr_mask)
 {
     if ( (set_mask & clr_mask) != 0 )
@@ -924,8 +938,8 @@ uint32_t drv_sx1509_leddriverenable_modify(uint16_t set_mask, uint16_t clr_mask)
 
     return ( DRV_SX1509_STATUS_CODE_SUCCESS );
 }
-
-
+//}}}
+//{{{
 uint32_t drv_sx1509_debounceconfig_get(uint8_t *p_debounceconfig)
 {
     if ( !reg_get(M_REGDEBOUNCECONFIG, p_debounceconfig) )
@@ -935,8 +949,8 @@ uint32_t drv_sx1509_debounceconfig_get(uint8_t *p_debounceconfig)
 
     return ( DRV_SX1509_STATUS_CODE_SUCCESS );
 }
-
-
+//}}}
+//{{{
 uint32_t drv_sx1509_debounceconfig_modify(uint8_t set_mask, uint8_t clr_mask)
 {
     uint8_t const clr_mask_mod  = (~set_mask) & (clr_mask); // Allow masks to overlap for multi-bit fields (See API doc).
@@ -954,8 +968,8 @@ uint32_t drv_sx1509_debounceconfig_modify(uint8_t set_mask, uint8_t clr_mask)
 
     return ( DRV_SX1509_STATUS_CODE_SUCCESS );
 }
-
-
+//}}}
+//{{{
 uint32_t drv_sx1509_debounceenable_get(uint16_t *p_debounceenable)
 {
     if ( two_registers_get(M_REGDEBOUNCEENABLEA, M_REGDEBOUNCEENABLEB, p_debounceenable) )
@@ -965,8 +979,8 @@ uint32_t drv_sx1509_debounceenable_get(uint16_t *p_debounceenable)
 
     return ( DRV_SX1509_STATUS_CODE_DISALLOWED );
 }
-
-
+//}}}
+//{{{
 uint32_t drv_sx1509_debounceenable_modify(uint16_t set_mask, uint16_t clr_mask)
 {
     if ( (set_mask & clr_mask) != 0 )
@@ -988,8 +1002,8 @@ uint32_t drv_sx1509_debounceenable_modify(uint16_t set_mask, uint16_t clr_mask)
 
     return ( DRV_SX1509_STATUS_CODE_SUCCESS );
 }
-
-
+//}}}
+//{{{
 uint32_t drv_sx1509_keyconfig_get(uint16_t *p_keyconfig)
 {
     if ( two_registers_get(M_REGKEYCONFIG2, M_REGKEYCONFIG1, p_keyconfig) )
@@ -999,8 +1013,8 @@ uint32_t drv_sx1509_keyconfig_get(uint16_t *p_keyconfig)
 
     return ( DRV_SX1509_STATUS_CODE_DISALLOWED );
 }
-
-
+//}}}
+//{{{
 uint32_t drv_sx1509_keyconfig_modify(uint16_t set_mask, uint16_t clr_mask)
 {
     uint16_t const clr_mask_mod  = (~set_mask) & (clr_mask); // Allow masks to overlap for multi-bit fields (See API doc).
@@ -1027,8 +1041,8 @@ uint32_t drv_sx1509_keyconfig_modify(uint16_t set_mask, uint16_t clr_mask)
 
     return ( DRV_SX1509_STATUS_CODE_SUCCESS );
 }
-
-
+//}}}
+//{{{
 uint32_t drv_sx1509_keydata_get(uint16_t *p_keydata)
 {
     uint16_t keydata;
@@ -1041,8 +1055,8 @@ uint32_t drv_sx1509_keydata_get(uint16_t *p_keydata)
 
     return ( DRV_SX1509_STATUS_CODE_DISALLOWED );
 }
-
-
+//}}}
+//{{{
 uint32_t drv_sx1509_onoffcfgx_get(uint8_t pin_no, uint32_t *p_onoffcfgx)
 {
     uint8_t const reg_base_addr = m_onoffcfgx_base_addr_get(pin_no);
@@ -1075,8 +1089,8 @@ uint32_t drv_sx1509_onoffcfgx_get(uint8_t pin_no, uint32_t *p_onoffcfgx)
 
     return ( DRV_SX1509_STATUS_CODE_SUCCESS );
 }
-
-
+//}}}
+//{{{
 uint32_t drv_sx1509_onoffcfgx_modify(uint8_t pin_no, uint32_t set_mask, uint32_t clr_mask)
 {
     uint8_t  const reg_base_addr = m_onoffcfgx_base_addr_get(pin_no);
@@ -1107,8 +1121,8 @@ uint32_t drv_sx1509_onoffcfgx_modify(uint8_t pin_no, uint32_t set_mask, uint32_t
 
     return ( DRV_SX1509_STATUS_CODE_SUCCESS );
 }
-
-
+//}}}
+//{{{
 uint32_t drv_sx1509_risefallcfgx_get(uint8_t pin_no, uint16_t *p_risefallcfgx)
 {
     uint8_t const reg_base_addr = m_risefallcfgx_base_addr_get(pin_no);
@@ -1135,8 +1149,8 @@ uint32_t drv_sx1509_risefallcfgx_get(uint8_t pin_no, uint16_t *p_risefallcfgx)
 
     return ( DRV_SX1509_STATUS_CODE_SUCCESS );
 }
-
-
+//}}}
+//{{{
 uint32_t drv_sx1509_risefallcfgx_modify(uint8_t pin_no, uint16_t set_mask, uint16_t clr_mask)
 {
     uint8_t const  reg_base_addr = m_risefallcfgx_base_addr_get(pin_no);
@@ -1163,8 +1177,8 @@ uint32_t drv_sx1509_risefallcfgx_modify(uint8_t pin_no, uint16_t set_mask, uint1
 
     return ( DRV_SX1509_STATUS_CODE_SUCCESS );
 }
-
-
+//}}}
+//{{{
 uint32_t drv_sx1509_highinpmode_get(uint16_t *p_highinpmode)
 {
     if ( two_registers_get(M_REGHIGHINPMODEA, M_REGHIGHINPMODEB, p_highinpmode) )
@@ -1174,8 +1188,8 @@ uint32_t drv_sx1509_highinpmode_get(uint16_t *p_highinpmode)
 
     return ( DRV_SX1509_STATUS_CODE_DISALLOWED );
 }
-
-
+//}}}
+//{{{
 uint32_t drv_sx1509_highinpmode_modify(uint16_t set_mask, uint16_t clr_mask)
 {
     if ( (set_mask & clr_mask) != 0 )
@@ -1197,8 +1211,9 @@ uint32_t drv_sx1509_highinpmode_modify(uint16_t set_mask, uint16_t clr_mask)
 
     return ( DRV_SX1509_STATUS_CODE_SUCCESS );
 }
+//}}}
 
-
+//{{{
 uint32_t drv_sx1509_reset(void)
 {
     uint8_t const tx_descr_buff[4] =
@@ -1223,8 +1238,8 @@ uint32_t drv_sx1509_reset(void)
 
     return ( DRV_SX1509_STATUS_CODE_SUCCESS );
 }
-
-
+//}}}
+//{{{
 uint32_t drv_sx1509_close(void)
 {
     if ( m_drv_sx1509.p_cfg != NULL )
@@ -1238,3 +1253,4 @@ uint32_t drv_sx1509_close(void)
 
     return ( DRV_SX1509_STATUS_CODE_DISALLOWED );
 }
+//}}}

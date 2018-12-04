@@ -1,3 +1,4 @@
+//{{{  copyright
 /*
   Copyright (c) 2010 - 2017, Nordic Semiconductor ASA
   All rights reserved.
@@ -35,7 +36,8 @@
   LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
   OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
+//}}}
+//{{{  includes
 #include <stdint.h>
 #include <string.h>
 #include "m_environment_flash.h"
@@ -47,13 +49,16 @@
 #define  NRF_LOG_MODULE_NAME "m_env_flash   "
 #include "nrf_log.h"
 #include "macros_common.h"
-
+//}}}
+//{{{  defines
 #define WS_FLASH_CONFIG_VALID   0x42UL
 #define ENV_FILE_ID             0x1001
 #define ENV_REC_KEY             0x1002
 #define ENV_FILE_BASELINE_ID    0x1003
 #define ENV_REC_BASELINE_KEY    0x1004
+//}}}
 
+//{{{  struct  m_env_flash_config_data_t
 /**@brief Data structure of configuration data stored to flash.
  */
 typedef struct
@@ -61,7 +66,8 @@ typedef struct
     uint32_t         valid;
     ble_tes_config_t config;
 } m_env_flash_config_data_t;
-
+//}}}
+//{{{  union m_env_flash_config_t
 /**@brief Configuration data with size.
  */
 typedef union
@@ -69,7 +75,8 @@ typedef union
     m_env_flash_config_data_t data;
     uint32_t               padding[CEIL_DIV(sizeof(m_env_flash_config_data_t), 4)];
 } m_env_flash_config_t;
-
+//}}}
+//{{{  struct m_env_flash_baseline_data_t
 /**@brief Data structure of gas sensor baseline data stored in flash.
  */
 typedef struct
@@ -77,7 +84,8 @@ typedef struct
     uint32_t         valid;
     m_gas_baseline_t baseline;
 } m_env_flash_baseline_data_t;
-
+//}}}
+//{{{  union m_env_flash_baseline_t
 /**@brief Baseline configuration data with size.
  */
 typedef union
@@ -85,6 +93,7 @@ typedef union
     m_env_flash_baseline_data_t data;
     uint32_t               padding[CEIL_DIV(sizeof(m_env_flash_baseline_data_t), 4)];
 } m_env_flash_baseline_t;
+//}}}
 
 static fds_record_desc_t        m_record_config_desc;
 static fds_record_desc_t        m_record_baseline_desc;
@@ -95,6 +104,7 @@ static bool                     m_fds_config_initialized = false;
 static bool                     m_fds_baseline_write_success = false;
 static bool                     m_fds_baseline_initialized = false;
 
+//{{{
 /**@brief Function for handling flash data storage events.
  */
 static void env_fds_evt_handler( fds_evt_t const * const p_fds_evt )
@@ -146,8 +156,9 @@ static void env_fds_evt_handler( fds_evt_t const * const p_fds_evt )
             break;
     }
 }
+//}}}
 
-
+//{{{
 uint32_t m_env_flash_config_store(const ble_tes_config_t * p_config)
 {
     uint32_t            err_code;
@@ -175,8 +186,8 @@ uint32_t m_env_flash_config_store(const ble_tes_config_t * p_config)
 
     return NRF_SUCCESS;
 }
-
-
+//}}}
+//{{{
 uint32_t m_env_flash_config_load(ble_tes_config_t ** p_config)
 {
     uint32_t            err_code;
@@ -202,8 +213,9 @@ uint32_t m_env_flash_config_load(ble_tes_config_t ** p_config)
 
     return NRF_SUCCESS;
 }
+//}}}
 
-
+//{{{
 uint32_t m_env_flash_baseline_store(const m_gas_baseline_t * p_baseline)
 {
     uint32_t            err_code;
@@ -231,8 +243,8 @@ uint32_t m_env_flash_baseline_store(const m_gas_baseline_t * p_baseline)
 
     return NRF_SUCCESS;
 }
-
-
+//}}}
+//{{{
 uint32_t m_env_flash_baseline_load(m_gas_baseline_t ** p_baseline)
 {
     uint32_t            err_code;
@@ -258,8 +270,9 @@ uint32_t m_env_flash_baseline_load(m_gas_baseline_t ** p_baseline)
 
     return NRF_SUCCESS;
 }
+//}}}
 
-
+//{{{
 uint32_t m_env_flash_init(const ble_tes_config_t * p_default_config,
                           ble_tes_config_t      ** p_config,
                           const m_gas_baseline_t * p_default_baseline,
@@ -268,7 +281,7 @@ uint32_t m_env_flash_init(const ble_tes_config_t * p_default_config,
     uint32_t err_code;
 
     NRF_LOG_INFO("Initialization\r\n");
-    
+
     NULL_PARAM_CHECK(p_default_config);
     NULL_PARAM_CHECK(p_default_baseline);
 
@@ -284,7 +297,7 @@ uint32_t m_env_flash_init(const ble_tes_config_t * p_default_config,
     }
 
     err_code = m_env_flash_config_load(p_config);
-    
+
     if (err_code == FDS_ERR_NOT_FOUND)
     {
         NRF_LOG_INFO("Writing default config\r\n");
@@ -359,3 +372,4 @@ uint32_t m_env_flash_init(const ble_tes_config_t * p_default_config,
 
     return NRF_SUCCESS;
 }
+//}}}

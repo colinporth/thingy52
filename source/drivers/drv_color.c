@@ -1,3 +1,4 @@
+//{{{  copyright
 /*
   Copyright (c) 2010 - 2017, Nordic Semiconductor ASA
   All rights reserved.
@@ -35,7 +36,8 @@
   LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
   OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
+//}}}
+//{{{  include
 #include "drv_color.h"
 #include "pca20020.h"
 #include "nrf_drv_gpiote.h"
@@ -43,11 +45,13 @@
 #define  NRF_LOG_MODULE_NAME "drv_color     "
 #include "nrf_log.h"
 #include "macros_common.h"
+//}}}
 
 static drv_bh1745_cfg_t         m_bh1745_cfg;
 static drv_color_data_handler_t m_data_handler;
 static bool                     m_running = false;
 
+//{{{
 static void gpiote_evt_sceduled(void * p_event_data, uint16_t event_size)
 {
     uint32_t err_code;
@@ -76,8 +80,9 @@ static void gpiote_evt_sceduled(void * p_event_data, uint16_t event_size)
         m_data_handler(&data);
     }
 }
+//}}}
 
-
+//{{{
 static uint32_t chip_verify(void)
 {
     uint32_t err_code;
@@ -98,8 +103,9 @@ static uint32_t chip_verify(void)
 
     return ( (manu_id == 0xE0) && (part_id == 0x0B) ) ? NRF_SUCCESS : NRF_ERROR_NOT_SUPPORTED;
 }
+//}}}
 
-
+//{{{
 static void gpiote_evt_handler(nrf_drv_gpiote_pin_t pin, nrf_gpiote_polarity_t action)
 {
     uint32_t err_code;
@@ -110,8 +116,9 @@ static void gpiote_evt_handler(nrf_drv_gpiote_pin_t pin, nrf_gpiote_polarity_t a
         APP_ERROR_CHECK(err_code);
     }
 }
+//}}}
 
-
+//{{{
 static uint32_t gpiote_init(uint32_t pin)
 {
     uint32_t err_code;
@@ -133,14 +140,15 @@ static uint32_t gpiote_init(uint32_t pin)
 
     return NRF_SUCCESS;
 }
-
-
+//}}}
+//{{{
 static void gpiote_uninit(uint32_t pin)
 {
     nrf_drv_gpiote_in_uninit(pin);
 }
+//}}}
 
-
+//{{{
 uint32_t drv_color_init(drv_color_init_t * p_init)
 {
     uint32_t                    err_code;
@@ -174,8 +182,9 @@ uint32_t drv_color_init(drv_color_init_t * p_init)
 
     return NRF_SUCCESS;
 }
+//}}}
 
-
+//{{{
 uint32_t drv_color_sample(void)
 {
     uint32_t err_code;
@@ -197,8 +206,8 @@ uint32_t drv_color_sample(void)
 
     return NRF_SUCCESS;
 }
-
-
+//}}}
+//{{{
 uint32_t drv_color_start(void)
 {
     uint32_t err_code;
@@ -244,8 +253,8 @@ uint32_t drv_color_start(void)
 
     return NRF_SUCCESS;
 }
-
-
+//}}}
+//{{{
 uint32_t drv_color_stop(void)
 {
     uint32_t err_code;
@@ -273,3 +282,4 @@ uint32_t drv_color_stop(void)
 
     return drv_bh1745_close();
 }
+//}}}

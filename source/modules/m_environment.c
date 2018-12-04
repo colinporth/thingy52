@@ -1,3 +1,4 @@
+//{{{  copyright
 /*
   Copyright (c) 2010 - 2017, Nordic Semiconductor ASA
   All rights reserved.
@@ -35,7 +36,8 @@
   LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
   OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
+//}}}
+//{{{  includes
 #include "m_environment.h"
 #include <string.h>
 #include "app_util_platform.h"
@@ -52,18 +54,13 @@
 #define  NRF_LOG_MODULE_NAME "m_env         "
 #include "nrf_log.h"
 #include "macros_common.h"
-
-/**@brief Different GAS sensor states.
- */
-typedef enum
-{
-    GAS_STATE_IDLE,
-    GAS_STATE_WARMUP,
-    GAS_STATE_ACTIVE
-}gas_state_t;
+//}}}
+//{{{  defines
+typedef enum { GAS_STATE_IDLE, GAS_STATE_WARMUP, GAS_STATE_ACTIVE }gas_state_t;
 
 #define M_GAS_CALIB_INTERVAL_MS (1000 * 60 * 60) ///< Humidity and temperature calibration interval for the gas sensor [ms].
 #define M_GAS_BASELINE_WRITE_MS (1000 * 60 * 30) ///< Stored baseline calibration delay for the gas sensor [ms].
+//}}}
 
 static void temperature_timeout_handler(void * p_context); ///< Temperature handler, forward declaration.
 static void humidity_timeout_handler(void * p_context);    ///< Humidity handler, forward declaration.
@@ -73,7 +70,6 @@ static ble_tes_config_t     * m_p_config;       ///< Configuraion pointer.
 static const ble_tes_config_t m_default_config = ENVIRONMENT_CONFIG_DEFAULT; ///< Default configuraion.
 static m_gas_baseline_t     * m_p_baseline;     ///< Baseline pointer.
 static const m_gas_baseline_t m_default_baseline = ENVIRONMENT_BASELINE_DEFAULT; ///< Default baseline.
-
 
 static bool        m_get_humidity                   = false;
 static bool        m_get_temperature                = false;
@@ -91,6 +87,7 @@ APP_TIMER_DEF(humidity_timer_id);
 APP_TIMER_DEF(color_timer_id);
 APP_TIMER_DEF(gas_calib_timer_id);
 
+//{{{
 /**@brief Function for converting the temperature sample.
  */
 static void temperature_conv_data(float in_temp, ble_tes_temperature_t * p_out_temp)
@@ -102,8 +99,8 @@ static void temperature_conv_data(float in_temp, ble_tes_temperature_t * p_out_t
     p_out_temp->decimal = (uint8_t)(f_decimal * 100.0f);
     NRF_LOG_DEBUG("temperature_conv_data: Temperature: ,%d.%d,C\r\n", p_out_temp->integer, p_out_temp->decimal);
 }
-
-
+//}}}
+//{{{
 /**@brief Function for converting the humidity sample.
  */
 static void humidity_conv_data(uint8_t humid, ble_tes_humidity_t * p_out_humid)
@@ -111,8 +108,8 @@ static void humidity_conv_data(uint8_t humid, ble_tes_humidity_t * p_out_humid)
    *p_out_humid = (uint8_t)humid;
    NRF_LOG_DEBUG("humidity_conv_data: Relative Humidty: ,%d,%%\r\n", humid);
 }
-
-
+//}}}
+//{{{
 /**@brief Function for converting the pressure sample.
  */
 static void pressure_conv_data(float in_press, ble_tes_pressure_t * p_out_press)
@@ -124,8 +121,9 @@ static void pressure_conv_data(float in_press, ble_tes_pressure_t * p_out_press)
     p_out_press->decimal = (uint8_t)(f_decimal * 100.0f);
     NRF_LOG_DEBUG("pressure_conv_data: Pressure/Altitude: %d.%d Pa/m\r\n", p_out_press->integer, p_out_press->decimal);
 }
+//}}}
 
-
+//{{{
 /**@brief Pressure sensor event handler.
  */
 static void drv_pressure_evt_handler(drv_pressure_evt_t const * p_event)
@@ -152,8 +150,8 @@ static void drv_pressure_evt_handler(drv_pressure_evt_t const * p_event)
             break;
     }
 }
-
-
+//}}}
+//{{{
 /**@brief Humidity sensor event handler.
  */
 static void drv_humidity_evt_handler(drv_humidity_evt_t event)
@@ -197,8 +195,8 @@ static void drv_humidity_evt_handler(drv_humidity_evt_t event)
         APP_ERROR_CHECK_BOOL(false);
     }
 }
-
-
+//}}}
+//{{{
 /**@brief Gas sensor data handler.
  */
 static void drv_gas_data_handler(drv_gas_sensor_data_t const * p_data)
@@ -226,8 +224,8 @@ static void drv_gas_data_handler(drv_gas_sensor_data_t const * p_data)
         #endif
     }
 }
-
-
+//}}}
+//{{{
 /**@brief Color sensor data handler.
  */
 static void drv_color_data_handler(drv_color_data_t const * p_data)
@@ -248,8 +246,9 @@ static void drv_color_data_handler(drv_color_data_t const * p_data)
         (void)ble_tes_color_set(&m_tes, &data);
     }
 }
+//}}}
 
-
+//{{{
 /**@brief Function for handling temperature timer timeout event.
  *
  * @details This function will read the temperature at the configured rate.
@@ -263,8 +262,8 @@ static void temperature_timeout_handler(void * p_context)
     err_code = drv_humidity_sample();
     APP_ERROR_CHECK(err_code);
 }
-
-
+//}}}
+//{{{
 /**@brief Function for starting temperature sampling.
  */
 static uint32_t temperature_start(void)
@@ -287,8 +286,8 @@ static uint32_t temperature_start(void)
 
     return NRF_SUCCESS;
 }
-
-
+//}}}
+//{{{
 /**@brief Function for stopping temperature sampling.
  */
 static uint32_t temperature_stop(bool disable_drv)
@@ -317,8 +316,9 @@ static uint32_t temperature_stop(bool disable_drv)
         return NRF_SUCCESS;
     }
 }
+//}}}
 
-
+//{{{
 /**@brief Function for handling pressure timer timout event.
  *
  * @details This function will read the pressure at the configured rate.
@@ -330,8 +330,8 @@ static void pressure_timeout_handler(void * p_context)
     err_code = drv_pressure_sample();
     APP_ERROR_CHECK(err_code);
 }
-
-
+//}}}
+//{{{
 /**@brief Function for starting pressure sampling.
  */
 static uint32_t pressure_start(void)
@@ -349,8 +349,8 @@ static uint32_t pressure_start(void)
                            APP_TIMER_TICKS(m_p_config->pressure_interval_ms),
                            NULL);
 }
-
-
+//}}}
+//{{{
 /**@brief Function for stopping pressure sampling.
  */
 static uint32_t pressure_stop(void)
@@ -362,7 +362,9 @@ static uint32_t pressure_stop(void)
 
     return drv_pressure_disable();
 }
+//}}}
 
+//{{{
 /**@brief Function for handling gas sensor calibration.
  *
  * @details This function will read the humidity and temperature at the configured rate.
@@ -401,8 +403,8 @@ static void gas_calib_timeout_handler(void * p_context)
         // Should never happen.
     }
 }
-
-
+//}}}
+//{{{
 /**@brief Sends the sampled humidity and temperature to the gas sensor for calibration.
  *
  * @note Not currently used.
@@ -428,8 +430,9 @@ static uint32_t calibrate_gas_sensor(uint16_t humid, float temp)
         return NRF_SUCCESS; // Do nothing.
     }
 }
+//}}}
 
-
+//{{{
 /**@brief Stops the humidity and temperature sensor, used to calibrate the gas sensor.
  *
  * @note Not currently used.
@@ -452,8 +455,8 @@ static uint32_t humidity_temp_stop_for_gas_calibration(void)
 
     return app_timer_stop(gas_calib_timer_id);
 }
-
-
+//}}}
+//{{{
 /**@brief Function for handling humidity timer timout event.
  *
  * @details This function will read the humidity at the configured rate.
@@ -467,7 +470,8 @@ static void humidity_timeout_handler(void * p_context)
     err_code = drv_humidity_sample();
     APP_ERROR_CHECK(err_code);
 }
-
+//}}}
+//{{{
 /**@brief Function for starting humidity sampling.
  */
 static uint32_t humidity_start(void)
@@ -487,8 +491,8 @@ static uint32_t humidity_start(void)
                            APP_TIMER_TICKS(m_p_config->humidity_interval_ms),
                            NULL);
 }
-
-
+//}}}
+//{{{
 /**@brief Function for stopping humidity sampling.
  */
 static uint32_t humidity_stop(bool disable_drv)
@@ -518,7 +522,9 @@ static uint32_t humidity_stop(bool disable_drv)
         return NRF_SUCCESS;
     }
 }
+//}}}
 
+//{{{
 /**@brief Loads the gas sensor baseline values from flash storage.
  */
 static uint32_t gas_load_baseline_flash(uint16_t * p_gas_baseline)
@@ -552,8 +558,8 @@ static uint32_t gas_load_baseline_flash(uint16_t * p_gas_baseline)
 
     return NRF_SUCCESS;
 }
-
-
+//}}}
+//{{{
 /**@brief Stores the gas sensor baseline values to flash storage.
  */
 static uint32_t gas_store_baseline_flash(uint16_t baseline)
@@ -591,8 +597,8 @@ static uint32_t gas_store_baseline_flash(uint16_t baseline)
 
     return NRF_SUCCESS;
 }
-
-
+//}}}
+//{{{
 static uint32_t gas_start(void)
 {
     NRF_LOG_DEBUG("Gas start: mode: 0x%x \r\n", m_p_config->gas_interval_mode);
@@ -628,8 +634,8 @@ static uint32_t gas_start(void)
                            APP_TIMER_TICKS(M_GAS_BASELINE_WRITE_MS),
                            NULL);
 }
-
-
+//}}}
+//{{{
 static uint32_t gas_stop(void)
 {
     uint32_t err_code;
@@ -651,8 +657,9 @@ static uint32_t gas_stop(void)
 
     return drv_gas_sensor_stop();
 }
+//}}}
 
-
+//{{{
 /**@brief Function for handling color timer timeout event.
  *
  * @details This function will read the color at the configured rate.
@@ -670,8 +677,8 @@ static void color_timeout_handler(void * p_context)
     err_code = drv_color_sample();
     APP_ERROR_CHECK(err_code);
 }
-
-
+//}}}
+//{{{
 static uint32_t color_start(void)
 {
     uint32_t                    err_code;
@@ -693,8 +700,8 @@ static uint32_t color_start(void)
                            APP_TIMER_TICKS(m_p_config->color_interval_ms),
                            NULL);
 }
-
-
+//}}}
+//{{{
 static uint32_t color_stop(void)
 {
     uint32_t err_code;
@@ -709,8 +716,9 @@ static uint32_t color_stop(void)
 
     return NRF_SUCCESS;
 }
+//}}}
 
-
+//{{{
 static uint32_t config_verify(ble_tes_config_t * p_config)
 {
     uint32_t err_code;
@@ -732,8 +740,8 @@ static uint32_t config_verify(ble_tes_config_t * p_config)
 
     return NRF_SUCCESS;
 }
-
-
+//}}}
+//{{{
 /**@brief Function for applying the configuration.
  *
  */
@@ -778,8 +786,9 @@ static uint32_t config_apply(ble_tes_config_t * p_config)
 
     return NRF_SUCCESS;
 }
+//}}}
 
-
+//{{{
 /**@brief Function for handling event from the Thingy Environment Service.
  *
  * @details This function will process the data received from the Thingy Environment BLE Service and send
@@ -887,8 +896,9 @@ static void ble_tes_evt_handler( ble_tes_t        * p_tes,
 
     }
 }
+//}}}
 
-
+//{{{
 /**@brief Function for initializing the Thingy Environment Service.
  *
  * @details This callback function will be called from the ble handling module to initialize the Thingy Environment service.
@@ -939,8 +949,8 @@ static uint32_t environment_service_init(bool major_minor_fw_ver_changed)
 
     return NRF_SUCCESS;
 }
-
-
+//}}}
+//{{{
 /**@brief Function for passing the BLE event to the Thingy Environment service.
  *
  * @details This callback function will be called from the BLE handling module.
@@ -958,8 +968,9 @@ static void environment_on_ble_evt(ble_evt_t * p_ble_evt)
         APP_ERROR_CHECK(err_code);
     }
 }
+//}}}
 
-
+//{{{
 /**@brief Function for initializing the humidity/temperature sensor
  */
 static uint32_t humidity_sensor_init(const nrf_drv_twi_t * p_twi_instance)
@@ -987,8 +998,8 @@ static uint32_t humidity_sensor_init(const nrf_drv_twi_t * p_twi_instance)
 
     return err_code;
 }
-
-
+//}}}
+//{{{
 static uint32_t pressure_sensor_init(const nrf_drv_twi_t * p_twi_instance)
 {
     drv_pressure_init_t init_params;
@@ -1010,8 +1021,8 @@ static uint32_t pressure_sensor_init(const nrf_drv_twi_t * p_twi_instance)
 
     return drv_pressure_init(&init_params);
 }
-
-
+//}}}
+//{{{
 static uint32_t gas_sensor_init(const nrf_drv_twi_t * p_twi_instance)
 {
     uint32_t       err_code;
@@ -1035,8 +1046,8 @@ static uint32_t gas_sensor_init(const nrf_drv_twi_t * p_twi_instance)
 
     return NRF_SUCCESS;
 }
-
-
+//}}}
+//{{{
 static uint32_t color_sensor_init(const nrf_drv_twi_t * p_twi_instance)
 {
     uint32_t err_code;
@@ -1060,14 +1071,15 @@ static uint32_t color_sensor_init(const nrf_drv_twi_t * p_twi_instance)
 
     return NRF_SUCCESS;
 }
+//}}}
 
-
+//{{{
 uint32_t m_environment_start(void)
 {
     return NRF_SUCCESS;
 }
-
-
+//}}}
+//{{{
 uint32_t m_environment_stop(void)
 {
     uint32_t err_code;
@@ -1089,8 +1101,8 @@ uint32_t m_environment_stop(void)
 
     return NRF_SUCCESS;
 }
-
-
+//}}}
+//{{{
 uint32_t m_environment_init(m_ble_service_handle_t * p_handle, m_environment_init_t * p_params)
 {
     uint32_t err_code;
@@ -1134,3 +1146,4 @@ uint32_t m_environment_init(m_ble_service_handle_t * p_handle, m_environment_ini
 
     return NRF_SUCCESS;
 }
+//}}}

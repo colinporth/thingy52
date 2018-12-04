@@ -1,3 +1,4 @@
+//{{{
 /*
   Copyright (c) 2010 - 2017, Nordic Semiconductor ASA
   All rights reserved.
@@ -35,7 +36,8 @@
   LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
   OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
- 
+//}}}
+//{{{  include
 #include <stdint.h>
 #include <string.h>
 #include "m_motion_flash.h"
@@ -47,11 +49,14 @@
 #define  NRF_LOG_MODULE_NAME "m_motion_flash"
 #include "nrf_log.h"
 #include "macros_common.h"
-
+//}}}
+//{{{  define
 #define MOTION_FLASH_CONFIG_VALID 0x42UL
 #define MOTION_FILE_ID 0x3000
 #define MOTION_REC_KEY 0x3001
+//}}}
 
+//{{{  struct m_motion_flash_config_data_t
 /**@brief Data structure of configuration data stored to flash.
  */
 typedef struct
@@ -59,7 +64,8 @@ typedef struct
     uint32_t         valid;
     ble_tms_config_t config;
 } m_motion_flash_config_data_t;
-
+//}}}
+//{{{  union m_motion_flash_config_t
 /**@brief Configuration data with size.
  */
 typedef union
@@ -67,12 +73,14 @@ typedef union
     m_motion_flash_config_data_t data;
     uint32_t                     padding[CEIL_DIV(sizeof(m_motion_flash_config_data_t), 4)];
 } m_motion_flash_config_t;
+//}}}
 
 static fds_record_desc_t       m_record_desc;
 static m_motion_flash_config_t m_config;
 static bool                    m_fds_initialized = false;
 static bool                    m_fds_write_success = false;
 
+//{{{
 /**@brief Function for handling flash data storage events.
  */
 static void motion_fds_evt_handler( fds_evt_t const * const p_fds_evt )
@@ -115,7 +123,9 @@ static void motion_fds_evt_handler( fds_evt_t const * const p_fds_evt )
             break;
     }
 }
+//}}}
 
+//{{{
 uint32_t m_motion_flash_config_store(const ble_tms_config_t * p_config)
 {
     uint32_t            err_code;
@@ -143,8 +153,8 @@ uint32_t m_motion_flash_config_store(const ble_tms_config_t * p_config)
 
     return NRF_SUCCESS;
 }
-
-
+//}}}
+//{{{
 uint32_t m_motion_flash_config_load(ble_tms_config_t ** p_config)
 {
     uint32_t            err_code;
@@ -170,8 +180,9 @@ uint32_t m_motion_flash_config_load(ble_tms_config_t ** p_config)
 
     return NRF_SUCCESS;
 }
+//}}}
 
-
+//{{{
 uint32_t m_motion_flash_init(const ble_tms_config_t * p_default_config,
                              ble_tms_config_t      ** p_config)
 {
@@ -192,7 +203,7 @@ uint32_t m_motion_flash_init(const ble_tms_config_t * p_default_config,
     }
 
     err_code = m_motion_flash_config_load(p_config);
-    
+
     if (err_code != NRF_SUCCESS)
     {
         fds_record_t        record;
@@ -229,3 +240,4 @@ uint32_t m_motion_flash_init(const ble_tms_config_t * p_default_config,
     }
     return NRF_SUCCESS;
 }
+//}}}

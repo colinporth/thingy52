@@ -1,3 +1,4 @@
+//{{{  copyright
 /*
   Copyright (c) 2010 - 2017, Nordic Semiconductor ASA
   All rights reserved.
@@ -35,7 +36,8 @@
   LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
   OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
+//}}}
+//{{{  includes
 #include <string.h>
 #include "app_util_platform.h"
 #include "m_sound.h"
@@ -45,9 +47,11 @@
 #define  NRF_LOG_MODULE_NAME "m_sound       "
 #include "nrf_log.h"
 #include "macros_common.h"
+//}}}
 
-static ble_tss_t              m_tss;  /**< Structure to identify the Thingy Sound Service. */
+static ble_tss_t m_tss;  /**< Structure to identify the Thingy Sound Service. */
 
+//{{{
 static void drv_speaker_evt_handler(drv_speaker_evt_t evt)
 {
     switch(evt)
@@ -78,9 +82,10 @@ static void drv_speaker_evt_handler(drv_speaker_evt_t evt)
             break;
     }
 }
+//}}}
 
-
-static uint32_t drv_mic_data_handler(m_audio_frame_t * p_frame)
+//{{{
+static uint32_t drv_mic_data_handler(m_audio_frame_t* p_frame)
 {
     uint32_t err_code;
 
@@ -97,7 +102,9 @@ static uint32_t drv_mic_data_handler(m_audio_frame_t * p_frame)
 
     return NRF_SUCCESS;
 }
+//}}}
 
+//{{{
 /**@brief Function for handling event from the Thingy Sound Service.
  *
  * @details This function will process the data received from the Thingy Sound BLE Service.
@@ -107,7 +114,7 @@ static uint32_t drv_mic_data_handler(m_audio_frame_t * p_frame)
  * @param[in] p_data   Event data.
  * @param[in] length   Length of the data.
  */
-static void ble_tss_evt_handler( ble_tss_t        * p_tes,
+static void ble_tss_evt_handler (ble_tss_t* p_tes,
                                  ble_tss_evt_type_t evt_type,
                                  uint8_t          * p_data,
                                  uint16_t           length)
@@ -198,8 +205,9 @@ static void ble_tss_evt_handler( ble_tss_t        * p_tes,
 
     }
 }
+//}}}
 
-
+//{{{
 /**@brief Function for initializing the Thingy Sound Service.
  *
  * @details This callback function will be called from the ble handling module to initialize the Thingy Sound service.
@@ -229,15 +237,16 @@ static uint32_t sound_service_init(bool major_minor_fw_ver_changed)
 
     return NRF_SUCCESS;
 }
+//}}}
 
-
+//{{{
 /**@brief Function for passing the BLE event to the Thingy Sound service.
  *
  * @details This callback function will be called from the BLE handling module.
  *
  * @param[in] p_ble_evt    Pointer to the BLE event.
  */
-static void sound_on_ble_evt(ble_evt_t * p_ble_evt)
+static void sound_on_ble_evt (ble_evt_t* p_ble_evt)
 {
     uint32_t err_code;
     ble_tss_on_ble_evt(&m_tss, p_ble_evt);
@@ -248,9 +257,11 @@ static void sound_on_ble_evt(ble_evt_t * p_ble_evt)
         APP_ERROR_CHECK(err_code);
     }
 }
+//}}}
 
+//{{{
 
-uint32_t m_sound_init(m_ble_service_handle_t * p_handle)
+uint32_t m_sound_init (m_ble_service_handle_t* p_handle)
 {
     uint32_t           err_code;
     drv_speaker_init_t speaker_init;
@@ -268,3 +279,4 @@ uint32_t m_sound_init(m_ble_service_handle_t * p_handle)
 
     return drv_mic_init(drv_mic_data_handler);
 }
+//}}}

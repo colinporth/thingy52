@@ -360,3 +360,7 @@ ocd: nrf52832_xxaa_s132
 ocdsoft:
 	@echo ocd Flashing: $(OUTPUT_BINARY_DIRECTORY)/$<.hex
 	..\..\..\openOCD\bin\openocd.exe -f openocd.cfg -c "program ../../../sdk_components/softdevice/s132/hex/s132_nrf52_4.0.2_softdevice.hex verify exit"
+
+ocdtest: 
+	@echo ocd test
+	..\..\..\openOCD\bin\openocd.exe -f openocd.cfg

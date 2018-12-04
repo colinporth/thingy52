@@ -117,10 +117,7 @@ void assert_nrf_callback (uint16_t line_num, const uint8_t * p_file_name)
 //}}}
 
 //{{{
-/**@brief Function for putting Thingy into sleep mode.
- * @note This function will not return.
- */
-static void sleep_mode_enter() {
+static void sleepModeEnter() {
 
   NRF_LOG_INFO("Entering sleep mode \r\n");
   uint32_t err_code = m_motion_sleep_prepare(true);
@@ -129,10 +126,11 @@ static void sleep_mode_enter() {
   err_code = support_func_configure_io_shutdown();
   APP_ERROR_CHECK(err_code);
 
-  // Enable wake on button press.
+  // Enable wake on button press
   nrf_gpio_cfg_sense_input(BUTTON, NRF_GPIO_PIN_PULLUP, NRF_GPIO_PIN_SENSE_LOW);
-  // Enable wake on low power accelerometer.
-  nrf_gpio_cfg_sense_input(LIS_INT1, NRF_GPIO_PIN_NOPULL, NRF_GPIO_PIN_SENSE_HIGH);
+
+  // Enable wake on low power accelerometer
+  //nrf_gpio_cfg_sense_input(LIS_INT1, NRF_GPIO_PIN_NOPULL, NRF_GPIO_PIN_SENSE_HIGH);
 
   NRF_LOG_FLUSH();
   nrf_delay_ms(5);
@@ -142,22 +140,19 @@ static void sleep_mode_enter() {
   NRF_LOG_FLUSH();
 
   #ifdef DEBUG
-      if(!support_func_sys_halt_debug_enabled())
-      {
-          APP_ERROR_CHECK(err_code); // If not in debug mode, return the error and the system will reboot.
+    if (!support_func_sys_halt_debug_enabled()) {
+      APP_ERROR_CHECK(err_code); // If not in debug mode, return the error and the system will reboot.
       }
-      else
-      {
-          NRF_LOG_WARNING("Exec stopped, busy wait \r\n");
-          NRF_LOG_FLUSH();
+    else {
+      NRF_LOG_WARNING("Exec stopped, busy wait \r\n");
+      NRF_LOG_FLUSH();
 
-          while(true) // Only reachable when entering emulated system off.
-          {
-              // Infinte loop to ensure that code stops in debug mode.
-          }
+      while(true) { // Only reachable when entering emulated system off.
+        // Infinte loop to ensure that code stops in debug mode.
+        }
       }
   #else
-      APP_ERROR_CHECK(err_code);
+    APP_ERROR_CHECK(err_code);
   #endif
   }
 //}}}
@@ -177,71 +172,63 @@ static void power_manage() {
   }
 //}}}
 //{{{
-/**@brief Battery module data handler.
- */
 static void m_batt_meas_handler (m_batt_meas_event_t const * p_batt_meas_event) {
 
   NRF_LOG_INFO ("Voltage: %d V, Charge: %d %%, Event type: %d \r\n",
                 p_batt_meas_event->voltage_mv, p_batt_meas_event->level_percent, p_batt_meas_event->type);
+
   if (p_batt_meas_event != NULL) {
-        if (p_batt_meas_event->type == M_BATT_MEAS_EVENT_LOW) {
-            uint32_t err_code;
+    if (p_batt_meas_event->type == M_BATT_MEAS_EVENT_LOW) {
+      uint32_t err_code = support_func_configure_io_shutdown();
+      APP_ERROR_CHECK(err_code);
 
-            err_code = support_func_configure_io_shutdown();
-            APP_ERROR_CHECK(err_code);
+      // Enable wake on USB detect only.
+      nrf_gpio_cfg_sense_input(USB_DETECT, NRF_GPIO_PIN_NOPULL, NRF_GPIO_PIN_SENSE_HIGH);
 
-            // Enable wake on USB detect only.
-            nrf_gpio_cfg_sense_input(USB_DETECT, NRF_GPIO_PIN_NOPULL, NRF_GPIO_PIN_SENSE_HIGH);
+      NRF_LOG_WARNING("Battery voltage low, shutting down Thingy. Connect USB to charge \r\n");
+      NRF_LOG_FINAL_FLUSH();
+      // Go to system-off mode (This function will not return; wakeup will cause a reset).
+      err_code = sd_power_system_off();
 
-            NRF_LOG_WARNING("Battery voltage low, shutting down Thingy. Connect USB to charge \r\n");
-            NRF_LOG_FINAL_FLUSH();
-            // Go to system-off mode (This function will not return; wakeup will cause a reset).
-            err_code = sd_power_system_off();
-
-            #ifdef DEBUG
-                if(!support_func_sys_halt_debug_enabled()) {
-                    APP_ERROR_CHECK(err_code); // If not in debug mode, return the error and the system will reboot.
-                  }
-                else {
-                    NRF_LOG_WARNING("Exec stopped, busy wait \r\n");
-                    NRF_LOG_FLUSH();
-                    while(true) // Only reachable when entering emulated system off.
-                    {
-                        // Infinte loop to ensure that code stops in debug mode.
-                    }
-                }
-            #else
-                APP_ERROR_CHECK(err_code);
-            #endif
+      #ifdef DEBUG
+        if (!support_func_sys_halt_debug_enabled()) {
+            APP_ERROR_CHECK (err_code); // If not in debug mode, return the error and the system will reboot.
+          }
+        else {
+          NRF_LOG_WARNING ("Exec stopped, busy wait \r\n");
+          NRF_LOG_FLUSH();
+          while(true) { // Only reachable when entering emulated system off.
+            // Infinte loop to ensure that code stops in debug mode.
+            }
+      #else
+        APP_ERROR_CHECK(err_code);
+      #endif
       }
     }
   }
 //}}}
 //{{{
-/**@brief Function for handling BLE events.
- */
-static void thingy_ble_evt_handler (m_ble_evt_t * p_evt)
-{
-    switch (p_evt->evt_type)
-    {
-        case thingy_ble_evt_connected:
-            NRF_LOG_INFO(NRF_LOG_COLOR_CODE_GREEN "Thingy_ble_evt_connected \r\n");
-            break;
+static void thingy_ble_evt_handler (m_ble_evt_t* p_evt) {
 
-        case thingy_ble_evt_disconnected:
-            NRF_LOG_INFO(NRF_LOG_COLOR_CODE_YELLOW "Thingy_ble_evt_disconnected \r\n");
-            NRF_LOG_FINAL_FLUSH();
-            nrf_delay_ms(5);
-            NVIC_SystemReset();
-            break;
+  switch (p_evt->evt_type) {
+    case thingy_ble_evt_connected:
+      NRF_LOG_INFO (NRF_LOG_COLOR_CODE_GREEN "Thingy_ble_evt_connected \r\n");
+      break;
 
-        case thingy_ble_evt_timeout:
-            NRF_LOG_INFO(NRF_LOG_COLOR_CODE_YELLOW "Thingy_ble_evt_timeout \r\n");
-            sleep_mode_enter();
-            NVIC_SystemReset();
-            break;
+    case thingy_ble_evt_disconnected:
+      NRF_LOG_INFO (NRF_LOG_COLOR_CODE_YELLOW "Thingy_ble_evt_disconnected \r\n");
+      NRF_LOG_FINAL_FLUSH();
+      nrf_delay_ms (5);
+      NVIC_SystemReset();
+      break;
+
+    case thingy_ble_evt_timeout:
+      NRF_LOG_INFO (NRF_LOG_COLOR_CODE_YELLOW "Thingy_ble_evt_timeout \r\n");
+      sleepModeEnter();
+      NVIC_SystemReset();
+      break;
     }
-}
+  }
 //}}}
 
 //{{{

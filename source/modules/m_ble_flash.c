@@ -1,3 +1,4 @@
+//{{{  copyright
 /*
   Copyright (c) 2010 - 2017, Nordic Semiconductor ASA
   All rights reserved.
@@ -35,7 +36,8 @@
   LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
   OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
+//}}}
+//{{{  includes
 #include <stdint.h>
 #include <string.h>
 #include "m_ble_flash.h"
@@ -48,11 +50,14 @@
 #define  NRF_LOG_MODULE_NAME "m_ble_flash   "
 #include "nrf_log.h"
 #include "macros_common.h"
-
+//}}}
+//{{{  defines
 #define TC_FLASH_CONFIG_VALID 0x42UL
 #define TC_FILE_ID 0x2000
 #define TC_REC_KEY 0x2001
+//}}}
 
+//{{{  struct tc_flash_config_data_t
 /**@brief Data structure of configuration data stored to flash.
  */
 typedef struct
@@ -60,7 +65,8 @@ typedef struct
     uint32_t         valid;
     ble_tcs_params_t config;
 } tc_flash_config_data_t;
-
+//}}}
+//{{{  union tc_flash_config_t
 /**@brief Configuration data with size.
  */
 typedef union
@@ -68,16 +74,18 @@ typedef union
     tc_flash_config_data_t data;
     uint32_t               padding[CEIL_DIV(sizeof(tc_flash_config_data_t), 4)];
 } tc_flash_config_t;
+//}}}
 
-static fds_record_desc_t    m_record_desc;
-static tc_flash_config_t    m_config;
-static bool                 m_fds_initialized = false;
-static bool                 m_fds_write_success = false;
-static bool                 m_fds_gc_run = false;
+static fds_record_desc_t m_record_desc;
+static tc_flash_config_t m_config;
+static bool m_fds_initialized = false;
+static bool m_fds_write_success = false;
+static bool m_fds_gc_run = false;
 
+//{{{
 /**@brief Function for handling flash data storage events.
  */
-static void tc_fds_evt_handler( fds_evt_t const * const p_fds_evt )
+static void tc_fds_evt_handler (fds_evt_t const* const p_fds_evt )
 {
     switch (p_fds_evt->id)
     {
@@ -124,9 +132,10 @@ static void tc_fds_evt_handler( fds_evt_t const * const p_fds_evt )
             break;
     }
 }
+//}}}
 
-
-uint32_t m_ble_flash_config_store(const ble_tcs_params_t * p_config)
+//{{{
+uint32_t m_ble_flash_config_store (const ble_tcs_params_t* p_config)
 {
     uint32_t            err_code;
     fds_record_t        record;
@@ -155,7 +164,9 @@ uint32_t m_ble_flash_config_store(const ble_tcs_params_t * p_config)
 }
 
 
-uint32_t m_ble_flash_config_load(ble_tcs_params_t ** p_config)
+//}}}
+//{{{
+uint32_t m_ble_flash_config_load (ble_tcs_params_t** p_config)
 {
     uint32_t            err_code;
     fds_flash_record_t  flash_record;
@@ -180,9 +191,9 @@ uint32_t m_ble_flash_config_load(ble_tcs_params_t ** p_config)
 
     return NRF_SUCCESS;
 }
-
-
-uint32_t m_ble_flash_init(const ble_tcs_params_t    * p_default_config,
+//}}}
+//{{{
+uint32_t m_ble_flash_init (const ble_tcs_params_t* p_default_config,
                           ble_tcs_params_t         ** p_config)
 {
     uint32_t                err_code;
@@ -248,3 +259,4 @@ uint32_t m_ble_flash_init(const ble_tcs_params_t    * p_default_config,
 
     return NRF_SUCCESS;
 }
+//}}}

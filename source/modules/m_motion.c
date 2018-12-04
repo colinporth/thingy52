@@ -1,3 +1,4 @@
+//{{{  copyright
 /*
   Copyright (c) 2010 - 2017, Nordic Semiconductor ASA
   All rights reserved.
@@ -35,7 +36,8 @@
   LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
   OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
+//}}}
+//{{{  includes
 #include "m_motion.h"
 #include "m_motion_flash.h"
 #include "ble_tms.h"
@@ -45,16 +47,19 @@
 #define  NRF_LOG_MODULE_NAME "m_motion      "
 #include "nrf_log.h"
 #include "macros_common.h"
-
+//}}}
+//{{{  defines
 #define RAW_PARAM_NUM                 9     // Number of raw parameters (3 * acc + 3 * gyro + 3 * compass).
 #define RAW_Q_FORMAT_ACC_INTEGER_BITS 6     // Number of bits used for integer part of raw data.
 #define RAW_Q_FORMAT_GYR_INTEGER_BITS 11    // Number of bits used for integer part of raw data.
 #define RAW_Q_FORMAT_CMP_INTEGER_BITS 12    // Number of bits used for integer part of raw data.
+//}}}
 
 static ble_tms_t              m_tms;
 static ble_tms_config_t     * m_config;
 static const ble_tms_config_t m_default_config = MOTION_DEFAULT_CONFIG;
 
+//{{{
 /**@brief Function for applying the configuration.
  */
 static uint32_t m_motion_configuration_apply(ble_tms_config_t * p_config)
@@ -75,15 +80,16 @@ static uint32_t m_motion_configuration_apply(ble_tms_config_t * p_config)
 
     return NRF_SUCCESS;
 }
+//}}}
 
-
+//{{{
 static void ble_tms_evt_handler(ble_tms_t        * p_tms,
                                 ble_tms_evt_type_t evt_type,
                                 uint8_t          * p_data,
                                 uint16_t           length)
 {
     uint32_t err_code;
-    
+
     switch (evt_type)
     {
         case BLE_TMS_EVT_NOTIF_TAP:
@@ -228,8 +234,9 @@ static void ble_tms_evt_handler(ble_tms_t        * p_tms,
     }
 
 }
+//}}}
 
-
+//{{{
 /**@brief Function for initializing the Thingy Motion Service.
  *
  * @details This callback function will be called from the ble handling module to initialize the Weather Station service.
@@ -244,7 +251,7 @@ static uint32_t motion_service_init(bool major_minor_fw_ver_changed)
     /**@brief Load configuration from flash. */
     err_code = m_motion_flash_init(&m_default_config, &m_config);
     RETURN_IF_ERROR(err_code);
-    
+
     if (major_minor_fw_ver_changed)
     {
         err_code = m_motion_flash_config_store(&m_default_config);
@@ -266,11 +273,12 @@ static uint32_t motion_service_init(bool major_minor_fw_ver_changed)
         NRF_LOG_ERROR("FAILED - %d\r\n", err_code);
         return err_code;
     }
-    
+
     return NRF_SUCCESS;
 }
+//}}}
 
-
+//{{{
 /**@brief Function for passing the BLE event to the Thingy Motion Service.
  *
  * @details This callback function will be called from the BLE handling module.
@@ -288,8 +296,9 @@ static void motion_on_ble_evt(ble_evt_t * p_ble_evt)
         APP_ERROR_CHECK(err_code);
     }
 }
+//}}}
 
-
+//{{{
 static void drv_motion_evt_handler(drv_motion_evt_t const * p_evt, void * p_data, uint32_t size)
 {
     switch (*p_evt)
@@ -381,7 +390,7 @@ static void drv_motion_evt_handler(drv_motion_evt_t const * p_evt, void * p_data
                 sprintf(buffer, "%.2f", f_buf);
                 NRF_LOG_DEBUG(" accel.z [G's] = %s:\r\n", nrf_log_push(buffer));
 
-                
+
                 f_buf = (double)p_raw[3];
                 f_buf = f_buf/(1<<16);
                 sprintf(buffer, "%.2f", f_buf);
@@ -496,7 +505,7 @@ static void drv_motion_evt_handler(drv_motion_evt_t const * p_evt, void * p_data
                     tmp = p_matrix[i]/(double)(1<<30);
                     sprintf(buffer[i], "% 1.2f", tmp);
                 }
-                
+
                 NRF_LOG_DEBUG("DRV_MOTION_EVT_ROT_MAT:\r\n");
                 NRF_LOG_DEBUG("[%s %s %s]\r\n", nrf_log_push(buffer[0]), nrf_log_push(buffer[1]), nrf_log_push(buffer[2]));
                 NRF_LOG_DEBUG("[%s %s %s]\r\n", nrf_log_push(buffer[3]), nrf_log_push(buffer[4]), nrf_log_push(buffer[5]));
@@ -596,14 +605,16 @@ static void drv_motion_evt_handler(drv_motion_evt_t const * p_evt, void * p_data
             break;
     }
 }
+//}}}
 
-
+//{{{
 uint32_t m_motion_sleep_prepare(bool wakeup)
 {
     return drv_motion_sleep_prepare(wakeup);
 }
+//}}}
 
-
+//{{{
 uint32_t m_motion_init(m_ble_service_handle_t * p_handle, m_motion_init_t * p_params)
 {
     uint32_t err_code;
@@ -656,3 +667,4 @@ uint32_t m_motion_init(m_ble_service_handle_t * p_handle, m_motion_init_t * p_pa
 
     return NRF_SUCCESS;
 }
+//}}}
