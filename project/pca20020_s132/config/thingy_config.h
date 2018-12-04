@@ -90,35 +90,35 @@
 //{{{  Thingy default configuration
 #define THINGY_CONFIG_DEFAULT { \
   .dev_name = {                 \
-      .name = DEVICE_NAME,      \
-      .len = 6                  \
+    .name = DEVICE_NAME,        \
+    .len = 6                    \
     },                          \
   .adv_params = {               \
-      .interval = MSEC_TO_UNITS(APP_ADV_INTERVAL_MS, UNIT_0_625_MS), \
-      .timeout = APP_ADV_TIMEOUT_IN_SECONDS \
-    },                                      \
-  .conn_params = {                          \
-      .min_conn_int  = (uint16_t)MSEC_TO_UNITS(MIN_CONN_INTERVAL_MS, UNIT_1_25_MS), \
-      .max_conn_int  = MSEC_TO_UNITS(MAX_CONN_INTERVAL_MS, UNIT_1_25_MS),           \
-      .slave_latency = SLAVE_LATENCY,                                               \
-      .sup_timeout   = MSEC_TO_UNITS(CONN_SUP_TIMEOUT_MS, UNIT_10_MS)               \
-    },                                      \
-  .eddystone_url = {                        \
-      .data = THINGY_BEACON_URL_DEFAULT,    \
-      .len  = THINGY_BEACON_URL_LEN         \
-    },                                      \
-  .cloud_token = {                          \
-      .token = THINGY_CLOUD_TOKEN_DEFAULT,  \
-      .len   = THINGY_CLOUD_TOKEN_LEN       \
-    },                                      \
-  .fw_version = {                           \
-      .major = THINGY_FW_VERSION_MAJOR,     \
-      .minor = THINGY_FW_VERSION_MINOR,     \
-      .patch = THINGY_FW_VERSION_PATCH      \
-    },                                      \
-  .mtu = {                                  \
-      .req = 0x00,                          \
-      .size = 23                            \
-    }                                       \
-}
+    .interval = MSEC_TO_UNITS(APP_ADV_INTERVAL_MS, UNIT_0_625_MS), \
+    .timeout = APP_ADV_TIMEOUT_IN_SECONDS \
+    },                                    \
+  .conn_params = {                        \
+    .min_conn_int  = (uint16_t)MSEC_TO_UNITS(MIN_CONN_INTERVAL_MS, UNIT_1_25_MS), \
+    .max_conn_int  = MSEC_TO_UNITS(MAX_CONN_INTERVAL_MS, UNIT_1_25_MS),           \
+    .slave_latency = SLAVE_LATENCY,                                               \
+    .sup_timeout   = MSEC_TO_UNITS(CONN_SUP_TIMEOUT_MS, UNIT_10_MS)               \
+    },                                    \
+  .eddystone_url = {                      \
+    .data = THINGY_BEACON_URL_DEFAULT,    \
+    .len  = THINGY_BEACON_URL_LEN         \
+    },                                    \
+  .cloud_token = {                        \
+    .token = THINGY_CLOUD_TOKEN_DEFAULT,  \
+    .len   = THINGY_CLOUD_TOKEN_LEN       \
+    },                                    \
+  .fw_version = {                         \
+    .major = THINGY_FW_VERSION_MAJOR,     \
+    .minor = THINGY_FW_VERSION_MINOR,     \
+    .patch = THINGY_FW_VERSION_PATCH      \
+    },                                    \
+  .mtu = {                                \
+    .req = 0x00,                          \
+    .size = 23                            \
+    }                                     \
+  }
 //}}}

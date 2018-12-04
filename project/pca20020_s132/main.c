@@ -77,7 +77,8 @@
 
 #define DEAD_BEEF   0xDEADBEEF          /**< Value used as error code on stack dump, can be used to identify stack location on stack unwind. */
 #define SCHED_MAX_EVENT_DATA_SIZE   MAX(APP_TIMER_SCHED_EVENT_DATA_SIZE, BLE_STACK_HANDLER_SCHED_EVT_SIZE) /**< Maximum size of scheduler events. */
-#define SCHED_QUEUE_SIZE            60  /**< Maximum number of events in the scheduler queue. */
+#define SCHED_QUEUE_SIZE    60  /**< Maximum number of events in the scheduler queue. */
+#define FPU_EXCEPTION_MASK  0x0000009F
 
 static const nrf_drv_twi_t     m_twi_sensors = NRF_DRV_TWI_INSTANCE(TWI_SENSOR_INSTANCE);
 static m_ble_service_handle_t  m_ble_service_handles[THINGY_SERVICES_MAX];
@@ -110,9 +111,9 @@ void app_error_fault_handler (uint32_t id, uint32_t pc, uint32_t info)
  * @param[in] line_num    Line number of the failing ASSERT call.
  * @param[in] p_file_name File name of the failing ASSERT call.
  */
-void assert_nrf_callback (uint16_t line_num, const uint8_t * p_file_name)
+void assert_nrf_callback (uint16_t line_num, const uint8_t* p_file_name)
 {
-  app_error_handler(DEAD_BEEF, line_num, p_file_name);
+  app_error_handler (DEAD_BEEF, line_num, p_file_name);
 }
 //}}}
 
@@ -157,22 +158,7 @@ static void sleepModeEnter() {
   }
 //}}}
 //{{{
-/**@brief Function for placing the application in low power state while waiting for events.
- */
-static void power_manage() {
-
-#define FPU_EXCEPTION_MASK 0x0000009F
-
-  __set_FPSCR(__get_FPSCR()  & ~(FPU_EXCEPTION_MASK));
-  (void) __get_FPSCR();
-  NVIC_ClearPendingIRQ(FPU_IRQn);
-
-  uint32_t err_code = sd_app_evt_wait();
-  APP_ERROR_CHECK(err_code);
-  }
-//}}}
-//{{{
-static void m_batt_meas_handler (m_batt_meas_event_t const * p_batt_meas_event) {
+static void m_batt_meas_handler (m_batt_meas_event_t const* p_batt_meas_event) {
 
   NRF_LOG_INFO ("Voltage: %d V, Charge: %d %%, Event type: %d \r\n",
                 p_batt_meas_event->voltage_mv, p_batt_meas_event->level_percent, p_batt_meas_event->type);
@@ -324,7 +310,14 @@ int main(void) {
 
   for (;;) {
     app_sched_execute();
-    if (!NRF_LOG_PROCESS()) // Process logs
-      power_manage();
+    if (!NRF_LOG_PROCESS()) { 
+      // place application in low power state while waiting for events.
+      __set_FPSCR(__get_FPSCR()  & ~(FPU_EXCEPTION_MASK));
+      (void) __get_FPSCR();
+      NVIC_ClearPendingIRQ (FPU_IRQn);
+
+      uint32_t err_code = sd_app_evt_wait();
+      APP_ERROR_CHECK (err_code);
+      }
     }
   }

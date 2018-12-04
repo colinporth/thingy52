@@ -82,25 +82,25 @@
 #define RANDOM_VECTOR_DEVICE_ID_SIZE         4                                          /** Length of random ID vector. Must be <= 32. */
 //}}}
 
-static uint16_t                   m_conn_handle = BLE_CONN_HANDLE_INVALID;              /**< Handle of the current connection. */
-static m_ble_evt_handler_t        m_evt_handler = 0;
-static m_ble_service_handle_t   * m_service_handles = 0;
-static uint32_t                   m_service_num = 0;
-static ble_tcs_t                  m_tcs;
-static ble_tcs_params_t         * m_ble_config;
-static const ble_tcs_params_t     m_ble_default_config = THINGY_CONFIG_DEFAULT;
-static ble_tcs_mtu_t              m_mtu;
-static bool                       m_flash_disconnect = false;
-static bool                       m_major_minor_fw_ver_changed = false;
-static char                       m_mac_addr[SUPPORT_FUNC_MAC_ADDR_STR_LEN];            /**< The device MAC address. */
-static uint8_t                    m_random_vector_device_id[RANDOM_VECTOR_DEVICE_ID_SIZE];        /**< Device random ID. Used for NFC BLE pairng on iOS. */
+static uint16_t                m_conn_handle = BLE_CONN_HANDLE_INVALID;              /**< Handle of the current connection. */
+static m_ble_evt_handler_t     m_evt_handler = 0;
+static m_ble_service_handle_t* m_service_handles = 0;
+static uint32_t                m_service_num = 0;
+static ble_tcs_t               m_tcs;
+static ble_tcs_params_t*       m_ble_config;
+static const ble_tcs_params_t  m_ble_default_config = THINGY_CONFIG_DEFAULT;
+static ble_tcs_mtu_t           m_mtu;
+static bool                    m_flash_disconnect = false;
+static bool                    m_major_minor_fw_ver_changed = false;
+static char                    m_mac_addr[SUPPORT_FUNC_MAC_ADDR_STR_LEN];    /**< The device MAC address. */
+static uint8_t                 m_random_vector_device_id[RANDOM_VECTOR_DEVICE_ID_SIZE];  /**< Device random ID. Used for NFC BLE pairng on iOS. */
 
-#define NRF_BLE_MAX_MTU_SIZE            BLE_GATT_ATT_MTU_DEFAULT*12         /**< MTU size used in the softdevice enabling and to reply to a BLE_GATTS_EVT_EXCHANGE_MTU_REQUEST event. */
+#define NRF_BLE_MAX_MTU_SIZE   BLE_GATT_ATT_MTU_DEFAULT*12  /**< MTU size used in the softdevice enabling and to reply to a BLE_GATTS_EVT_EXCHANGE_MTU_REQUEST event. */
 
 #ifdef BLE_DFU_APP_SUPPORT
-  static ble_dfu_t                  m_dfus;                                   /**< Structure used to identify the DFU service. */
+  static ble_dfu_t             m_dfus;   /**< Structure used to identify the DFU service. */
   //{{{
-  static void ble_dfu_evt_handler(ble_dfu_t * p_dfu, ble_dfu_evt_t * p_evt)
+  static void ble_dfu_evt_handler(ble_dfu_t* p_dfu, ble_dfu_evt_t* p_evt)
   {
       switch (p_evt->type)
       {
@@ -128,7 +128,7 @@ static uint8_t                    m_random_vector_device_id[RANDOM_VECTOR_DEVICE
 //{{{
 /**@brief Check if flash is currently being accessed.
  */
-static bool flash_access_ongoing(void)
+static bool flash_access_ongoing()
 {
     fs_ret_t err_code;
     uint32_t flash_op_cnt = 0;
@@ -143,7 +143,7 @@ static bool flash_access_ongoing(void)
 //{{{
 /**@brief Generate random number.
  */
-static uint32_t random_vector_generate(uint8_t * p_buff, uint8_t size)
+static uint32_t random_vector_generate (uint8_t* p_buff, uint8_t size)
 {
     uint32_t err_code;
     uint8_t  bytes_available = 0;
@@ -188,7 +188,7 @@ static uint32_t random_vector_generate(uint8_t * p_buff, uint8_t size)
  * @details This function will set up all the necessary GAP (Generic Access Profile) parameters of
  *          the device. It also sets the permissions and appearance.
  */
-static uint32_t gap_params_init(void)
+static uint32_t gap_params_init()
 {
     uint32_t                err_code;
     ble_gap_conn_params_t   gap_conn_params;
@@ -254,7 +254,7 @@ static uint32_t gap_params_init(void)
  *
  * @param[in] p_evt  Event received from the Connection Parameters Module.
  */
-static void on_conn_params_evt(ble_conn_params_evt_t * p_evt)
+static void on_conn_params_evt (ble_conn_params_evt_t* p_evt)
 {
     uint32_t err_code;
 
@@ -281,7 +281,7 @@ static void on_conn_params_evt(ble_conn_params_evt_t * p_evt)
  *
  * @param[in] nrf_error  Error code containing information about what went wrong.
  */
-static void conn_params_error_handler(uint32_t nrf_error)
+static void conn_params_error_handler (uint32_t nrf_error)
 {
     NRF_LOG_ERROR("conn_params_error_handler: %d\r\n", nrf_error);
     APP_ERROR_HANDLER(nrf_error);
@@ -291,7 +291,7 @@ static void conn_params_error_handler(uint32_t nrf_error)
 //{{{
 /**@brief Function for initializing the Connection Parameters module.
  */
-static uint32_t conn_params_init(void)
+static uint32_t conn_params_init()
 {
     uint32_t               err_code;
     ble_conn_params_init_t cp_init;
@@ -332,7 +332,7 @@ static uint32_t conn_params_init(void)
  *
  * @param[in] ble_adv_evt  Advertising event.
  */
-static void on_adv_evt(ble_adv_evt_t ble_adv_evt)
+static void on_adv_evt (ble_adv_evt_t ble_adv_evt)
 {
     uint32_t      err_code;
     m_ble_evt_t evt;
@@ -361,7 +361,7 @@ static void on_adv_evt(ble_adv_evt_t ble_adv_evt)
  *
  * @param[in] p_ble_evt SoftDevice event.
  */
-static void on_ble_evt(ble_evt_t * p_ble_evt)
+static void on_ble_evt (ble_evt_t* p_ble_evt)
 {
     uint32_t                       err_code;
     m_ble_evt_t                    evt;
@@ -455,7 +455,7 @@ static void on_ble_evt(ble_evt_t * p_ble_evt)
  *
  * @param[in] p_ble_evt  SoftDevice event.
  */
-static void ble_evt_dispatch(ble_evt_t * p_ble_evt)
+static void ble_evt_dispatch (ble_evt_t* p_ble_evt)
 {
     ble_conn_state_on_ble_evt(p_ble_evt);
     ble_conn_params_on_ble_evt(p_ble_evt);
@@ -484,7 +484,7 @@ static void ble_evt_dispatch(ble_evt_t * p_ble_evt)
  *
  * @param[in] evt_id  System event id.
  */
-static void sys_evt_dispatch(uint32_t evt_id)
+static void sys_evt_dispatch (uint32_t evt_id)
 {
     fs_sys_event_handler(evt_id);
     app_beacon_on_sys_evt(evt_id);
@@ -512,7 +512,7 @@ static void sys_evt_dispatch(uint32_t evt_id)
  *
  * @details This function initializes the SoftDevice and the BLE event interrupt.
  */
-static uint32_t ble_stack_init(void)
+static uint32_t ble_stack_init()
 {
     uint32_t err_code;
 
@@ -610,7 +610,7 @@ static uint32_t ble_stack_init(void)
 //{{{
 /**@brief Function for initializing the Advertising functionality.
  */
-static uint32_t advertising_init(void)
+static uint32_t advertising_init()
 {
     uint32_t      err_code;
     ble_advdata_t advdata;
@@ -665,7 +665,7 @@ static uint32_t advertising_init(void)
  *
  * @param[in]   nrf_error   Error code containing information about what went wrong.
  */
-static void beacon_advertiser_error_handler(uint32_t nrf_error)
+static void beacon_advertiser_error_handler (uint32_t nrf_error)
 {
     APP_ERROR_HANDLER(nrf_error);
 }
@@ -674,7 +674,7 @@ static void beacon_advertiser_error_handler(uint32_t nrf_error)
 //{{{
 /**@brief Function for initializing the beacon timeslot functionality.
  */
-static uint32_t timeslot_init(void)
+static uint32_t timeslot_init()
 {
     uint32_t err_code;
     static ble_beacon_init_t beacon_init;
@@ -710,7 +710,7 @@ static uint32_t timeslot_init(void)
 //{{{
 /**@brief Function for handling thingy configuration events.
  */
-static void tcs_evt_handler (ble_tcs_t        * p_tcs,
+static void tcs_evt_handler (ble_tcs_t* p_tcs,
                              ble_tcs_evt_type_t evt_type,
                              uint8_t          * p_data,
                              uint16_t           length)
@@ -823,7 +823,7 @@ static void tcs_evt_handler (ble_tcs_t        * p_tcs,
  *
  * @note: If the FW version is changed while erasing all flash, a FW change cannot be detected.
  */
-static uint32_t thingy_config_verify(void)
+static uint32_t thingy_config_verify()
 {
     bool update_flash = false;
     uint32_t err_code;
@@ -887,7 +887,7 @@ static uint32_t thingy_config_verify(void)
 }
 //}}}
 //{{{
-static uint32_t thingy_config_init(void)
+static uint32_t thingy_config_init()
 {
     ble_tcs_init_t params;
     uint32_t err_code;
@@ -909,7 +909,7 @@ static uint32_t thingy_config_init(void)
 //{{{
 /**@brief Function for initializing the ble services.
  */
-static uint32_t services_init(m_ble_service_handle_t * p_service_handles, uint32_t num_services)
+static uint32_t services_init (m_ble_service_handle_t* p_service_handles, uint32_t num_services)
 {
     uint32_t err_code;
 
@@ -949,7 +949,7 @@ static uint32_t services_init(m_ble_service_handle_t * p_service_handles, uint32
 //}}}
 
 //{{{
-uint32_t nfc_init(void)
+uint32_t nfc_init()
 {
     uint32_t err_code;
 
@@ -986,8 +986,8 @@ uint32_t nfc_init(void)
 
     return NRF_SUCCESS;
 }
-
-
+//}}}
+//{{{
 uint32_t m_ble_init(m_ble_init_t * p_params)
 {
     uint32_t err_code;
