@@ -214,7 +214,6 @@ OUTPUT_BINARY_DIRECTORY = $(OBJECT_DIRECTORY)
 # Sorting removes duplicates
 BUILD_DIRECTORIES := $(sort $(OBJECT_DIRECTORY) $(OUTPUT_BINARY_DIRECTORY) $(LISTING_DIRECTORY) )
 
-#flags common to all targets
 CFLAGS = -DNRF52
 CFLAGS += -DNRF52832
 CFLAGS += -DNRF52832_XXAA
@@ -250,27 +249,21 @@ CFLAGS += -DBLE_DFU_APP_SUPPORT
 CFLAGS += -DNRF_DFU_SETTINGS_VERSION=1
 CFLAGS += -DAUDIO_EQ_DEF=3
 CFLAGS += -DHAL_NFC_ENGINEERING_BC_FTPAN_WORKAROUND
-#
 CFLAGS += -mcpu=cortex-m4
 CFLAGS += -mthumb -mabi=aapcs --std=gnu99
 CFLAGS += -Wall -Werror -O3 -g3
 CFLAGS += -mfloat-abi=hard -mfpu=fpv4-sp-d16
-# keep every function in separate section. This will allow linker to dump unused functions
 CFLAGS += -ffunction-sections -fdata-sections -fno-strict-aliasing
 CFLAGS += -fno-builtin --short-enums
 #CFLAGS += -NRF_LOG_ENABLED=1 # Use if RTT output is desired.
-# keep every function in separate section. This will allow linker to dump unused functions
 
 LDFLAGS += -Xlinker -Map=$(LISTING_DIRECTORY)/$(OUTPUT_FILENAME).map
 LDFLAGS += -mthumb -mabi=aapcs -L $(TEMPLATE_PATH) -T$(LINKER_SCRIPT)
 LDFLAGS += -mcpu=cortex-m4
 LDFLAGS += -mfloat-abi=hard -mfpu=fpv4-sp-d16
-# let linker to dump unused sections
 LDFLAGS += -Wl,--gc-sections
-# use newlib in nano version
 LDFLAGS += --specs=nano.specs -lc -lnosys
 
-# Assembler flags
 ASMFLAGS += -x assembler-with-cpp
 ASMFLAGS += -DNRF52
 ASMFLAGS += -DBLE_STACK_SUPPORT_REQD
@@ -300,7 +293,6 @@ ASMFLAGS += -DEMPL
 ASMFLAGS += -DUSE_DMP
 ASMFLAGS += -DEMPL_TARGET_NRF52
 
-#default target - first one defined
 default: nrf52832_xxaa_s132
 
 all: clean
@@ -324,7 +316,7 @@ OBJECTS = $(C_OBJECTS) $(ASM_OBJECTS)
 $(OBJECT_DIRECTORY)/inv_mpu.o : CFLAGS+=-Wno-maybe-uninitialized
 
 nrf52832_xxaa_s132: OUTPUT_FILENAME := nrf52832_xxaa_s132
-nrf52832_xxaa_s132: LINKER_SCRIPT=ble_app_thingy_gcc_nrf52.ld
+nrf52832_xxaa_s132: LINKER_SCRIPT=thingy.ld
 
 nrf52832_xxaa_s132: $(BUILD_DIRECTORIES) $(OBJECTS)
 	@echo Linking target: $(OUTPUT_FILENAME).out
@@ -333,27 +325,27 @@ nrf52832_xxaa_s132: $(BUILD_DIRECTORIES) $(OBJECTS)
 	@echo Preparing: $(OUTPUT_FILENAME).hex
 	$(NO_ECHO)$(OBJCOPY) -O ihex $(OUTPUT_BINARY_DIRECTORY)/$(OUTPUT_FILENAME).out $(OUTPUT_BINARY_DIRECTORY)/$(OUTPUT_FILENAME).hex
 
-## Create build directories
+# create build directories
 $(BUILD_DIRECTORIES):
 	echo $(MAKEFILE_NAME)
 	$(MK) $@
 
-# Create objects from C SRC files
+# compile C files
 $(OBJECT_DIRECTORY)/%.o: %.c
 	@echo Compiling file: $(notdir $<)
 	$(NO_ECHO)$(CC) $(CFLAGS) $(INC_PATHS) -c -o $@ $<
 
-# Assemble files
+# assemble files
 $(OBJECT_DIRECTORY)/%.o: %.S
 	@echo Assembly file: $(notdir $<)
 	$(NO_ECHO)$(CC) $(ASMFLAGS) $(INC_PATHS) -c -o $@ $<
 
-# Link
+# link
 $(OUTPUT_BINARY_DIRECTORY)/$(OUTPUT_FILENAME).out: $(BUILD_DIRECTORIES) $(OBJECTS)
 	@echo Linking target: $(OUTPUT_FILENAME).out
 	$(NO_ECHO)$(CC) $(LDFLAGS) $(OBJECTS) $(LIBS) -lm -o $(OUTPUT_BINARY_DIRECTORY)/$(OUTPUT_FILENAME).out
 
-## Create binary .hex file from the .out file
+# create .hex from .out
 $(OUTPUT_BINARY_DIRECTORY)/$(OUTPUT_FILENAME).hex: $(OUTPUT_BINARY_DIRECTORY)/$(OUTPUT_FILENAME).out
 	@echo Preparing: $(OUTPUT_FILENAME).hex
 	$(NO_ECHO)$(OBJCOPY) -O ihex $(OUTPUT_BINARY_DIRECTORY)/$(OUTPUT_FILENAME).out $(OUTPUT_BINARY_DIRECTORY)/$(OUTPUT_FILENAME).hex
@@ -368,13 +360,3 @@ ocd: nrf52832_xxaa_s132
 ocdsoft:
 	@echo ocd Flashing: $(OUTPUT_BINARY_DIRECTORY)/$<.hex
 	..\..\..\openOCD\bin\openocd.exe -f openocd.cfg -c "program ../../../sdk_components/softdevice/s132/hex/s132_nrf52_4.0.2_softdevice.hex verify exit"
-
-flash: nrf52832_xxaa_s132
-	@echo Flashing: $(OUTPUT_BINARY_DIRECTORY)/$<.hex
-	nrfjprog --program $(OUTPUT_BINARY_DIRECTORY)/$<.hex -f nrf52  --sectorerase
-	nrfjprog --reset -f nrf52
-
-flash_softdevice:
-	@echo Flashing: s132_nrf52_4.0.2_softdevice.hex
-	nrfjprog --program ../../../sdk_components/softdevice/s132/hex/s132_nrf52_4.0.2_softdevice.hex -f nrf52 --chiperase
-	nrfjprog --reset -f nrf52

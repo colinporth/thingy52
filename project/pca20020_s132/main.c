@@ -85,52 +85,45 @@ static m_ble_service_handle_t  m_ble_service_handles[THINGY_SERVICES_MAX];
 //{{{
 void app_error_fault_handler (uint32_t id, uint32_t pc, uint32_t info)
 {
-    #if NRF_LOG_ENABLED
-        error_info_t * err_info = (error_info_t*)info;
-        NRF_LOG_ERROR(" id = %d, pc = %d, file = %s, line number: %d, error code = %d = %s \r\n", \
-        id, pc, nrf_log_push((char*)err_info->p_file_name), err_info->line_num, err_info->err_code, nrf_log_push((char*)nrf_strerror_find(err_info->err_code)));
-    #endif
+  #if NRF_LOG_ENABLED
+      error_info_t * err_info = (error_info_t*)info;
+      NRF_LOG_ERROR(" id = %d, pc = %d, file = %s, line number: %d, error code = %d = %s \r\n", \
+      id, pc, nrf_log_push((char*)err_info->p_file_name), err_info->line_num, err_info->err_code, nrf_log_push((char*)nrf_strerror_find(err_info->err_code)));
+  #endif
 
-    (void)m_ui_led_set_event(M_UI_ERROR);
-    NRF_LOG_FINAL_FLUSH();
-    nrf_delay_ms(5);
+  (void)m_ui_led_set_event(M_UI_ERROR);
+  NRF_LOG_FINAL_FLUSH();
+  nrf_delay_ms(5);
 
-    // On assert, the system can only recover with a reset.
-    #ifndef DEBUG
-        NVIC_SystemReset();
-    #endif
+  // On assert, the system can only recover with a reset.
+  #ifndef DEBUG
+    NVIC_SystemReset();
+  #endif
 
-    app_error_save_and_stop(id, pc, info);
-}
+  app_error_save_and_stop(id, pc, info);
+  }
 //}}}
 //{{{
 /**@brief Function for assert macro callback.
- *
  * @details This function will be called in case of an assert in the SoftDevice.
- *
  * @warning On assert from the SoftDevice, the system can only recover on reset.
- *
  * @param[in] line_num    Line number of the failing ASSERT call.
  * @param[in] p_file_name File name of the failing ASSERT call.
  */
 void assert_nrf_callback (uint16_t line_num, const uint8_t * p_file_name)
 {
-    app_error_handler(DEAD_BEEF, line_num, p_file_name);
+  app_error_handler(DEAD_BEEF, line_num, p_file_name);
 }
 //}}}
 
 //{{{
 /**@brief Function for putting Thingy into sleep mode.
- *
  * @note This function will not return.
  */
 static void sleep_mode_enter() {
 
-  //{{{
-  uint32_t err_code;
-
   NRF_LOG_INFO("Entering sleep mode \r\n");
-  err_code = m_motion_sleep_prepare(true);
+  uint32_t err_code = m_motion_sleep_prepare(true);
   APP_ERROR_CHECK(err_code);
 
   err_code = support_func_configure_io_shutdown();
@@ -166,35 +159,32 @@ static void sleep_mode_enter() {
   #else
       APP_ERROR_CHECK(err_code);
   #endif
-  //}}}
   }
 //}}}
 //{{{
 /**@brief Function for placing the application in low power state while waiting for events.
  */
-static void power_manage()
-{
-#define FPU_EXCEPTION_MASK 0x0000009F
-    __set_FPSCR(__get_FPSCR()  & ~(FPU_EXCEPTION_MASK));
-    (void) __get_FPSCR();
-    NVIC_ClearPendingIRQ(FPU_IRQn);
+static void power_manage() {
 
-    uint32_t err_code = sd_app_evt_wait();
-    APP_ERROR_CHECK(err_code);
-}
+#define FPU_EXCEPTION_MASK 0x0000009F
+
+  __set_FPSCR(__get_FPSCR()  & ~(FPU_EXCEPTION_MASK));
+  (void) __get_FPSCR();
+  NVIC_ClearPendingIRQ(FPU_IRQn);
+
+  uint32_t err_code = sd_app_evt_wait();
+  APP_ERROR_CHECK(err_code);
+  }
 //}}}
 //{{{
 /**@brief Battery module data handler.
  */
-static void m_batt_meas_handler (m_batt_meas_event_t const * p_batt_meas_event)
-{
-    NRF_LOG_INFO("Voltage: %d V, Charge: %d %%, Event type: %d \r\n",
-                p_batt_meas_event->voltage_mv, p_batt_meas_event->level_percent, p_batt_meas_event->type);
+static void m_batt_meas_handler (m_batt_meas_event_t const * p_batt_meas_event) {
 
-    if (p_batt_meas_event != NULL)
-    {
-        if( p_batt_meas_event->type == M_BATT_MEAS_EVENT_LOW)
-        {
+  NRF_LOG_INFO ("Voltage: %d V, Charge: %d %%, Event type: %d \r\n",
+                p_batt_meas_event->voltage_mv, p_batt_meas_event->level_percent, p_batt_meas_event->type);
+  if (p_batt_meas_event != NULL) {
+        if (p_batt_meas_event->type == M_BATT_MEAS_EVENT_LOW) {
             uint32_t err_code;
 
             err_code = support_func_configure_io_shutdown();
@@ -209,12 +199,10 @@ static void m_batt_meas_handler (m_batt_meas_event_t const * p_batt_meas_event)
             err_code = sd_power_system_off();
 
             #ifdef DEBUG
-                if(!support_func_sys_halt_debug_enabled())
-                {
+                if(!support_func_sys_halt_debug_enabled()) {
                     APP_ERROR_CHECK(err_code); // If not in debug mode, return the error and the system will reboot.
-                }
-                else
-                {
+                  }
+                else {
                     NRF_LOG_WARNING("Exec stopped, busy wait \r\n");
                     NRF_LOG_FLUSH();
                     while(true) // Only reachable when entering emulated system off.
@@ -225,11 +213,10 @@ static void m_batt_meas_handler (m_batt_meas_event_t const * p_batt_meas_event)
             #else
                 APP_ERROR_CHECK(err_code);
             #endif
-        }
+      }
     }
-}
+  }
 //}}}
-
 //{{{
 /**@brief Function for handling BLE events.
  */
