@@ -1,3 +1,4 @@
+//{{{  copyright
 /*
   Copyright (c) 2010 - 2017, Nordic Semiconductor ASA
   All rights reserved.
@@ -35,11 +36,13 @@
   LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
   OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
+//}}}
+//{{{  includes
 #include "ble_tms.h"
 #include "ble_srv_common.h"
 #include "sdk_common.h"
-
+//}}}
+//{{{  defines
 #define BLE_UUID_TMS_CONFIG_CHAR      0x0401                      /**< The UUID of the config Characteristic. */
 #define BLE_UUID_TMS_TAP_CHAR         0x0402                      /**< The UUID of the tap Characteristic. */
 #define BLE_UUID_TMS_ORIENTATION_CHAR 0x0403                      /**< The UUID of the orientation Characteristic. */
@@ -54,7 +57,9 @@
 
 // EF68xxxx-9B35-4933-9B10-52FFA9740042
 #define TMS_BASE_UUID                  {{0x42, 0x00, 0x74, 0xA9, 0xFF, 0x52, 0x10, 0x9B, 0x33, 0x49, 0x35, 0x9B, 0x00, 0x00, 0x68, 0xEF}} /**< Used vendor specific UUID. */
+//}}}
 
+//{{{
 /**@brief Function for handling the @ref BLE_GAP_EVT_CONNECTED event from the S132 SoftDevice.
  *
  * @param[in] p_tms     Motion Service structure.
@@ -64,8 +69,8 @@ static void on_connect(ble_tms_t * p_tms, ble_evt_t * p_ble_evt)
 {
     p_tms->conn_handle = p_ble_evt->evt.gap_evt.conn_handle;
 }
-
-
+//}}}
+//{{{
 /**@brief Function for handling the @ref BLE_GAP_EVT_DISCONNECTED event from the S132 SoftDevice.
  *
  * @param[in] p_tms     Motion Service structure.
@@ -76,8 +81,8 @@ static void on_disconnect(ble_tms_t * p_tms, ble_evt_t * p_ble_evt)
     UNUSED_PARAMETER(p_ble_evt);
     p_tms->conn_handle = BLE_CONN_HANDLE_INVALID;
 }
-
-
+//}}}
+//{{{
 /**@brief Function for handling the @ref BLE_GATTS_EVT_WRITE event from the S132 SoftDevice.
  *
  * @param[in] p_tms     Motion Service structure.
@@ -246,8 +251,8 @@ static void on_write(ble_tms_t * p_tms, ble_evt_t * p_ble_evt)
         // Do Nothing. This event is not relevant for this service.
     }
 }
-
-
+//}}}
+//{{{
 static void on_authorize_req(ble_tms_t * p_tms, ble_evt_t * p_ble_evt)
 {
     ble_gatts_evt_rw_authorize_request_t * p_evt_rw_authorize_request = &p_ble_evt->evt.gatts_evt.params.authorize_request;
@@ -314,8 +319,9 @@ static void on_authorize_req(ble_tms_t * p_tms, ble_evt_t * p_ble_evt)
         }
     }
 }
+//}}}
 
-
+//{{{
 /**@brief Function for adding tap characteristic.
  *
  * @param[in] p_tms       Motion Service structure.
@@ -375,8 +381,8 @@ static uint32_t tap_char_add(ble_tms_t * p_tms, const ble_tms_init_t * p_tms_ini
                                            &attr_char_value,
                                            &p_tms->tap_handles);
 }
-
-
+//}}}
+//{{{
 /**@brief Function for adding orientation characteristic.
  *
  * @param[in] p_tms       Motion Service structure.
@@ -436,8 +442,8 @@ static uint32_t orientation_char_add(ble_tms_t * p_tms, const ble_tms_init_t * p
                                            &attr_char_value,
                                            &p_tms->orientation_handles);
 }
-
-
+//}}}
+//{{{
 /**@brief Function for adding quaternion characteristic.
  *
  * @param[in] p_tms       Motion Service structure.
@@ -497,8 +503,8 @@ static uint32_t quat_char_add(ble_tms_t * p_tms, const ble_tms_init_t * p_tms_in
                                            &attr_char_value,
                                            &p_tms->quat_handles);
 }
-
-
+//}}}
+//{{{
 /**@brief Function for adding raw data characteristic.
  *
  * @param[in] p_tms       Motion Service structure.
@@ -559,8 +565,8 @@ static uint32_t raw_char_add(ble_tms_t * p_tms, const ble_tms_init_t * p_tms_ini
                                            &attr_char_value,
                                            &p_tms->raw_handles);
 }
-
-
+//}}}
+//{{{
 /**@brief Function for adding euler angle data characteristic.
  *
  * @param[in] p_tms       Motion Service structure.
@@ -620,8 +626,8 @@ static uint32_t euler_char_add(ble_tms_t * p_tms, const ble_tms_init_t * p_tms_i
                                            &attr_char_value,
                                            &p_tms->euler_handles);
 }
-
-
+//}}}
+//{{{
 /**@brief Function for adding rotation matrix data characteristic.
  *
  * @param[in] p_tms       Motion Service structure.
@@ -682,8 +688,8 @@ static uint32_t rot_mat_char_add(ble_tms_t * p_tms, const ble_tms_init_t * p_tms
                                            &attr_char_value,
                                            &p_tms->rot_mat_handles);
 }
-
-
+//}}}
+//{{{
 /**@brief Function for adding compass heading data characteristic.
  *
  * @param[in] p_tms       Motion Service structure.
@@ -743,8 +749,8 @@ static uint32_t heading_char_add(ble_tms_t * p_tms, const ble_tms_init_t * p_tms
                                            &attr_char_value,
                                            &p_tms->heading_handles);
 }
-
-
+//}}}
+//{{{
 /**@brief Function for adding gravity data characteristic.
  *
  * @param[in] p_tms       Motion Service structure.
@@ -804,8 +810,8 @@ static uint32_t gravity_char_add(ble_tms_t * p_tms, const ble_tms_init_t * p_tms
                                            &attr_char_value,
                                            &p_tms->gravity_handles);
 }
-
-
+//}}}
+//{{{
 /**@brief Function for adding pedometer characteristic.
  *
  * @param[in] p_tms       Motion Service structure.
@@ -865,8 +871,8 @@ static uint32_t pedo_char_add(ble_tms_t * p_tms, const ble_tms_init_t * p_tms_in
                                            &attr_char_value,
                                            &p_tms->pedo_handles);
 }
-
-
+//}}}
+//{{{
 /**@brief Function for adding configuration characteristic.
  *
  * @param[in] p_tms       Motion Service structure.
@@ -919,8 +925,9 @@ static uint32_t config_char_add(ble_tms_t * p_tms, const ble_tms_init_t * p_tms_
                                            &attr_char_value,
                                            &p_tms->config_handles);
 }
+//}}}
 
-
+//{{{
 void ble_tms_on_ble_evt(ble_tms_t * p_tms, ble_evt_t * p_ble_evt)
 {
     if ((p_tms == NULL) || (p_ble_evt == NULL))
@@ -951,8 +958,9 @@ void ble_tms_on_ble_evt(ble_tms_t * p_tms, ble_evt_t * p_ble_evt)
             break;
     }
 }
+//}}}
 
-
+//{{{
 uint32_t ble_tms_init(ble_tms_t * p_tms, const ble_tms_init_t * p_tms_init)
 {
     uint32_t      err_code;
@@ -1023,8 +1031,9 @@ uint32_t ble_tms_init(ble_tms_t * p_tms, const ble_tms_init_t * p_tms_init)
 
     return NRF_SUCCESS;
 }
+//}}}
 
-
+//{{{
 uint32_t ble_tms_tap_set(ble_tms_t * p_tms, ble_tms_tap_t * p_data)
 {
     ble_gatts_hvx_params_t hvx_params;
@@ -1051,8 +1060,8 @@ uint32_t ble_tms_tap_set(ble_tms_t * p_tms, ble_tms_tap_t * p_data)
 
     return sd_ble_gatts_hvx(p_tms->conn_handle, &hvx_params);
 }
-
-
+//}}}
+//{{{
 uint32_t ble_tms_orientation_set(ble_tms_t * p_tms, ble_tms_orientation_t * p_data)
 {
     ble_gatts_hvx_params_t hvx_params;
@@ -1079,8 +1088,8 @@ uint32_t ble_tms_orientation_set(ble_tms_t * p_tms, ble_tms_orientation_t * p_da
 
     return sd_ble_gatts_hvx(p_tms->conn_handle, &hvx_params);
 }
-
-
+//}}}
+//{{{
 uint32_t ble_tms_quat_set(ble_tms_t * p_tms, ble_tms_quat_t * p_data)
 {
     ble_gatts_hvx_params_t hvx_params;
@@ -1107,8 +1116,8 @@ uint32_t ble_tms_quat_set(ble_tms_t * p_tms, ble_tms_quat_t * p_data)
 
     return sd_ble_gatts_hvx(p_tms->conn_handle, &hvx_params);
 }
-
-
+//}}}
+//{{{
 uint32_t ble_tms_pedo_set(ble_tms_t * p_tms, ble_tms_pedo_t * p_data)
 {
     ble_gatts_hvx_params_t hvx_params;
@@ -1164,7 +1173,8 @@ uint32_t ble_tms_raw_set(ble_tms_t * p_tms, ble_tms_raw_t * p_data)
     return sd_ble_gatts_hvx(p_tms->conn_handle, &hvx_params);
 }
 
-
+//}}}
+//{{{
 uint32_t ble_tms_euler_set(ble_tms_t * p_tms, ble_tms_euler_t * p_data)
 {
     ble_gatts_hvx_params_t hvx_params;
@@ -1191,8 +1201,8 @@ uint32_t ble_tms_euler_set(ble_tms_t * p_tms, ble_tms_euler_t * p_data)
 
     return sd_ble_gatts_hvx(p_tms->conn_handle, &hvx_params);
 }
-
-
+//}}}
+//{{{
 uint32_t ble_tms_rot_mat_set(ble_tms_t * p_tms, ble_tms_rot_mat_t * p_data)
 {
     ble_gatts_hvx_params_t hvx_params;
@@ -1219,8 +1229,8 @@ uint32_t ble_tms_rot_mat_set(ble_tms_t * p_tms, ble_tms_rot_mat_t * p_data)
 
     return sd_ble_gatts_hvx(p_tms->conn_handle, &hvx_params);
 }
-
-
+//}}}
+//{{{
 uint32_t ble_tms_heading_set(ble_tms_t * p_tms, ble_tms_heading_t * p_data)
 {
     ble_gatts_hvx_params_t hvx_params;
@@ -1247,8 +1257,8 @@ uint32_t ble_tms_heading_set(ble_tms_t * p_tms, ble_tms_heading_t * p_data)
 
     return sd_ble_gatts_hvx(p_tms->conn_handle, &hvx_params);
 }
-
-
+//}}}
+//{{{
 uint32_t ble_tms_gravity_set(ble_tms_t * p_tms, ble_tms_gravity_t * p_data)
 {
     ble_gatts_hvx_params_t hvx_params;
@@ -1275,3 +1285,4 @@ uint32_t ble_tms_gravity_set(ble_tms_t * p_tms, ble_tms_gravity_t * p_data)
 
     return sd_ble_gatts_hvx(p_tms->conn_handle, &hvx_params);
 }
+//}}}

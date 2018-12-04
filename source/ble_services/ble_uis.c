@@ -1,3 +1,4 @@
+//{{{  copyright
 /*
   Copyright (c) 2010 - 2017, Nordic Semiconductor ASA
   All rights reserved.
@@ -35,11 +36,14 @@
   LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
   OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
+//}}}
+//{{{  include
 #include "ble_uis.h"
 #include "ble_srv_common.h"
 #include "sdk_common.h"
+//}}}
 
+//{{{
 /**@brief Function for handling the Connect event.
  *
  * @param[in] p_uis      UI Service structure.
@@ -49,8 +53,8 @@ static void on_connect(ble_uis_t * p_uis, ble_evt_t * p_ble_evt)
 {
     p_uis->conn_handle = p_ble_evt->evt.gap_evt.conn_handle;
 }
-
-
+//}}}
+//{{{
 /**@brief Function for handling the Disconnect event.
  *
  * @param[in] p_uis      UI Service structure.
@@ -61,8 +65,8 @@ static void on_disconnect(ble_uis_t * p_uis, ble_evt_t * p_ble_evt)
     UNUSED_PARAMETER(p_ble_evt);
     p_uis->conn_handle = BLE_CONN_HANDLE_INVALID;
 }
-
-
+//}}}
+//{{{
 /**@brief Function for handling the Write event.
  *
  * @param[in] p_uis      UI Service structure.
@@ -89,8 +93,8 @@ static void on_write(ble_uis_t * p_uis, ble_evt_t * p_ble_evt)
         // Do Nothing. This event is not relevant for this service.
     }
 }
-
-
+//}}}
+//{{{
 /**@brief Checks data validity for the UI service
  *
  * @param[in] data_length  Length of recieved LED characteristic data
@@ -157,8 +161,8 @@ static bool valid_data_check(uint16_t data_length, ble_uis_led_t const * const p
 
     return true;
 }
-
-
+//}}}
+//{{{
 static void on_authorize_req(ble_uis_t * p_uis, ble_evt_t * p_ble_evt)
 {
     ble_gatts_evt_rw_authorize_request_t * p_evt_rw_authorize_request = &p_ble_evt->evt.gatts_evt.params.authorize_request;
@@ -261,7 +265,9 @@ static void on_authorize_req(ble_uis_t * p_uis, ble_evt_t * p_ble_evt)
     }
 }
 
+//}}}
 
+//{{{
 void ble_uis_on_ble_evt(ble_uis_t * p_uis, ble_evt_t * p_ble_evt)
 {
     if ((p_uis == NULL) || (p_ble_evt == NULL))
@@ -292,8 +298,9 @@ void ble_uis_on_ble_evt(ble_uis_t * p_uis, ble_evt_t * p_ble_evt)
             break;
     }
 }
+//}}}
 
-
+//{{{
 /**@brief Function for adding the LED Characteristic.
  *
  * @param[in] p_uis      UI Service structure.
@@ -344,8 +351,8 @@ static uint32_t led_char_add(ble_uis_t * p_uis, const ble_uis_init_t * p_uis_ini
                                            &attr_char_value,
                                            &p_uis->led_char_handles);
 }
-
-
+//}}}
+//{{{
 /**@brief Function for adding the Button Characteristic.
  *
  * @param[in] p_uis      UI Service structure.
@@ -404,8 +411,8 @@ static uint32_t button_char_add(ble_uis_t * p_uis, const ble_uis_init_t * p_uis_
                                           &attr_char_value,
                                           &p_uis->button_char_handles);
 }
-
-
+//}}}
+//{{{
 /**@brief Function for adding the PIN Characteristic.
  *
  * @param[in] p_uis      UI Service structure.
@@ -458,8 +465,9 @@ static uint32_t pin_char_add(ble_uis_t * p_uis, const ble_uis_init_t * p_uis_ini
                                            &attr_char_value,
                                            &p_uis->pin_char_handles);
 }
+//}}}
 
-
+//{{{
 uint32_t ble_uis_init(ble_uis_t * p_uis, const ble_uis_init_t * p_uis_init)
 {
     uint32_t   err_code;
@@ -493,8 +501,9 @@ uint32_t ble_uis_init(ble_uis_t * p_uis, const ble_uis_init_t * p_uis_init)
 
     return NRF_SUCCESS;
 }
+//}}}
 
-
+//{{{
 uint32_t ble_uis_on_button_change(ble_uis_t * p_uis, uint8_t buttons_state)
 {
     ble_gatts_hvx_params_t params;
@@ -515,3 +524,4 @@ uint32_t ble_uis_on_button_change(ble_uis_t * p_uis, uint8_t buttons_state)
 
     return sd_ble_gatts_hvx(p_uis->conn_handle, &params);
 }
+//}}}

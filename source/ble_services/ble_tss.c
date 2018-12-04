@@ -1,3 +1,4 @@
+//{{{  copyright
 /*
   Copyright (c) 2010 - 2017, Nordic Semiconductor ASA
   All rights reserved.
@@ -35,11 +36,13 @@
   LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
   OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
+//}}}
+//{{{  includes
 #include "ble_tss.h"
 #include "ble_srv_common.h"
 #include "sdk_common.h"
-
+//}}}
+//{{{  defines
 #define BLE_UUID_TSS_CONFIG_CHAR      0x0501                      /**< The UUID of the config Characteristic. */
 #define BLE_UUID_TSS_SPKR_CHAR        0x0502                      /**< The UUID of the speaker Characteristic. */
 #define BLE_UUID_TSS_SPKR_STAT_CHAR   0x0503                      /**< The UUID of the speaker Status Characteristic. */
@@ -51,7 +54,9 @@
 
 // EF68xxxx-9B35-4933-9B10-52FFA9740042
 #define TSS_BASE_UUID                  {{0x42, 0x00, 0x74, 0xA9, 0xFF, 0x52, 0x10, 0x9B, 0x33, 0x49, 0x35, 0x9B, 0x00, 0x00, 0x68, 0xEF}} /**< Used vendor specific UUID. */
+//}}}
 
+//{{{
 /**@brief Function for handling the @ref BLE_GAP_EVT_CONNECTED event from the S132 SoftDevice.
  *
  * @param[in] p_tss     Thingy Sound Service structure.
@@ -61,8 +66,8 @@ static void on_connect(ble_tss_t * p_tss, ble_evt_t * p_ble_evt)
 {
     p_tss->conn_handle = p_ble_evt->evt.gap_evt.conn_handle;
 }
-
-
+//}}}
+//{{{
 /**@brief Function for handling the @ref BLE_GAP_EVT_DISCONNECTED event from the S132 SoftDevice.
  *
  * @param[in] p_tss     Thingy Sound Service structure.
@@ -73,8 +78,8 @@ static void on_disconnect(ble_tss_t * p_tss, ble_evt_t * p_ble_evt)
     UNUSED_PARAMETER(p_ble_evt);
     p_tss->conn_handle = BLE_CONN_HANDLE_INVALID;
 }
-
-
+//}}}
+//{{{
 /**@brief Function for handling the @ref BLE_GATTS_EVT_WRITE event from the S132 SoftDevice.
  *
  * @param[in] p_tss     Thingy Sound Service structure.
@@ -129,8 +134,8 @@ static void on_write(ble_tss_t * p_tss, ble_evt_t * p_ble_evt)
         // Do Nothing. This event is not relevant for this service.
     }
 }
-
-
+//}}}
+//{{{
 static void on_authorize_req(ble_tss_t * p_tss, ble_evt_t * p_ble_evt)
 {
     ble_gatts_evt_rw_authorize_request_t * p_evt_rw_authorize_request = &p_ble_evt->evt.gatts_evt.params.authorize_request;
@@ -191,8 +196,9 @@ static void on_authorize_req(ble_tss_t * p_tss, ble_evt_t * p_ble_evt)
         }
     }
 }
+//}}}
 
-
+//{{{
 /**@brief Function for adding microphone characteristic.
  *
  * @param[in] p_tss       Thingy Sound Service structure.
@@ -253,8 +259,8 @@ static uint32_t mic_char_add(ble_tss_t * p_tss, const ble_tss_init_t * p_tss_ini
                                            &attr_char_value,
                                            &p_tss->mic_handles);
 }
-
-
+//}}}
+//{{{
 /**@brief Function for adding speaker characteristic.
  *
  * @param[in] p_tss       Thingy Sound Service structure.
@@ -309,8 +315,8 @@ static uint32_t spkr_char_add(ble_tss_t * p_tss, const ble_tss_init_t * p_tss_in
                                            &attr_char_value,
                                            &p_tss->spkr_handles);
 }
-
-
+//}}}
+//{{{
 /**@brief Function for adding speaker status characteristic.
  *
  * @param[in] p_tss       Thingy Sound Service structure.
@@ -372,8 +378,8 @@ static uint32_t spkr_stat_char_add(ble_tss_t * p_tss, const ble_tss_init_t * p_t
                                            &attr_char_value,
                                            &p_tss->spkr_stat_handles);
 }
-
-
+//}}}
+//{{{
 /**@brief Function for adding configuration characteristic.
  *
  * @param[in] p_tss       Thingy Sound Service structure.
@@ -426,8 +432,9 @@ static uint32_t config_char_add(ble_tss_t * p_tss, const ble_tss_init_t * p_tss_
                                            &attr_char_value,
                                            &p_tss->config_handles);
 }
+//}}}
 
-
+//{{{
 void ble_tss_on_ble_evt(ble_tss_t * p_tss, ble_evt_t * p_ble_evt)
 {
     if ((p_tss == NULL) || (p_ble_evt == NULL))
@@ -458,8 +465,9 @@ void ble_tss_on_ble_evt(ble_tss_t * p_tss, ble_evt_t * p_ble_evt)
             break;
     }
 }
+//}}}
 
-
+//{{{
 uint32_t ble_tss_init(ble_tss_t * p_tss, const ble_tss_init_t * p_tss_init)
 {
     uint32_t      err_code;
@@ -506,8 +514,9 @@ uint32_t ble_tss_init(ble_tss_t * p_tss, const ble_tss_init_t * p_tss_init)
 
     return NRF_SUCCESS;
 }
+//}}}
 
-
+//{{{
 uint32_t ble_tss_mic_set(ble_tss_t * p_tss, uint8_t * p_data, uint16_t size)
 {
     ble_gatts_hvx_params_t hvx_params;
@@ -533,8 +542,8 @@ uint32_t ble_tss_mic_set(ble_tss_t * p_tss, uint8_t * p_data, uint16_t size)
 
     return sd_ble_gatts_hvx(p_tss->conn_handle, &hvx_params);
 }
-
-
+//}}}
+//{{{
 uint32_t ble_tss_spkr_stat_set(ble_tss_t * p_tss, ble_tss_spkr_stat_t status)
 {
     ble_gatts_hvx_params_t hvx_params;
@@ -561,3 +570,4 @@ uint32_t ble_tss_spkr_stat_set(ble_tss_t * p_tss, ble_tss_spkr_stat_t status)
 
     return sd_ble_gatts_hvx(p_tss->conn_handle, &hvx_params);
 }
+//}}}

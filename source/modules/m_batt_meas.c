@@ -1,3 +1,4 @@
+//{{{  copyright
 /*
   Copyright (c) 2010 - 2017, Nordic Semiconductor ASA
   All rights reserved.
@@ -35,7 +36,8 @@
   LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
   OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
+//}}}
+//{{{  include
 #include "m_batt_meas.h"
 #include "sdk_config.h"
 #include "drv_ext_gpio.h"
@@ -52,12 +54,14 @@
 #define  NRF_LOG_MODULE_NAME "m_batt_meas   "
 #include "nrf_log.h"
 #include "macros_common.h"
-
+//}}}
+//{{{  defines
 #define ADC_GAIN                    NRF_SAADC_GAIN1     // ADC gain.
 #define ADC_REFERENCE_VOLTAGE       (0.6f)              // The standard internal ADC reference voltage.
 #define ADC_RESOLUTION_BITS         (8 + (SAADC_CONFIG_RESOLUTION * 2)) //ADC resolution [bits].
 #define ADC_BUF_SIZE                (1)                 // Size of each ADC buffer.
 #define INVALID_BATTERY_LEVEL       (0xFF)              // Invalid/default battery level.
+//}}}
 
 static ble_bas_t                    m_bas;                          // Structure to identify the battery service.
 static m_batt_meas_event_handler_t  m_evt_handler;                  // Event handler function pointer.
@@ -68,12 +72,10 @@ static volatile bool                m_adc_cal_in_progress;          //
 static bool                         m_ble_bas_configured = false;   // Has the BLE battery service been initalized?
 static uint8_t                      m_initial_batt_level_percent = INVALID_BATTERY_LEVEL;  // Initial battery level in percent.
 
-
-/** @brief Timer for periodic battery measurement.
- */
+// Timer for periodic battery measurement.
 APP_TIMER_DEF(batt_meas_app_timer_id);
 
-
+//{{{
 /** @brief Converts ADC gain register values to actual gain.
  */
 static uint32_t adc_gain_enum_to_real_gain(nrf_saadc_gain_t gain_reg, float * real_val)
@@ -101,15 +103,15 @@ static uint32_t adc_gain_enum_to_real_gain(nrf_saadc_gain_t gain_reg, float * re
 
     return M_BATT_STATUS_CODE_SUCCESS;
 }
-
-
+//}}}
+//{{{
 /** @brief Simple conversion from battery voltage to remaining level in percent.
  */
 static void batt_voltage_to_percent(uint16_t voltage_mv, uint8_t * const battery_level_percent)
 {
     int16_t soc_vector_element = (voltage_mv - m_batt_meas_param.state_of_charge.first_element_mv)/
                                                m_batt_meas_param.state_of_charge.delta_mv;
-    
+
     // Ensure that only valid vector entries are used.
     if (soc_vector_element < 0)
     {
@@ -119,13 +121,13 @@ static void batt_voltage_to_percent(uint16_t voltage_mv, uint8_t * const battery
     {
         soc_vector_element = (m_batt_meas_param.state_of_charge.num_elements - 1);
     }
-    
+
     *battery_level_percent = m_batt_meas_param.state_of_charge.voltage_to_soc[soc_vector_element];
-    
+
     NRF_LOG_DEBUG("soc_vector_element %d, voltage %d, SoC %d \r\n", soc_vector_element, voltage_mv, *battery_level_percent);
 }
-
-
+//}}}
+//{{{
 /** @brief Converts an ADC reading to battery voltage. Returned as an integer in millivolts.
  */
 static uint32_t adc_to_batt_voltage(uint32_t adc_val, uint16_t * const voltage)
@@ -143,8 +145,9 @@ static uint32_t adc_to_batt_voltage(uint32_t adc_val, uint16_t * const voltage)
 
     return M_BATT_STATUS_CODE_SUCCESS;
 }
+//}}}
 
-
+//{{{
 /** @brief  The batt_event_handler for charge events, executed in main context.
  */
 static void batt_event_handler_charge(void * event_data, uint16_t unused)
@@ -158,8 +161,8 @@ static void batt_event_handler_charge(void * event_data, uint16_t unused)
 
     m_evt_handler(&batt_meas_evt);
 }
-
-
+//}}}
+//{{{
 /** @brief  The batt_event_handler event handler for ADC conversions, executed in main context.
  */
 static void batt_event_handler_adc(void * p_event_data, uint16_t size)
@@ -206,8 +209,8 @@ static void batt_event_handler_adc(void * p_event_data, uint16_t size)
 
     m_evt_handler(&batt_meas_evt);
 }
-
-
+//}}}
+//{{{
 /** @brief  The SAADC event handler, executed in interrupt context.
  */
 static void saadc_event_handler_interrupt(nrf_drv_saadc_evt_t const * const p_event)
@@ -230,8 +233,9 @@ static void saadc_event_handler_interrupt(nrf_drv_saadc_evt_t const * const p_ev
 
     nrf_drv_saadc_uninit();
 }
+//}}}
 
-
+//{{{
 /** @brief GPIOTE event handler for charge status.
  */
 static void gpiote_evt_handler(nrf_drv_gpiote_pin_t pin, nrf_gpiote_polarity_t unused)
@@ -262,8 +266,9 @@ static void gpiote_evt_handler(nrf_drv_gpiote_pin_t pin, nrf_gpiote_polarity_t u
     err_code = app_sched_event_put((void*)&event_source, sizeof(event_source), batt_event_handler_charge);
     APP_ERROR_CHECK(err_code);
 }
+//}}}
 
-
+//{{{
 /** @brief  SAADC calibration.
  */
 static uint32_t saadc_calibrate(void)
@@ -286,8 +291,8 @@ static uint32_t saadc_calibrate(void)
 
     return M_BATT_STATUS_CODE_SUCCESS;
 }
-
-
+//}}}
+//{{{
 /** @brief  Basic configuration of the SAADC.
  */
 static uint32_t saadc_init(void)
@@ -315,8 +320,9 @@ static uint32_t saadc_init(void)
 
     return M_BATT_STATUS_CODE_SUCCESS;
 }
+//}}}
 
-
+//{{{
 /** @brief Periodic timer handler.
  */
 static void app_timer_periodic_handler(void * unused)
@@ -333,8 +339,8 @@ static void app_timer_periodic_handler(void * unused)
     err_code = nrf_drv_saadc_sample();
     APP_ERROR_CHECK(err_code);
 }
-
-
+//}}}
+//{{{
 /** @brief Checks validity of supplied parameters.
  */
 static uint32_t param_check(batt_meas_init_t const * const p_batt_meas_init)
@@ -366,8 +372,8 @@ static uint32_t param_check(batt_meas_init_t const * const p_batt_meas_init)
 
     return M_BATT_STATUS_CODE_SUCCESS;
 }
-
-
+//}}}
+//{{{
 /** @brief GPIO task and event config for detecting USB and battery charge status.
  */
 static uint32_t gpiote_init(void)
@@ -395,8 +401,9 @@ static uint32_t gpiote_init(void)
 
     return NRF_SUCCESS;
 }
+//}}}
 
-
+//{{{
 /**@brief Function for passing the BLE event to the Thingy Battery module.
  *
  * @details This callback function will be called from the BLE handling module.
@@ -412,8 +419,8 @@ static void battery_on_ble_evt(ble_evt_t * p_ble_evt)
         // No particular action needed on disconnect.
     }
 }
-
-
+//}}}
+//{{{
 /**@brief Event handler, handles events in the Battery Service.
  *
  * @details This callback function is often used to enable a service when requested over BLE,
@@ -436,8 +443,9 @@ static void ble_bas_evt_handler(ble_bas_t * p_bas, ble_bas_evt_t * p_evt)
             break;
     }
 }
+//}}}
 
-
+//{{{
 /**@brief Function for initializing the Thingy Battery Service.
  *
  * @details This callback function will be called from the ble handling module to initialize the Battery service.
@@ -471,8 +479,9 @@ static uint32_t battery_service_init(bool major_minor_fw_ver_changed)
 
     return NRF_SUCCESS;
 }
+//}}}
 
-
+//{{{
 uint32_t m_batt_meas_enable(uint32_t meas_interval_ms)
 {
     uint32_t err_code;
@@ -502,8 +511,8 @@ uint32_t m_batt_meas_enable(uint32_t meas_interval_ms)
 
     return M_BATT_STATUS_CODE_SUCCESS;
 }
-
-
+//}}}
+//{{{
 uint32_t m_batt_meas_disable(void)
 {
     uint32_t err_code;
@@ -519,8 +528,9 @@ uint32_t m_batt_meas_disable(void)
 
     return M_BATT_STATUS_CODE_SUCCESS;
 }
+//}}}
 
-
+//{{{
 uint32_t m_batt_meas_init(m_ble_service_handle_t * p_handle, batt_meas_init_t const * const p_batt_meas_init)
 {
     uint32_t err_code;
@@ -560,3 +570,4 @@ uint32_t m_batt_meas_init(m_ble_service_handle_t * p_handle, batt_meas_init_t co
 
     return M_BATT_STATUS_CODE_SUCCESS;
 }
+//}}}

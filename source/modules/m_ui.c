@@ -1,3 +1,4 @@
+//{{{  copyright
 /*
   Copyright (c) 2010 - 2017, Nordic Semiconductor ASA
   All rights reserved.
@@ -35,7 +36,8 @@
   LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
   OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
+//}}}
+//{{{  includes
 #include "m_ui.h"
 #include "ble_uis.h"
 #include "m_ui_flash.h"
@@ -52,6 +54,7 @@
 #define  NRF_LOG_MODULE_NAME "m_ui          "
 #include "nrf_log.h"
 #include "macros_common.h"
+//}}}
 
 static ble_uis_led_t     * mp_config_ui;
 static ble_uis_t           m_uis;
@@ -59,6 +62,7 @@ static const ble_uis_led_t m_default_config_connected    = UI_CONFIG_DEFAULT_CON
 static const ble_uis_led_t m_default_config_disconnected = UI_CONFIG_DEFAULT_DISCONNECTED;
 static const ble_uis_led_t m_default_config_error        = UI_CONFIG_DEFAULT_ERROR;
 
+//{{{
 /**@brief Treats r, g, b integer values as boolean and returns corresponing color mix.
  *
  * @param[in] color_r                   red intensity   (0 to 255)
@@ -88,8 +92,9 @@ static drv_ext_light_color_mix_t rgb_to_color_mix(uint8_t color_r, uint8_t color
 
     return (drv_ext_light_color_mix_t)color_mix;
 }
+//}}}
 
-
+//{{{
 /**@brief Sends commands to drv_ext_light for changing led configurations.
  *
  * @param[in] p_config_ui       Contains all settings for the LED according to the BLE characteristics.
@@ -202,8 +207,9 @@ static ret_code_t led_set(ble_uis_led_t const * const p_config_ui,
         return M_IU_STATUS_CODE_INVALID_PARAM;
     }
 }
+//}}}
 
-
+//{{{
 /**@brief Function for passing the BLE event to the UI service.
  *
  * @details This callback function will be called from the BLE handling module.
@@ -240,8 +246,9 @@ static void thingy_ui_on_ble_evt(ble_evt_t * p_ble_evt)
             break;
     }
 }
+//}}}
 
-
+//{{{
 /**@brief Function for handling LED write events UI Service.
  *
  * @param[in] p_wss     UI Service structure.
@@ -264,8 +271,8 @@ static void ble_uis_led_write_handler(ble_uis_t * p_uis, ble_uis_led_t * input)
         APP_ERROR_CHECK(err_code);
     }
 }
-
-
+//}}}
+//{{{
 /**@brief Function for handling PIN write events UI Service.
  *
  * @param[in] p_wss     UI Service structure.
@@ -316,8 +323,9 @@ static void ble_uis_pin_write_handler(ble_uis_t * p_uis, ble_uis_pin_t * pin)
        nrf_gpio_pin_clear(MOS_4);
    }
 }
+//}}}
 
-
+//{{{
 /**@brief Function for initializing the UI Service.
  *
  * @details This callback function will be called from the ble handling module to initialize the UI service.
@@ -332,7 +340,7 @@ static ret_code_t thingy_ui_service_init(bool major_minor_fw_ver_changed)
     /**@brief Load configuration from flash. */
     err_code = m_ui_flash_init(&m_default_config_connected, &mp_config_ui);
     RETURN_IF_ERROR(err_code);
-    
+
     if (major_minor_fw_ver_changed)
     {
         err_code = m_ui_flash_config_store(&m_default_config_connected);
@@ -349,8 +357,9 @@ static ret_code_t thingy_ui_service_init(bool major_minor_fw_ver_changed)
 
     return ble_uis_init(&m_uis, &uis_init);
 }
+//}}}
 
-
+//{{{
 static void button_evt_handler(uint8_t pin_no, uint8_t button_action)
 {
     uint32_t err_code;
@@ -369,8 +378,9 @@ static void button_evt_handler(uint8_t pin_no, uint8_t button_action)
         }
     }
 }
+//}}}
 
-
+//{{{
 ret_code_t m_ui_led_set(uint8_t r, uint8_t g, uint8_t b)
 {
 
@@ -382,7 +392,8 @@ ret_code_t m_ui_led_set(uint8_t r, uint8_t g, uint8_t b)
     return led_set(NULL, &rgb);
 }
 
-
+//}}}
+//{{{
 ret_code_t m_ui_led_set_event(ui_led_events event_code)
 {
     ret_code_t err_code;
@@ -404,8 +415,9 @@ ret_code_t m_ui_led_set_event(ui_led_events event_code)
     }
     return NRF_SUCCESS;
 }
+//}}}
 
-
+//{{{
 static ret_code_t button_init(void)
 {
     ret_code_t err_code;
@@ -430,8 +442,9 @@ static ret_code_t button_init(void)
 
     return app_button_enable();
 }
+//}}}
 
-
+//{{{
 uint32_t m_ui_init(m_ble_service_handle_t * p_handle, m_ui_init_t * p_params)
 {
     uint32_t                        err_code;
@@ -471,7 +484,7 @@ uint32_t m_ui_init(m_ble_service_handle_t * p_handle, m_ui_init_t * p_params)
 
     (void)drv_ext_light_off(DRV_EXT_RGB_LED_SENSE);
     (void)drv_ext_light_off(DRV_EXT_RGB_LED_LIGHTWELL);
-    
+
     nrf_gpio_cfg_output(MOS_1);
     nrf_gpio_cfg_output(MOS_2);
     nrf_gpio_cfg_output(MOS_3);
@@ -483,3 +496,4 @@ uint32_t m_ui_init(m_ble_service_handle_t * p_handle, m_ui_init_t * p_params)
 
     return NRF_SUCCESS;
 }
+//}}}
