@@ -378,11 +378,7 @@ $(OUTPUT_BINARY_DIRECTORY)/$(OUTPUT_FILENAME).hex: $(OUTPUT_BINARY_DIRECTORY)/$(
 	@echo Preparing: $(OUTPUT_FILENAME).hex
 	$(NO_ECHO)$(OBJCOPY) -O ihex $(OUTPUT_BINARY_DIRECTORY)/$(OUTPUT_FILENAME).out $(OUTPUT_BINARY_DIRECTORY)/$(OUTPUT_FILENAME).hex
 
-finalize: genbin genhex echosize
-
-genbin:
-	@echo Preparing: $(OUTPUT_FILENAME).bin
-	$(NO_ECHO)$(OBJCOPY) -O binary $(OUTPUT_BINARY_DIRECTORY)/$(OUTPUT_FILENAME).out $(OUTPUT_BINARY_DIRECTORY)/$(OUTPUT_FILENAME).bin
+finalize: genhex echosize
 
 ## Create binary .hex file from the .out file
 genhex:
@@ -398,18 +394,17 @@ clean:
 
 cleanobj:
 	$(RM) $(BUILD_DIRECTORIES)/*.o
+
+ocd: nrf52832_xxaa_s132
+	@echo ocd Flashing: $(OUTPUT_BINARY_DIRECTORY)/$<.hex
+	..\..\..\openOCD\bin\openocd.exe -f openocd.cfg -c "program $(OUTPUT_BINARY_DIRECTORY)/$<.hex verify reset exit"
+
 flash: nrf52832_xxaa_s132
 	@echo Flashing: $(OUTPUT_BINARY_DIRECTORY)/$<.hex
 	nrfjprog --program $(OUTPUT_BINARY_DIRECTORY)/$<.hex -f nrf52  --sectorerase
 	nrfjprog --reset -f nrf52
 
-## Flash softdevice
 flash_softdevice:
 	@echo Flashing: s132_nrf52_4.0.2_softdevice.hex
 	nrfjprog --program ../../../sdk_components/softdevice/s132/hex/s132_nrf52_4.0.2_softdevice.hex -f nrf52 --chiperase
 	nrfjprog --reset -f nrf52
-
-ocd: nrf52832_xxaa_s132
-	@echo ocd Flashing: $(OUTPUT_BINARY_DIRECTORY)/$<.hex
-	../../../openOCD/bin/openocd -c "exit" -d 3
-#        ../../../openOCD/bin/openocd -c "program $(OUTPUT_BINARY_DIRECTORY)/$<.hex verify reset exit"

@@ -1,3 +1,4 @@
+//{{{  copyright
 /*
   Copyright (c) 2010 - 2017, Nordic Semiconductor ASA
   All rights reserved.
@@ -35,28 +36,26 @@
   LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
   OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+//}}}
+#pragma once
+#define APP_TIMER_PRESCALER             0        /**< Value of the RTC1 PRESCALER register. */
+#define APP_TIMER_OP_QUEUE_SIZE         75       /**< Size of timer operation queues: 6 LEDs, 2 buttons, 3 sensor notification timers, 3 sensor data convertion timers   . */
 
-#ifndef __THINGY_CONFIG_H__
-#define __THINGY_CONFIG_H__
+#define IS_SRVC_CHANGED_CHARACT_PRESENT 1        /**< Include the service_changed characteristic. If not enabled, the server's database cannot be changed for the lifetime of the device. */
 
-#define APP_TIMER_PRESCALER             0                                           /**< Value of the RTC1 PRESCALER register. */
-#define APP_TIMER_OP_QUEUE_SIZE         75                                          /**< Size of timer operation queues: 6 LEDs, 2 buttons, 3 sensor notification timers, 3 sensor data convertion timers   . */
+#define CENTRAL_LINK_COUNT              0        /**< Number of central links used by the application. When changing this number remember to adjust the RAM settings*/
+#define PERIPHERAL_LINK_COUNT           1        /**< Number of peripheral links used by the application. When changing this number remember to adjust the RAM settings*/
 
-#define IS_SRVC_CHANGED_CHARACT_PRESENT 1                                           /**< Include the service_changed characteristic. If not enabled, the server's database cannot be changed for the lifetime of the device. */
+#define DEVICE_NAME                     "thingy" /**< Name of device. Will be included in the advertising data. */
+#define NORDIC_COMPANY_ID               0x0059   /**< Nordic Semiconductor ASA company identifier. */
 
-#define CENTRAL_LINK_COUNT              0                                           /**< Number of central links used by the application. When changing this number remember to adjust the RAM settings*/
-#define PERIPHERAL_LINK_COUNT           1                                           /**< Number of peripheral links used by the application. When changing this number remember to adjust the RAM settings*/
+#define APP_ADV_INTERVAL_MS             380      /**< The advertising interval in ms. */
+#define APP_ADV_TIMEOUT_IN_SECONDS      180      /**< The advertising timeout in s. */
 
-#define DEVICE_NAME                     "Thingy"                                    /**< Name of device. Will be included in the advertising data. */
-#define NORDIC_COMPANY_ID               0x0059                                      /**< Nordic Semiconductor ASA company identifier. */
-
-#define APP_ADV_INTERVAL_MS             380                                         /**< The advertising interval in ms. */
-#define APP_ADV_TIMEOUT_IN_SECONDS      180                                         /**< The advertising timeout in s. */
-
-#define MIN_CONN_INTERVAL_MS            7.5                                         /**< Minimum acceptable connection interval in ms. */
-#define MAX_CONN_INTERVAL_MS            30                                          /**< Maximum acceptable connection interval in ms. */
-#define SLAVE_LATENCY                   0                                           /**< Slave latency. */
-#define CONN_SUP_TIMEOUT_MS             3200                                        /**< Connection supervisory timeout (4 seconds), Supervision Timeout uses 10 ms units. */
+#define MIN_CONN_INTERVAL_MS            7.5      /**< Minimum acceptable connection interval in ms. */
+#define MAX_CONN_INTERVAL_MS            30       /**< Maximum acceptable connection interval in ms. */
+#define SLAVE_LATENCY                   0        /**< Slave latency. */
+#define CONN_SUP_TIMEOUT_MS             3200     /**< Connection supervisory timeout (4 seconds), Supervision Timeout uses 10 ms units. */
 #define FIRST_CONN_PARAMS_UPDATE_DELAY  APP_TIMER_TICKS(1000)  /**< Time from initiating event (connect or start of notification) to first time sd_ble_gap_conn_param_update is called (1 second). */
 #define NEXT_CONN_PARAMS_UPDATE_DELAY   APP_TIMER_TICKS(30000) /**< Time between each call to sd_ble_gap_conn_param_update after the first call (30 seconds). */
 #define MAX_CONN_PARAMS_UPDATE_COUNT    3                                           /**< Number of attempts before giving up the connection parameter negotiation. */
@@ -66,7 +65,7 @@
 #define THINGY_SERVICE_UI               2
 #define THINGY_SERVICE_SOUND            3
 #define THINGY_SERVICE_BATTERY          4
-    
+
 #define THINGY_SERVICES_MAX             5
 
 /**@brief Thingy default beacon configuration. Eddystone url */
@@ -83,9 +82,8 @@
 #define THINGY_NFC_APP_ANDROID_NAME_LEN     sizeof(THINGY_NFC_APP_ANDROID_NAME_DEFAULT)
 /** The text fields will by default be filled with the MAC address and a random generated address */
 
-
 /**@brief Thingy FW version.
-* 0xFF indicates a custom build from source. 
+* 0xFF indicates a custom build from source.
 Version numbers are changed for releases. */
 #define THINGY_FW_VERSION_MAJOR     (0xFF)
 #define THINGY_FW_VERSION_MINOR     (0xFF)
@@ -133,5 +131,3 @@ Version numbers are changed for releases. */
         .size = 23                                    \
     }                                                 \
 }
-
-#endif
