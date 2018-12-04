@@ -65,15 +65,14 @@
 #define THINGY_SERVICE_UI               2
 #define THINGY_SERVICE_SOUND            3
 #define THINGY_SERVICE_BATTERY          4
-
 #define THINGY_SERVICES_MAX             5
 
 /**@brief Thingy default beacon configuration. Eddystone url */
-#define THINGY_BEACON_ADV_INTERVAL      760                 /**< The Beacon's advertising interval, in milliseconds*/
-#define THINGY_BEACON_URL_DEFAULT       "\x03goo.gl/pIWdir" /**< https://goo.gl/pIWdir short for https://developer.nordicsemi.com/thingy/52/ */
-#define THINGY_BEACON_URL_LEN           14
-#define THINGY_CLOUD_TOKEN_DEFAULT      ""
-#define THINGY_CLOUD_TOKEN_LEN          0
+#define THINGY_BEACON_ADV_INTERVAL  760                 /**< The Beacon's advertising interval, in milliseconds*/
+#define THINGY_BEACON_URL_DEFAULT   "\x03goo.gl/pIWdir" /**< https://goo.gl/pIWdir short for https://developer.nordicsemi.com/thingy/52/ */
+#define THINGY_BEACON_URL_LEN       14
+#define THINGY_CLOUD_TOKEN_DEFAULT  ""
+#define THINGY_CLOUD_TOKEN_LEN      0
 
 /**@brief Thingy NFC default configuration. */
 #define THINGY_NFC_URI_DEFAULT              "nordicsemi.com/thingy"            /**< Is appended with http://www. in drv_nfc.c */
@@ -83,51 +82,43 @@
 /** The text fields will by default be filled with the MAC address and a random generated address */
 
 /**@brief Thingy FW version.
-* 0xFF indicates a custom build from source.
-Version numbers are changed for releases. */
-#define THINGY_FW_VERSION_MAJOR     (0xFF)
-#define THINGY_FW_VERSION_MINOR     (0xFF)
-#define THINGY_FW_VERSION_PATCH     (0xFF)
+* 0xFF indicates a custom build from source. Version numbers are changed for releases. */
+#define THINGY_FW_VERSION_MAJOR (0xFF)
+#define THINGY_FW_VERSION_MINOR (0xFF)
+#define THINGY_FW_VERSION_PATCH (0xFF)
 
-/**@brief Thingy default configuration. */
-#define THINGY_CONFIG_DEFAULT                         \
-{                                                     \
-    .dev_name =                                       \
-    {                                                 \
-        .name = DEVICE_NAME,                          \
-        .len = 6                                      \
-    },                                                \
-    .adv_params =                                     \
-    {                                                 \
-        .interval = MSEC_TO_UNITS(APP_ADV_INTERVAL_MS, UNIT_0_625_MS),                  \
-        .timeout = APP_ADV_TIMEOUT_IN_SECONDS         \
-    },                                                \
-    .conn_params =                                    \
-    {                                                 \
-        .min_conn_int  = (uint16_t)MSEC_TO_UNITS(MIN_CONN_INTERVAL_MS, UNIT_1_25_MS),   \
-        .max_conn_int  = MSEC_TO_UNITS(MAX_CONN_INTERVAL_MS, UNIT_1_25_MS),             \
-        .slave_latency = SLAVE_LATENCY,                                                 \
-        .sup_timeout   = MSEC_TO_UNITS(CONN_SUP_TIMEOUT_MS, UNIT_10_MS)                 \
-    },                                                \
-    .eddystone_url =                                  \
-    {                                                 \
-        .data = THINGY_BEACON_URL_DEFAULT,            \
-        .len  = THINGY_BEACON_URL_LEN                 \
-    },                                                \
-    .cloud_token =                                    \
-    {                                                 \
-        .token = THINGY_CLOUD_TOKEN_DEFAULT,          \
-        .len   = THINGY_CLOUD_TOKEN_LEN               \
-    },                                                \
-    .fw_version =                                     \
-    {                                                 \
-        .major = THINGY_FW_VERSION_MAJOR,             \
-        .minor = THINGY_FW_VERSION_MINOR,             \
-        .patch = THINGY_FW_VERSION_PATCH              \
-    },                                                \
-    .mtu =                                            \
-    {                                                 \
-        .req = 0x00,                                  \
-        .size = 23                                    \
-    }                                                 \
+//{{{  Thingy default configuration
+#define THINGY_CONFIG_DEFAULT { \
+  .dev_name = {                 \
+      .name = DEVICE_NAME,      \
+      .len = 6                  \
+    },                          \
+  .adv_params = {               \
+      .interval = MSEC_TO_UNITS(APP_ADV_INTERVAL_MS, UNIT_0_625_MS), \
+      .timeout = APP_ADV_TIMEOUT_IN_SECONDS \
+    },                                      \
+  .conn_params = {                          \
+      .min_conn_int  = (uint16_t)MSEC_TO_UNITS(MIN_CONN_INTERVAL_MS, UNIT_1_25_MS), \
+      .max_conn_int  = MSEC_TO_UNITS(MAX_CONN_INTERVAL_MS, UNIT_1_25_MS),           \
+      .slave_latency = SLAVE_LATENCY,                                               \
+      .sup_timeout   = MSEC_TO_UNITS(CONN_SUP_TIMEOUT_MS, UNIT_10_MS)               \
+    },                                      \
+  .eddystone_url = {                        \
+      .data = THINGY_BEACON_URL_DEFAULT,    \
+      .len  = THINGY_BEACON_URL_LEN         \
+    },                                      \
+  .cloud_token = {                          \
+      .token = THINGY_CLOUD_TOKEN_DEFAULT,  \
+      .len   = THINGY_CLOUD_TOKEN_LEN       \
+    },                                      \
+  .fw_version = {                           \
+      .major = THINGY_FW_VERSION_MAJOR,     \
+      .minor = THINGY_FW_VERSION_MINOR,     \
+      .patch = THINGY_FW_VERSION_PATCH      \
+    },                                      \
+  .mtu = {                                  \
+      .req = 0x00,                          \
+      .size = 23                            \
+    }                                       \
 }
+//}}}

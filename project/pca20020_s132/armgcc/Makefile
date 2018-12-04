@@ -348,7 +348,11 @@ nrf52832_xxaa_s132: LINKER_SCRIPT=ble_app_thingy_gcc_nrf52.ld
 nrf52832_xxaa_s132: $(BUILD_DIRECTORIES) $(OBJECTS)
 	@echo Linking target: $(OUTPUT_FILENAME).out
 	$(NO_ECHO)$(CC) $(LDFLAGS) $(OBJECTS) $(LIBS) -lm -o $(OUTPUT_BINARY_DIRECTORY)/$(OUTPUT_FILENAME).out
-	$(NO_ECHO)$(MAKE) -f $(MAKEFILE_NAME) -C $(MAKEFILE_DIR) -e finalize
+	-@echo ''
+	$(NO_ECHO)$(SIZE) $(OUTPUT_BINARY_DIRECTORY)/$(OUTPUT_FILENAME).out
+	-@echo ''
+	@echo Preparing: $(OUTPUT_FILENAME).hex
+	$(NO_ECHO)$(OBJCOPY) -O ihex $(OUTPUT_BINARY_DIRECTORY)/$(OUTPUT_FILENAME).out $(OUTPUT_BINARY_DIRECTORY)/$(OUTPUT_FILENAME).hex
 
 ## Create build directories
 $(BUILD_DIRECTORIES):
@@ -364,40 +368,27 @@ $(OBJECT_DIRECTORY)/%.o: %.c
 $(OBJECT_DIRECTORY)/%.o: %.S
 	@echo Assembly file: $(notdir $<)
 	$(NO_ECHO)$(CC) $(ASMFLAGS) $(INC_PATHS) -c -o $@ $<
+
 # Link
 $(OUTPUT_BINARY_DIRECTORY)/$(OUTPUT_FILENAME).out: $(BUILD_DIRECTORIES) $(OBJECTS)
 	@echo Linking target: $(OUTPUT_FILENAME).out
 	$(NO_ECHO)$(CC) $(LDFLAGS) $(OBJECTS) $(LIBS) -lm -o $(OUTPUT_BINARY_DIRECTORY)/$(OUTPUT_FILENAME).out
-## Create binary .bin file from the .out file
-$(OUTPUT_BINARY_DIRECTORY)/$(OUTPUT_FILENAME).bin: $(OUTPUT_BINARY_DIRECTORY)/$(OUTPUT_FILENAME).out
-	@echo Preparing: $(OUTPUT_FILENAME).bin
-	$(NO_ECHO)$(OBJCOPY) -O binary $(OUTPUT_BINARY_DIRECTORY)/$(OUTPUT_FILENAME).out $(OUTPUT_BINARY_DIRECTORY)/$(OUTPUT_FILENAME).bin
 
 ## Create binary .hex file from the .out file
 $(OUTPUT_BINARY_DIRECTORY)/$(OUTPUT_FILENAME).hex: $(OUTPUT_BINARY_DIRECTORY)/$(OUTPUT_FILENAME).out
 	@echo Preparing: $(OUTPUT_FILENAME).hex
 	$(NO_ECHO)$(OBJCOPY) -O ihex $(OUTPUT_BINARY_DIRECTORY)/$(OUTPUT_FILENAME).out $(OUTPUT_BINARY_DIRECTORY)/$(OUTPUT_FILENAME).hex
 
-finalize: genhex echosize
-
-## Create binary .hex file from the .out file
-genhex:
-	@echo Preparing: $(OUTPUT_FILENAME).hex
-	$(NO_ECHO)$(OBJCOPY) -O ihex $(OUTPUT_BINARY_DIRECTORY)/$(OUTPUT_FILENAME).out $(OUTPUT_BINARY_DIRECTORY)/$(OUTPUT_FILENAME).hex
-echosize:
-	-@echo ''
-	$(NO_ECHO)$(SIZE) $(OUTPUT_BINARY_DIRECTORY)/$(OUTPUT_FILENAME).out
-	-@echo ''
-
 clean:
 	$(RM) $(BUILD_DIRECTORIES)
-
-cleanobj:
-	$(RM) $(BUILD_DIRECTORIES)/*.o
 
 ocd: nrf52832_xxaa_s132
 	@echo ocd Flashing: $(OUTPUT_BINARY_DIRECTORY)/$<.hex
 	..\..\..\openOCD\bin\openocd.exe -f openocd.cfg -c "program $(OUTPUT_BINARY_DIRECTORY)/$<.hex verify reset exit"
+
+ocdsoft:
+	@echo ocd Flashing: $(OUTPUT_BINARY_DIRECTORY)/$<.hex
+	..\..\..\openOCD\bin\openocd.exe -f openocd.cfg -c "program ../../../sdk_components/softdevice/s132/hex/s132_nrf52_4.0.2_softdevice.hex verify exit"
 
 flash: nrf52832_xxaa_s132
 	@echo Flashing: $(OUTPUT_BINARY_DIRECTORY)/$<.hex

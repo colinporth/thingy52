@@ -1,3 +1,4 @@
+//{{{
 /*
   Copyright (c) 2010 - 2017, Nordic Semiconductor ASA
   All rights reserved.
@@ -35,16 +36,19 @@
   LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
   OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
+//}}}
+//{{{  includes
 #include "twi_manager.h"
 #include "nrf_error.h"
 #define  NRF_LOG_MODULE_NAME "twi_manager   "
 #include "nrf_log.h"
 #include "macros_common.h"
+//}}}
 
 static app_irq_priority_t s_context_limit = APP_IRQ_PRIORITY_HIGHEST;
 static uint32_t           s_collisions    = 0;
 
+//{{{
 uint32_t twi_manager_request(nrf_drv_twi_t const *        p_instance,
                              nrf_drv_twi_config_t const * p_config,
                              nrf_drv_twi_evt_handler_t    event_handler,
@@ -73,30 +77,32 @@ uint32_t twi_manager_request(nrf_drv_twi_t const *        p_instance,
 
     return NRF_SUCCESS;
 }
-
-
+//}}}
+//{{{
 uint32_t twi_manager_release(nrf_drv_twi_t const * p_instance)
 {
     nrf_drv_twi_uninit(p_instance);
 
     return NRF_SUCCESS;
 }
+//}}}
 
-
+//{{{
 uint32_t twi_manager_collision_get(void)
 {
     return s_collisions;
 }
-
-
+//}}}
+//{{{
 uint32_t twi_manager_collision_reset(void)
 {
     s_collisions = 0;
 
     return NRF_SUCCESS;
 }
+//}}}
 
-
+//{{{
 uint32_t twi_manager_init(app_irq_priority_t context_limit)
 {
     s_context_limit = context_limit;
@@ -104,3 +110,4 @@ uint32_t twi_manager_init(app_irq_priority_t context_limit)
 
     return NRF_SUCCESS;
 }
+//}}}

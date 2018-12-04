@@ -1,3 +1,4 @@
+//{{{  copyright
 /*
   Copyright (c) 2010 - 2017, Nordic Semiconductor ASA
   All rights reserved.
@@ -35,7 +36,8 @@
   LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
   OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
+//}}}
+//{{{  includes
 #include "advertiser_beacon.h"
 #include <stdio.h>
 #include <string.h>
@@ -45,7 +47,8 @@
 #define  NRF_LOG_MODULE_NAME "adv_beacon_..."
 #include "nrf_log.h"
 #include "macros_common.h"
-
+//}}}
+//{{{  defines
 #define ADV_PACK_LENGTH_IDX     1
 #define ADV_DATA_LENGTH_IDX    16
 #define ADV_HEADER_LEN          3
@@ -58,7 +61,9 @@
 #define FREQ_ADV_CHANNEL_38    26
 #define FREQ_ADV_CHANNEL_39    80
 #define BEACON_SLOT_LENGTH   5500
+//}}}
 
+//{{{  struct beacon
 static struct
 {
     uint32_t                adv_interval;                       /** Advertising interval in milliseconds to be used for 'beacon' advertisements. */
@@ -71,7 +76,9 @@ static struct
     uint8_t               * p_data;
     uint16_t                data_size;
 } m_beacon;
+//}}}
 
+//{{{
 enum mode_t
 {
   ADV_INIT,                                                 /** Initialisation. */
@@ -81,7 +88,9 @@ enum mode_t
   ADV_DONE                                                  /** Done advertising. */
 };
 
+//}}}
 
+//{{{
 nrf_radio_request_t * m_configure_next_event(void)
 {
     m_beacon.timeslot_request.request_type              = NRF_RADIO_REQ_TYPE_NORMAL;
@@ -91,8 +100,8 @@ nrf_radio_request_t * m_configure_next_event(void)
     m_beacon.timeslot_request.params.normal.length_us   = m_beacon.slot_length;
     return &m_beacon.timeslot_request;
 }
-
-
+//}}}
+//{{{
 uint32_t m_request_earliest(enum NRF_RADIO_PRIORITY priority)
 {
     m_beacon.timeslot_request.request_type                = NRF_RADIO_REQ_TYPE_EARLIEST;
@@ -102,8 +111,10 @@ uint32_t m_request_earliest(enum NRF_RADIO_PRIORITY priority)
     m_beacon.timeslot_request.params.earliest.timeout_us  = 1000000;
     return sd_radio_request(&m_beacon.timeslot_request);
 }
+//}}}
 
 
+//{{{
 static uint8_t * m_get_adv_packet(void)
 {
     static uint8_t adv_pdu[40];
@@ -151,8 +162,8 @@ static uint8_t * m_get_adv_packet(void)
 
     return &adv_pdu[0];
 }
-
-
+//}}}
+//{{{
 static void m_set_adv_ch(uint32_t channel)
 {
     if (channel == ADV_CHANNEL_37)
@@ -171,8 +182,9 @@ static void m_set_adv_ch(uint32_t channel)
         NRF_RADIO->DATAWHITEIV  = ADV_CHANNEL_39;
     }
 }
+//}}}
 
-
+//{{{
 static void m_configure_radio()
 {
     uint8_t * p_adv_pdu = m_get_adv_packet();
@@ -201,8 +213,9 @@ static void m_configure_radio()
 
     NVIC_EnableIRQ(RADIO_IRQn);
 }
+//}}}
 
-
+//{{{
 void m_handle_start(void)
 {
     // Configure TX_EN on TIMER EVENT_0.
@@ -214,8 +227,8 @@ void m_handle_start(void)
     m_configure_radio();
     NRF_RADIO->TASKS_DISABLE = 1;
 }
-
-
+//}}}
+//{{{
 void m_handle_radio_disabled(enum mode_t mode)
 {
     switch (mode)
@@ -238,8 +251,9 @@ void m_handle_radio_disabled(enum mode_t mode)
             break;
     }
 }
+//}}}
 
-
+//{{{
 static nrf_radio_signal_callback_return_param_t * m_timeslot_callback(uint8_t signal_type)
 {
   static nrf_radio_signal_callback_return_param_t signal_callback_return_param;
@@ -291,8 +305,9 @@ static nrf_radio_signal_callback_return_param_t * m_timeslot_callback(uint8_t si
 
   return ( &signal_callback_return_param );
 }
+//}}}
 
-
+//{{{
 void app_beacon_on_sys_evt(uint32_t event)
 {
     uint32_t err_code;
@@ -330,8 +345,9 @@ void app_beacon_on_sys_evt(uint32_t event)
             break;
     }
 }
+//}}}
 
-
+//{{{
 void app_beacon_init(ble_beacon_init_t * p_init)
 {
     NRF_LOG_INFO("app_beacon_init:\r\n");
@@ -342,8 +358,9 @@ void app_beacon_init(ble_beacon_init_t * p_init)
     m_beacon.data_size     = p_init->data_size;
     m_beacon.p_data        = p_init->p_data;
 }
+//}}}
 
-
+//{{{
 void app_beacon_start(void)
 {
     if (m_beacon.is_running || m_beacon.keep_running)
@@ -368,9 +385,11 @@ void app_beacon_start(void)
     }
 }
 
-
+//}}}
+//{{{
 void app_beacon_stop(void)
 {
     NRF_LOG_INFO("app_beacon_stop:\r\n");
     m_beacon.keep_running = false;
 }
+//}}}

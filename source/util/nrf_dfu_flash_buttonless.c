@@ -1,3 +1,4 @@
+//{{{  copyright
 /*
   Copyright (c) 2010 - 2017, Nordic Semiconductor ASA
   All rights reserved.
@@ -35,7 +36,8 @@
   LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
   OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
+//}}}
+//{{{  includes
 #include "nrf_dfu_flash.h"
 #include "nrf_dfu_types.h"
 #include "softdevice_handler.h"
@@ -45,60 +47,63 @@
 // Only include fstorage if SD interaction is required
 #include "fstorage.h"
 #endif
-
+//}}}
+//{{{  defines
 #define FLASH_FLAG_NONE                 (0)
 #define FLASH_FLAG_OPER                 (1<<0)
 #define FLASH_FLAG_FAILURE_SINCE_LAST   (1<<1)
 #define FLASH_FLAG_SD_ENABLED           (1<<2)
+//}}}
 
 static uint32_t m_flags;
 
 #ifdef BLE_STACK_SUPPORT_REQD
+  // Function prototypes
+  static void fs_evt_handler(fs_evt_t const * const evt, fs_ret_t result);
+  //{{{
+  FS_REGISTER_CFG(fs_config_t fs_dfu_config) =
+  {
+      .callback       = fs_evt_handler,            // Function for event callbacks.
+      .p_start_addr   = (uint32_t*)MBR_SIZE,
+      .p_end_addr     = (uint32_t*)BOOTLOADER_SETTINGS_ADDRESS + CODE_PAGE_SIZE
+  };
+  //}}}
+  //{{{
+  static void fs_evt_handler(fs_evt_t const * const evt, fs_ret_t result)
+  {
+      // Clear the operation flag
+      m_flags &= ~FLASH_FLAG_OPER;
 
-// Function prototypes
-static void fs_evt_handler(fs_evt_t const * const evt, fs_ret_t result);
+      if (result == FS_SUCCESS)
+      {
+          // Clear flag for ongoing operation and failure since last
+          m_flags &= ~FLASH_FLAG_FAILURE_SINCE_LAST;
+      }
+      else
+      {
+          NRF_LOG_INFO("Generating failure\r\n");
+          m_flags |= FLASH_FLAG_FAILURE_SINCE_LAST;
+      }
 
-FS_REGISTER_CFG(fs_config_t fs_dfu_config) =
-{
-    .callback       = fs_evt_handler,            // Function for event callbacks.
-    .p_start_addr   = (uint32_t*)MBR_SIZE,
-    .p_end_addr     = (uint32_t*)BOOTLOADER_SETTINGS_ADDRESS + CODE_PAGE_SIZE
-};
-
-
-static void fs_evt_handler(fs_evt_t const * const evt, fs_ret_t result)
-{
-    // Clear the operation flag
-    m_flags &= ~FLASH_FLAG_OPER;
-
-    if (result == FS_SUCCESS)
-    {
-        // Clear flag for ongoing operation and failure since last
-        m_flags &= ~FLASH_FLAG_FAILURE_SINCE_LAST;
-    }
-    else
-    {
-        NRF_LOG_INFO("Generating failure\r\n");
-        m_flags |= FLASH_FLAG_FAILURE_SINCE_LAST;
-    }
-
-    if (evt->p_context)
-    {
-        //lint -e611
-        ((dfu_flash_callback_t)evt->p_context)(evt, result);
-    }
-}
-
+      if (evt->p_context)
+      {
+          //lint -e611
+          ((dfu_flash_callback_t)evt->p_context)(evt, result);
+      }
+  }
+  //}}}
 #endif
 
 
+//{{{
 uint32_t nrf_dfu_flash_init(bool sd_enabled)
 {
     m_flags = FLASH_FLAG_SD_ENABLED;
     return NRF_SUCCESS;
 }
+//}}}
 
-
+//{{{
 fs_ret_t nrf_dfu_flash_store(uint32_t const * p_dest, uint32_t const * const p_src, uint32_t len_words, dfu_flash_callback_t callback)
 {
     fs_ret_t ret_val = FS_SUCCESS;
@@ -129,10 +134,9 @@ fs_ret_t nrf_dfu_flash_store(uint32_t const * p_dest, uint32_t const * const p_s
 
     return ret_val;
 }
-
-
-/** @brief Internal function to initialize DFU BLE transport
- */
+//}}}
+//{{{
+// Internal function to initialize DFU BLE transport
 fs_ret_t nrf_dfu_flash_erase(uint32_t const * p_dest, uint32_t num_pages, dfu_flash_callback_t callback)
 {
     fs_ret_t ret_val = FS_SUCCESS;
@@ -163,14 +167,16 @@ fs_ret_t nrf_dfu_flash_erase(uint32_t const * p_dest, uint32_t num_pages, dfu_fl
 
     return ret_val;
 }
+//}}}
 
-
+//{{{
 void nrf_dfu_flash_error_clear(void)
 {
     m_flags &= ~FLASH_FLAG_FAILURE_SINCE_LAST;
 }
+//}}}
 
-
+//{{{
 fs_ret_t nrf_dfu_flash_wait(void)
 {
     NRF_LOG_INFO("Waiting for finished...\r\n");
@@ -194,3 +200,4 @@ fs_ret_t nrf_dfu_flash_wait(void)
     NRF_LOG_INFO("After wait!\r\n");
     return FS_SUCCESS;
 }
+//}}}

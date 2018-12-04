@@ -1,3 +1,4 @@
+//{{{  copyright
 /*
   Copyright (c) 2010 - 2017, Nordic Semiconductor ASA
   All rights reserved.
@@ -35,7 +36,8 @@
   LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
   OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
+//}}}
+//{{{  includes
 #include "sx150x_led_drv_calc.h"
 #include "sx150x_led_drv_regs.h"
 #include <math.h>
@@ -44,7 +46,8 @@
 #define  NRF_LOG_MODULE_NAME "sx150x_led_..."
 #include "nrf_log.h"
 #include "macros_common.h"
-
+//}}}
+//{{{  defines
 #define REG_ONOFF_TIME_LOW_MULTIPLIER       64
 #define REG_LOW_MAXVAL                      15
 #define REG_HIGH_MINVAL                     16
@@ -67,13 +70,14 @@
     .fade_in_time    = 0,                 \
     .fade_out_time   = 0                  \
 };
+//}}}
 
 static float    m_clkx_tics_pr_sec;         // SX150x clock ticks per sec.
 static bool     m_initialized = false;      // Is this module initialized?
 static uint16_t m_fade_supported_port_mask; // Port mask, indicates which pins that support the fade functionality.
 
-
-bool sx150x_led_drv_calc_fade_supp(uint16_t port_mask)
+//{{{
+bool sx150x_led_drv_calc_fade_supp (uint16_t port_mask)
 {
     if (!m_initialized)
     {
@@ -92,11 +96,11 @@ bool sx150x_led_drv_calc_fade_supp(uint16_t port_mask)
 
     return false;
 }
+//}}}
 
-
-/**@brief Checks if the difference between the desired value and actual value is above a given threshold.
- */
-static uint32_t diff_above_limit(uint32_t desired_val, uint32_t actual_val)
+//{{{
+// Checks if the difference between the desired value and actual value is above a given threshold.
+static uint32_t diff_above_limit (uint32_t desired_val, uint32_t actual_val)
 {
     if ((desired_val * ( 1 + (ACCURACY_LIMIT_PERCENT / (float)100))) < actual_val)
     {
@@ -111,13 +115,12 @@ static uint32_t diff_above_limit(uint32_t desired_val, uint32_t actual_val)
         return 0;
     }
 }
-
-/**@brief Calculates the on and off register values to be set based on the desired real values requested by the user.
- *
- * @param[in,out] real_val      Will be populated with the acutal values used.
- * @param[out]    reg_val       The register values to be written to the IO extender.
-*/
-static uint32_t optimal_time_settings_onoff_calculate(drv_ext_light_sequence_t * const real_val,
+//}}}
+//{{{
+// Calculates the on and off register values to be set based on the desired real values requested by the user.
+// @param[in,out] real_val      Will be populated with the acutal values used.
+// @param[out]    reg_val       The register values to be written to the IO extender.
+static uint32_t optimal_time_settings_onoff_calculate (drv_ext_light_sequence_t * const real_val,
                                                       sx150x_led_drv_regs_vals_t * const reg_val)
 {
     uint32_t inaccurate_results_num = 0;
@@ -219,13 +222,12 @@ static uint32_t optimal_time_settings_onoff_calculate(drv_ext_light_sequence_t *
 
     return inaccurate_results_num;
 }
-
-/**@brief Calculates the rise and fall register values to be set based on the desired real values requested by the user.
- *
- * @param[in,out] real_val      Will be populated with the acutal values used.
- * @param[out]    reg_val       The register values to be written to the IO extender.
- */
-static uint32_t optimal_time_settings_risefall_calculate(drv_ext_light_sequence_t * const real_val,
+//}}}
+//{{{
+// Calculates the rise and fall register values to be set based on the desired real values requested by the user.
+//* @param[in,out] real_val      Will be populated with the acutal values used.
+//* @param[out]    reg_val       The register values to be written to the IO extender.
+static uint32_t optimal_time_settings_risefall_calculate (drv_ext_light_sequence_t * const real_val,
                                                          sx150x_led_drv_regs_vals_t * const reg_val)
 {
     uint32_t inaccurate_results_num = 0;
@@ -344,11 +346,12 @@ static uint32_t optimal_time_settings_risefall_calculate(drv_ext_light_sequence_
 
     return inaccurate_results_num;
 }
+//}}}
 
-
-ret_code_t sx150x_led_drv_calc_convert(uint16_t port_mask,
-                                       drv_ext_light_sequence_t * const real_vals,
-                                       sx150x_led_drv_regs_vals_t * const reg_vals)
+//{{{
+ret_code_t sx150x_led_drv_calc_convert (uint16_t port_mask,
+                                        drv_ext_light_sequence_t * const real_vals,
+                                        sx150x_led_drv_regs_vals_t * const reg_vals)
 {
     uint32_t inaccurate_results_num = 0;
 
@@ -404,9 +407,10 @@ ret_code_t sx150x_led_drv_calc_convert(uint16_t port_mask,
     }
     return SX150x_LED_DRC_CALC_STATUS_CODE_SUCCESS;
 }
+//}}}
 
-
-void sx150x_led_drv_calc_init(uint16_t fade_supported_port_mask, uint32_t clkx_tics_pr_sec)
+//{{{
+void sx150x_led_drv_calc_init (uint16_t fade_supported_port_mask, uint32_t clkx_tics_pr_sec)
 {
 
     m_clkx_tics_pr_sec = (float)clkx_tics_pr_sec;
@@ -414,3 +418,4 @@ void sx150x_led_drv_calc_init(uint16_t fade_supported_port_mask, uint32_t clkx_t
     m_fade_supported_port_mask = fade_supported_port_mask;
     m_initialized = true;
 }
+//}}}

@@ -1,3 +1,4 @@
+//{{{  copyright
 /*
   Copyright (c) 2010 - 2017, Nordic Semiconductor ASA
   All rights reserved.
@@ -35,11 +36,13 @@
   LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
   OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
+//}}}
+//{{{  includes
 #include "ble_tcs.h"
 #include "ble_srv_common.h"
 #include "sdk_common.h"
-
+//}}}
+//{{{  defines
 #define BLE_UUID_TCS_DEVICE_NAME_CHAR   0x0101                      /**< The UUID of the device name Characteristic. */
 #define BLE_UUID_TCS_ADV_PARAMS_CHAR    0x0102                      /**< The UUID of the advertising parameters Characteristic. */
 #define BLE_UUID_TCS_APPEARANCE_CHAR    0x0103                      /**< The UUID of the appearance Characteristic. */
@@ -51,7 +54,9 @@
 
 // EF68xxxx-9B35-4933-9B10-52FFA9740042
 #define TCS_BASE_UUID                  {{0x42, 0x00, 0x74, 0xA9, 0xFF, 0x52, 0x10, 0x9B, 0x33, 0x49, 0x35, 0x9B, 0x00, 0x00, 0x68, 0xEF}} /**< Used vendor specific UUID. */
+//}}}
 
+//{{{
 /**@brief Function for handling the @ref BLE_GAP_EVT_CONNECTED event from the S132 SoftDevice.
  *
  * @param[in] p_tcs     Thingy Configuration Service structure.
@@ -62,7 +67,8 @@ static void on_connect(ble_tcs_t * p_tcs, ble_evt_t * p_ble_evt)
     p_tcs->conn_handle = p_ble_evt->evt.gap_evt.conn_handle;
 }
 
-
+//}}}
+//{{{
 /**@brief Function for handling the @ref BLE_GAP_EVT_DISCONNECTED event from the S132 SoftDevice.
  *
  * @param[in] p_tcs     Thingy Configuration Service structure.
@@ -73,8 +79,8 @@ static void on_disconnect(ble_tcs_t * p_tcs, ble_evt_t * p_ble_evt)
     UNUSED_PARAMETER(p_ble_evt);
     p_tcs->conn_handle = BLE_CONN_HANDLE_INVALID;
 }
-
-
+//}}}
+//{{{
 static void on_authorize_req(ble_tcs_t * p_tcs, ble_evt_t * p_ble_evt)
 {
     ble_gatts_evt_rw_authorize_request_t * p_evt_rw_authorize_request = &p_ble_evt->evt.gatts_evt.params.authorize_request;
@@ -243,8 +249,9 @@ static void on_authorize_req(ble_tcs_t * p_tcs, ble_evt_t * p_ble_evt)
         }
     }
 }
+//}}}
 
-
+//{{{
 /**@brief Function for adding device name characteristic.
  *
  * @param[in] p_tcs       Thingy Configuration Service structure.
@@ -297,8 +304,8 @@ static uint32_t device_name_char_add(ble_tcs_t * p_tcs, const ble_tcs_init_t * p
                                            &attr_char_value,
                                            &p_tcs->dev_name_handles);
 }
-
-
+//}}}
+//{{{
 /**@brief Function for adding advertising parameters characteristic.
  *
  * @param[in] p_tcs       Thingy Configuration Service structure.
@@ -351,8 +358,8 @@ static uint32_t adv_params_char_add(ble_tcs_t * p_tcs, const ble_tcs_init_t * p_
                                            &attr_char_value,
                                            &p_tcs->adv_param_handles);
 }
-
-
+//}}}
+//{{{
 /**@brief Function for adding connection parameters characteristic.
  *
  * @param[in] p_tcs       Thingy Configuration Service structure.
@@ -405,8 +412,8 @@ static uint32_t conn_params_char_add(ble_tcs_t * p_tcs, const ble_tcs_init_t * p
                                            &attr_char_value,
                                            &p_tcs->conn_param_handles);
 }
-
-
+//}}}
+//{{{
 /**@brief Function for adding beacon characteristic.
  *
  * @param[in] p_tcs       Thingy Configuration Service structure.
@@ -459,8 +466,8 @@ static uint32_t beacon_data_char_add(ble_tcs_t * p_tcs, const ble_tcs_init_t * p
                                            &attr_char_value,
                                            &p_tcs->beacon_handles);
 }
-
-
+//}}}
+//{{{
 /**@brief Function for adding cloud token characteristic.
  *
  * @param[in] p_tcs       Thingy Configuration Service structure.
@@ -513,8 +520,8 @@ static uint32_t token_data_char_add(ble_tcs_t * p_tcs, const ble_tcs_init_t * p_
                                            &attr_char_value,
                                            &p_tcs->cloud_handles);
 }
-
-
+//}}}
+//{{{
 /**@brief Function for adding FW version characteristic.
  *
  * @param[in] p_tcs       Thingy Configuration Service structure.
@@ -564,8 +571,8 @@ static uint32_t fw_version_char_add(ble_tcs_t * p_tcs, const ble_tcs_init_t * p_
                                            &attr_char_value,
                                            &p_tcs->fwv_handles);
 }
-
-
+//}}}
+//{{{
 /**@brief Function for adding MTU characteristic.
  *
  * @param[in] p_tcs       Thingy Configuration Service structure.
@@ -619,7 +626,9 @@ static uint32_t mtu_char_add(ble_tcs_t * p_tcs, const ble_tcs_init_t * p_tcs_ini
                                            &p_tcs->mtu_handles);
 }
 
+//}}}
 
+//{{{
 void ble_tcs_on_ble_evt(ble_tcs_t * p_tcs, ble_evt_t * p_ble_evt)
 {
     if ((p_tcs == NULL) || (p_ble_evt == NULL))
@@ -646,8 +655,9 @@ void ble_tcs_on_ble_evt(ble_tcs_t * p_tcs, ble_evt_t * p_ble_evt)
             break;
     }
 }
+//}}}
 
-
+//{{{
 uint32_t ble_tcs_init(ble_tcs_t * p_tcs, const ble_tcs_init_t * p_tcs_init)
 {
     uint32_t      err_code;
@@ -704,8 +714,9 @@ uint32_t ble_tcs_init(ble_tcs_t * p_tcs, const ble_tcs_init_t * p_tcs_init)
 
     return NRF_SUCCESS;
 }
+//}}}
 
-
+//{{{
 uint32_t ble_tcs_mtu_set(ble_tcs_t * p_tcs, ble_tcs_mtu_t * p_data)
 {
     ble_gatts_value_t      gatts_value;
@@ -724,3 +735,4 @@ uint32_t ble_tcs_mtu_set(ble_tcs_t * p_tcs, ble_tcs_mtu_t * p_data)
 
     return sd_ble_gatts_value_set(p_tcs->conn_handle, p_tcs->mtu_handles.value_handle, &gatts_value);
 }
+//}}}

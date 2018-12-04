@@ -1,3 +1,4 @@
+//{{{  copyright
 /*
   Copyright (c) 2010 - 2017, Nordic Semiconductor ASA
   All rights reserved.
@@ -35,11 +36,13 @@
   LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
   OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
+//}}}
+//{{{  include
 #include "ble_tes.h"
 #include "ble_srv_common.h"
 #include "sdk_common.h"
-
+//}}}
+//{{{  define
 #define BLE_UUID_TES_TEMPERATURE_CHAR 0x0201                      /**< The UUID of the temperature Characteristic. */
 #define BLE_UUID_TES_PRESSURE_CHAR    0x0202                      /**< The UUID of the pressure Characteristic. */
 #define BLE_UUID_TES_HUMIDITY_CHAR    0x0203                      /**< The UUID of the humidity Characteristic. */
@@ -53,8 +56,9 @@
 
 // EF68xxxx-9B35-4933-9B10-52FFA9740042
 #define TES_BASE_UUID                  {{0x42, 0x00, 0x74, 0xA9, 0xFF, 0x52, 0x10, 0x9B, 0x33, 0x49, 0x35, 0x9B, 0x00, 0x00, 0x68, 0xEF}} /**< Used vendor specific UUID. */
+//}}}
 
-
+//{{{
 /**@brief Function for handling the @ref BLE_GAP_EVT_CONNECTED event from the S132 SoftDevice.
  *
  * @param[in] p_tes     Thingy Environment Service structure.
@@ -64,8 +68,8 @@ static void on_connect(ble_tes_t * p_tes, ble_evt_t * p_ble_evt)
 {
     p_tes->conn_handle = p_ble_evt->evt.gap_evt.conn_handle;
 }
-
-
+//}}}
+//{{{
 /**@brief Function for handling the @ref BLE_GAP_EVT_DISCONNECTED event from the S132 SoftDevice.
  *
  * @param[in] p_tes     Thingy Environment Service structure.
@@ -76,8 +80,8 @@ static void on_disconnect(ble_tes_t * p_tes, ble_evt_t * p_ble_evt)
     UNUSED_PARAMETER(p_ble_evt);
     p_tes->conn_handle = BLE_CONN_HANDLE_INVALID;
 }
-
-
+//}}}
+//{{{
 /**@brief Function for handling the @ref BLE_GATTS_EVT_WRITE event from the S132 SoftDevice.
  *
  * @param[in] p_tes     Thingy Environment Service structure.
@@ -177,8 +181,8 @@ static void on_write(ble_tes_t * p_tes, ble_evt_t * p_ble_evt)
         // Do Nothing. This event is not relevant for this service.
     }
 }
-
-
+//}}}
+//{{{
 static void on_authorize_req(ble_tes_t * p_tes, ble_evt_t * p_ble_evt)
 {
     ble_gatts_evt_rw_authorize_request_t * p_evt_rw_authorize_request = &p_ble_evt->evt.gatts_evt.params.authorize_request;
@@ -245,8 +249,9 @@ static void on_authorize_req(ble_tes_t * p_tes, ble_evt_t * p_ble_evt)
         }
     }
 }
+//}}}
 
-
+//{{{
 /**@brief Function for adding temperature characteristic.
  *
  * @param[in] p_tes       Thingy Environment Service structure.
@@ -305,8 +310,8 @@ static uint32_t temperature_char_add(ble_tes_t * p_tes, const ble_tes_init_t * p
                                            &attr_char_value,
                                            &p_tes->temperature_handles);
 }
-
-
+//}}}
+//{{{
 /**@brief Function for adding pressure characteristic.
  *
  * @param[in] p_tes       Thingy Environment Service structure.
@@ -365,8 +370,8 @@ static uint32_t pressure_char_add(ble_tes_t * p_tes, const ble_tes_init_t * p_te
                                            &attr_char_value,
                                            &p_tes->pressure_handles);
 }
-
-
+//}}}
+//{{{
 /**@brief Function for adding humidity characteristic.
  *
  * @param[in] p_tes       Thingy Environment Service structure.
@@ -425,8 +430,8 @@ static uint32_t humidity_char_add(ble_tes_t * p_tes, const ble_tes_init_t * p_te
                                            &attr_char_value,
                                            &p_tes->humidity_handles);
 }
-
-
+//}}}
+//{{{
 /**@brief Function for adding gas characteristic.
  *
  * @param[in] p_tes       Thingy Environment Service structure.
@@ -485,8 +490,8 @@ static uint32_t gas_char_add(ble_tes_t * p_tes, const ble_tes_init_t * p_tes_ini
                                            &attr_char_value,
                                            &p_tes->gas_handles);
 }
-
-
+//}}}
+//{{{
 /**@brief Function for adding color characteristic.
  *
  * @param[in] p_tes       Thingy Environment Service structure.
@@ -545,8 +550,8 @@ static uint32_t color_char_add(ble_tes_t * p_tes, const ble_tes_init_t * p_tes_i
                                            &attr_char_value,
                                            &p_tes->color_handles);
 }
-
-
+//}}}
+//{{{
 /**@brief Function for adding configuration characteristic.
  *
  * @param[in] p_tes       Thingy Environment Service structure.
@@ -599,8 +604,10 @@ static uint32_t config_char_add(ble_tes_t * p_tes, const ble_tes_init_t * p_tes_
                                            &attr_char_value,
                                            &p_tes->config_handles);
 }
+//}}}
 
 
+//{{{
 void ble_tes_on_ble_evt(ble_tes_t * p_tes, ble_evt_t * p_ble_evt)
 {
     if ((p_tes == NULL) || (p_ble_evt == NULL))
@@ -631,8 +638,9 @@ void ble_tes_on_ble_evt(ble_tes_t * p_tes, ble_evt_t * p_ble_evt)
             break;
     }
 }
+//}}}
 
-
+//{{{
 uint32_t ble_tes_init(ble_tes_t * p_tes, const ble_tes_init_t * p_tes_init)
 {
     uint32_t      err_code;
@@ -688,8 +696,9 @@ uint32_t ble_tes_init(ble_tes_t * p_tes, const ble_tes_init_t * p_tes_init)
 
     return NRF_SUCCESS;
 }
+//}}}
 
-
+//{{{
 uint32_t ble_tes_temperature_set(ble_tes_t * p_tes, ble_tes_temperature_t * p_data)
 {
     ble_gatts_hvx_params_t hvx_params;
@@ -716,8 +725,8 @@ uint32_t ble_tes_temperature_set(ble_tes_t * p_tes, ble_tes_temperature_t * p_da
 
     return sd_ble_gatts_hvx(p_tes->conn_handle, &hvx_params);
 }
-
-
+//}}}
+//{{{
 uint32_t ble_tes_pressure_set(ble_tes_t * p_tes, ble_tes_pressure_t * p_data)
 {
     ble_gatts_hvx_params_t hvx_params;
@@ -744,8 +753,8 @@ uint32_t ble_tes_pressure_set(ble_tes_t * p_tes, ble_tes_pressure_t * p_data)
 
     return sd_ble_gatts_hvx(p_tes->conn_handle, &hvx_params);
 }
-
-
+//}}}
+//{{{
 uint32_t ble_tes_humidity_set(ble_tes_t * p_tes, ble_tes_humidity_t * p_data)
 {
     ble_gatts_hvx_params_t hvx_params;
@@ -772,8 +781,8 @@ uint32_t ble_tes_humidity_set(ble_tes_t * p_tes, ble_tes_humidity_t * p_data)
 
     return sd_ble_gatts_hvx(p_tes->conn_handle, &hvx_params);
 }
-
-
+//}}}
+//{{{
 uint32_t ble_tes_gas_set(ble_tes_t * p_tes, ble_tes_gas_t * p_data)
 {
     ble_gatts_hvx_params_t hvx_params;
@@ -800,8 +809,8 @@ uint32_t ble_tes_gas_set(ble_tes_t * p_tes, ble_tes_gas_t * p_data)
 
     return sd_ble_gatts_hvx(p_tes->conn_handle, &hvx_params);
 }
-
-
+//}}}
+//{{{
 uint32_t ble_tes_color_set(ble_tes_t * p_tes, ble_tes_color_t * p_data)
 {
     ble_gatts_hvx_params_t hvx_params;
@@ -828,3 +837,4 @@ uint32_t ble_tes_color_set(ble_tes_t * p_tes, ble_tes_color_t * p_data)
 
     return sd_ble_gatts_hvx(p_tes->conn_handle, &hvx_params);
 }
+//}}}
