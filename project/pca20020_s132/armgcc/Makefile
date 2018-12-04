@@ -4,23 +4,13 @@ export OUTPUT_FILENAME
 #MAKEFILE_NAME := $(CURDIR)/$(word $(words $(MAKEFILE_LIST)),$(MAKEFILE_LIST))
 MAKEFILE_NAME := $(MAKEFILE_LIST)
 MAKEFILE_DIR := $(dir $(MAKEFILE_NAME) )
-
 TEMPLATE_PATH = ../../../sdk_components/toolchain/gcc
-ifeq ($(OS),Windows_NT)
 include $(TEMPLATE_PATH)/Makefile.windows
-else
-include $(TEMPLATE_PATH)/Makefile.posix
-endif
 
 MK := mkdir
 RM := rm -rf
-
-#echo suspend
-ifeq ("$(VERBOSE)","1")
-NO_ECHO :=
-else
+#NO_ECHO :=
 NO_ECHO := @
-endif
 
 # Toolchain commands
 CC              := '$(GNU_INSTALL_ROOT)/bin/$(GNU_PREFIX)-gcc'
@@ -40,7 +30,6 @@ $(abspath ../../../libs/liblibmplmpu_m4_hardfp/liblibmplmpu.a) \
 $(abspath ../../../sdk_components/toolchain/cmsis/dsp/GCC/libarm_cortexM4lf_math.a) \
 $(abspath ../../../sdk_components/nfc/t2t_lib/nfc_t2t_lib_gcc.a) \
 
-#source common to all targets
 C_SOURCE_FILES += \
 $(abspath ../main.c) \
 $(abspath ../../../source/modules/m_ble.c) \
@@ -146,10 +135,9 @@ $(abspath ../../../sdk_components/ble/ble_services/ble_bas/ble_bas.c) \
 $(abspath ../../../sdk_components/libraries/bootloader/dfu/nrf_dfu_settings.c) \
 $(abspath ../../../sdk_components/libraries/crc32/crc32.c) \
 $(abspath ../../../sdk_components/libraries/strerror/nrf_strerror.c) \
-#assembly files common to all targets
+
 ASM_SOURCE_FILES  = $(abspath ../../../sdk_components/toolchain/gcc/gcc_startup_nrf52.S)
 
-#includes common to all targets
 INC_PATHS += -I$(abspath ../config)
 INC_PATHS += -I$(abspath ../../../external/segger_rtt)
 INC_PATHS += -I$(abspath ../../../include/ble_services)
@@ -315,16 +303,9 @@ ASMFLAGS += -DEMPL_TARGET_NRF52
 #default target - first one defined
 default: nrf52832_xxaa_s132
 
-#building all targets
 all: clean
 	$(NO_ECHO)$(MAKE) -f $(MAKEFILE_NAME) -C $(MAKEFILE_DIR) -e cleanobj
 	$(NO_ECHO)$(MAKE) -f $(MAKEFILE_NAME) -C $(MAKEFILE_DIR) -e nrf52832_xxaa_s132
-
-#target for printing all targets
-help:
-	@echo following targets are available:
-	@echo   nrf52832_xxaa_s132
-	@echo   flash_softdevice
 
 C_SOURCE_FILE_NAMES = $(notdir $(C_SOURCE_FILES))
 C_PATHS = $(call remduplicates, $(dir $(C_SOURCE_FILES) ) )
@@ -348,9 +329,7 @@ nrf52832_xxaa_s132: LINKER_SCRIPT=ble_app_thingy_gcc_nrf52.ld
 nrf52832_xxaa_s132: $(BUILD_DIRECTORIES) $(OBJECTS)
 	@echo Linking target: $(OUTPUT_FILENAME).out
 	$(NO_ECHO)$(CC) $(LDFLAGS) $(OBJECTS) $(LIBS) -lm -o $(OUTPUT_BINARY_DIRECTORY)/$(OUTPUT_FILENAME).out
-	-@echo ''
 	$(NO_ECHO)$(SIZE) $(OUTPUT_BINARY_DIRECTORY)/$(OUTPUT_FILENAME).out
-	-@echo ''
 	@echo Preparing: $(OUTPUT_FILENAME).hex
 	$(NO_ECHO)$(OBJCOPY) -O ihex $(OUTPUT_BINARY_DIRECTORY)/$(OUTPUT_FILENAME).out $(OUTPUT_BINARY_DIRECTORY)/$(OUTPUT_FILENAME).hex
 
