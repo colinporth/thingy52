@@ -1,11 +1,12 @@
 PROJECT_NAME := ble_app_thingy_s132_pca20020
 
 export OUTPUT_FILENAME
-#MAKEFILE_NAME := $(CURDIR)/$(word $(words $(MAKEFILE_LIST)),$(MAKEFILE_LIST))
 MAKEFILE_NAME := $(MAKEFILE_LIST)
 MAKEFILE_DIR := $(dir $(MAKEFILE_NAME) )
 TEMPLATE_PATH = ../../../sdk_components/toolchain/gcc
-include $(TEMPLATE_PATH)/Makefile.windows
+GNU_INSTALL_ROOT := C:/Program Files (x86)/GNU Tools ARM Embedded/4.9 2015q3
+GNU_VERSION := 4.9.3
+GNU_PREFIX := arm-none-eabi
 
 MK := mkdir
 RM := rm -rf
@@ -32,19 +33,11 @@ $(abspath ../../../sdk_components/nfc/t2t_lib/nfc_t2t_lib_gcc.a) \
 
 C_SOURCE_FILES += \
 $(abspath ../main.c) \
-$(abspath ../../../source/modules/m_ble.c) \
-$(abspath ../../../source/modules/m_ble_flash.c) \
-$(abspath ../../../source/util/advertiser_beacon_timeslot.c) \
-$(abspath ../../../source/util/twi_manager.c) \
-$(abspath ../../../source/util/support_func.c) \
-$(abspath ../../../source/modules/m_environment.c) \
-$(abspath ../../../source/modules/m_environment_flash.c) \
-$(abspath ../../../source/modules/m_sound.c) \
-$(abspath ../../../source/modules/m_motion.c) \
-$(abspath ../../../source/modules/m_motion_flash.c) \
-$(abspath ../../../source/modules/m_ui.c) \
-$(abspath ../../../source/modules/m_ui_flash.c) \
-$(abspath ../../../source/modules/m_batt_meas.c) \
+$(abspath ../../../source/ble_services/ble_tes.c) \
+$(abspath ../../../source/ble_services/ble_tcs.c) \
+$(abspath ../../../source/ble_services/ble_uis.c) \
+$(abspath ../../../source/ble_services/ble_tms.c) \
+$(abspath ../../../source/ble_services/ble_tss.c) \
 $(abspath ../../../source/drivers/drv_gas_sensor.c) \
 $(abspath ../../../source/drivers/drv_ccs811.c) \
 $(abspath ../../../source/drivers/drv_pressure.c) \
@@ -54,7 +47,6 @@ $(abspath ../../../source/drivers/drv_hts221.c) \
 $(abspath ../../../source/drivers/drv_ext_light.c) \
 $(abspath ../../../source/drivers/drv_ext_gpio.c) \
 $(abspath ../../../source/drivers/drv_nfc.c) \
-$(abspath ../../../source/util/sx150x_led_drv_calc.c) \
 $(abspath ../../../source/drivers/drv_sx1509.c) \
 $(abspath ../../../source/drivers/drv_bh1745.c) \
 $(abspath ../../../source/drivers/drv_color.c) \
@@ -63,6 +55,22 @@ $(abspath ../../../source/drivers/drv_mpu9250.c) \
 $(abspath ../../../source/drivers/drv_motion.c) \
 $(abspath ../../../source/drivers/drv_acc_lis3dh.c) \
 $(abspath ../../../source/drivers/drv_mic.c) \
+$(abspath ../../../source/modules/m_ble.c) \
+$(abspath ../../../source/modules/m_ble_flash.c) \
+$(abspath ../../../source/modules/m_environment.c) \
+$(abspath ../../../source/modules/m_environment_flash.c) \
+$(abspath ../../../source/modules/m_sound.c) \
+$(abspath ../../../source/modules/m_motion.c) \
+$(abspath ../../../source/modules/m_motion_flash.c) \
+$(abspath ../../../source/modules/m_ui.c) \
+$(abspath ../../../source/modules/m_ui_flash.c) \
+$(abspath ../../../source/modules/m_batt_meas.c) \
+$(abspath ../../../source/util/advertiser_beacon_timeslot.c) \
+$(abspath ../../../source/util/nrf_dfu_flash_buttonless.c) \
+$(abspath ../../../source/util/support_func.c) \
+$(abspath ../../../source/util/sx150x_led_drv_calc.c) \
+$(abspath ../../../source/util/twi_manager.c) \
+$(abspath ../../../libs/dvi_adpcm/dvi_adpcm.c) \
 $(abspath ../../../libs/eMD6/core/driver/eMPL/inv_mpu.c) \
 $(abspath ../../../libs/eMD6/core/driver/eMPL/inv_mpu_dmp_motion_driver.c) \
 $(abspath ../../../libs/eMD6/core/mllite/data_builder.c) \
@@ -76,21 +84,17 @@ $(abspath ../../../libs/eMD6/core/mllite/start_manager.c) \
 $(abspath ../../../libs/eMD6/core/mllite/storage_manager.c) \
 $(abspath ../../../libs/eMD6/core/eMPL-hal/eMPL_outputs.c) \
 $(abspath ../../../libs/eMD6/core/driver/nRF52/log_nrf52.c) \
-$(abspath ../../../libs/dvi_adpcm/dvi_adpcm.c) \
 $(abspath ../../../libs/sr3_audio/drv_audio_coder_adpcm.c) \
 $(abspath ../../../libs/sr3_audio/drv_audio_coder_bv32fp.c) \
 $(abspath ../../../libs/sr3_audio/drv_audio_dsp.c) \
 $(abspath ../../../libs/sr3_audio/drv_audio_pdm.c) \
-$(abspath ../../../sdk_components/ble/common/ble_advdata.c) \
 $(abspath ../../../sdk_components/ble/ble_advertising/ble_advertising.c) \
+$(abspath ../../../sdk_components/ble/common/ble_advdata.c) \
 $(abspath ../../../sdk_components/ble/common/ble_conn_params.c) \
 $(abspath ../../../sdk_components/ble/common/ble_srv_common.c) \
 $(abspath ../../../sdk_components/ble/common/ble_conn_state.c) \
-$(abspath ../../../source/ble_services/ble_tes.c) \
-$(abspath ../../../source/ble_services/ble_tcs.c) \
-$(abspath ../../../source/ble_services/ble_uis.c) \
-$(abspath ../../../source/ble_services/ble_tms.c) \
-$(abspath ../../../source/ble_services/ble_tss.c) \
+$(abspath ../../../sdk_components/ble/ble_services/ble_dfu/ble_dfu.c) \
+$(abspath ../../../sdk_components/ble/ble_services/ble_bas/ble_bas.c) \
 $(abspath ../../../sdk_components/drivers_nrf/common/nrf_drv_common.c) \
 $(abspath ../../../sdk_components/drivers_nrf/gpiote/nrf_drv_gpiote.c) \
 $(abspath ../../../sdk_components/drivers_nrf/twi_master/nrf_drv_twi.c) \
@@ -121,20 +125,17 @@ $(abspath ../../../sdk_components/libraries/fds/fds.c) \
 $(abspath ../../../sdk_components/libraries/util/app_util_platform.c) \
 $(abspath ../../../sdk_components/libraries/util/sdk_mapped_flags.c) \
 $(abspath ../../../sdk_components/libraries/queue/nrf_queue.c) \
+$(abspath ../../../sdk_components/libraries/log/src/nrf_log_frontend.c) \
+$(abspath ../../../sdk_components/libraries/log/src/nrf_log_backend_serial.c) \
+$(abspath ../../../sdk_components/libraries/bootloader/dfu/nrf_dfu_settings.c) \
+$(abspath ../../../sdk_components/libraries/crc32/crc32.c) \
+$(abspath ../../../sdk_components/libraries/strerror/nrf_strerror.c) \
+$(abspath ../../../sdk_components/softdevice/common/softdevice_handler/softdevice_handler.c) \
+$(abspath ../../../sdk_components/toolchain/system_nrf52.c) \
 $(abspath ../../../external/segger_rtt/RTT_Syscalls_GCC.c) \
 $(abspath ../../../external/segger_rtt/SEGGER_RTT.c) \
 $(abspath ../../../external/segger_rtt/SEGGER_RTT_printf.c) \
 $(abspath ../../../external/sdk13_override/softdevice_handler_appsh.c) \
-$(abspath ../../../sdk_components/softdevice/common/softdevice_handler/softdevice_handler.c) \
-$(abspath ../../../sdk_components/toolchain/system_nrf52.c) \
-$(abspath ../../../sdk_components/libraries/log/src/nrf_log_frontend.c) \
-$(abspath ../../../sdk_components/libraries/log/src/nrf_log_backend_serial.c) \
-$(abspath ../../../source/util/nrf_dfu_flash_buttonless.c) \
-$(abspath ../../../sdk_components/ble/ble_services/ble_dfu/ble_dfu.c) \
-$(abspath ../../../sdk_components/ble/ble_services/ble_bas/ble_bas.c) \
-$(abspath ../../../sdk_components/libraries/bootloader/dfu/nrf_dfu_settings.c) \
-$(abspath ../../../sdk_components/libraries/crc32/crc32.c) \
-$(abspath ../../../sdk_components/libraries/strerror/nrf_strerror.c) \
 
 ASM_SOURCE_FILES  = $(abspath ../../../sdk_components/toolchain/gcc/gcc_startup_nrf52.S)
 
@@ -293,11 +294,11 @@ ASMFLAGS += -DEMPL
 ASMFLAGS += -DUSE_DMP
 ASMFLAGS += -DEMPL_TARGET_NRF52
 
-default: nrf52832_xxaa_s132
+default: thingy
 
 all: clean
 	$(NO_ECHO)$(MAKE) -f $(MAKEFILE_NAME) -C $(MAKEFILE_DIR) -e cleanobj
-	$(NO_ECHO)$(MAKE) -f $(MAKEFILE_NAME) -C $(MAKEFILE_DIR) -e nrf52832_xxaa_s132
+	$(NO_ECHO)$(MAKE) -f $(MAKEFILE_NAME) -C $(MAKEFILE_DIR) -e thingy
 
 C_SOURCE_FILE_NAMES = $(notdir $(C_SOURCE_FILES))
 C_PATHS = $(call remduplicates, $(dir $(C_SOURCE_FILES) ) )
@@ -315,10 +316,10 @@ OBJECTS = $(C_OBJECTS) $(ASM_OBJECTS)
 # Special case for inv_mpu as this throws uninitialized warnings
 $(OBJECT_DIRECTORY)/inv_mpu.o : CFLAGS+=-Wno-maybe-uninitialized
 
-nrf52832_xxaa_s132: OUTPUT_FILENAME := nrf52832_xxaa_s132
-nrf52832_xxaa_s132: LINKER_SCRIPT=thingy.ld
+thingy: OUTPUT_FILENAME := thingy
+thingy: LINKER_SCRIPT=thingy.ld
 
-nrf52832_xxaa_s132: $(BUILD_DIRECTORIES) $(OBJECTS)
+thingy: $(BUILD_DIRECTORIES) $(OBJECTS)
 	@echo Linking target: $(OUTPUT_FILENAME).out
 	$(NO_ECHO)$(CC) $(LDFLAGS) $(OBJECTS) $(LIBS) -lm -o $(OUTPUT_BINARY_DIRECTORY)/$(OUTPUT_FILENAME).out
 	$(NO_ECHO)$(SIZE) $(OUTPUT_BINARY_DIRECTORY)/$(OUTPUT_FILENAME).out
@@ -353,7 +354,7 @@ $(OUTPUT_BINARY_DIRECTORY)/$(OUTPUT_FILENAME).hex: $(OUTPUT_BINARY_DIRECTORY)/$(
 clean:
 	$(RM) $(BUILD_DIRECTORIES)
 
-ocd: nrf52832_xxaa_s132
+ocd: thingy
 	@echo ocd Flashing: $(OUTPUT_BINARY_DIRECTORY)/$<.hex
 	..\..\..\openOCD\bin\openocd.exe -f openocd.cfg -c "program $(OUTPUT_BINARY_DIRECTORY)/$<.hex verify reset exit"
 
@@ -361,6 +362,6 @@ ocdsoft:
 	@echo ocd Flashing: $(OUTPUT_BINARY_DIRECTORY)/$<.hex
 	..\..\..\openOCD\bin\openocd.exe -f openocd.cfg -c "program ../../../sdk_components/softdevice/s132/hex/s132_nrf52_4.0.2_softdevice.hex verify exit"
 
-ocdtest: 
+ocdtest:
 	@echo ocd test
 	..\..\..\openOCD\bin\openocd.exe -f openocd.cfg

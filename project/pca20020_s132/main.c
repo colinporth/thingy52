@@ -80,28 +80,45 @@
 #define SCHED_QUEUE_SIZE    60  /**< Maximum number of events in the scheduler queue. */
 #define FPU_EXCEPTION_MASK  0x0000009F
 
-static const nrf_drv_twi_t     m_twi_sensors = NRF_DRV_TWI_INSTANCE(TWI_SENSOR_INSTANCE);
-static m_ble_service_handle_t  m_ble_service_handles[THINGY_SERVICES_MAX];
+static const nrf_drv_twi_t m_twi_sensors = NRF_DRV_TWI_INSTANCE(TWI_SENSOR_INSTANCE);
+//{{{
+static const nrf_drv_twi_config_t twi_config = {
+  .scl                = TWI_SCL,
+  .sda                = TWI_SDA,
+  .frequency          = NRF_TWI_FREQ_400K,
+  .interrupt_priority = APP_IRQ_PRIORITY_LOW
+  };
+//}}}
+//{{{
+static const drv_sx1509_cfg_t sx1509_cfg = {
+  .twi_addr       = SX1509_ADDR,
+  .p_twi_instance = &m_twi_sensors,
+  .p_twi_cfg      = &twi_config
+  };
+//}}}
+static m_ble_service_handle_t m_ble_service_handles[THINGY_SERVICES_MAX];
 
 //{{{
-void app_error_fault_handler (uint32_t id, uint32_t pc, uint32_t info)
-{
+void app_error_fault_handler (uint32_t id, uint32_t pc, uint32_t info) {
+
   #if NRF_LOG_ENABLED
-      error_info_t * err_info = (error_info_t*)info;
-      NRF_LOG_ERROR(" id = %d, pc = %d, file = %s, line number: %d, error code = %d = %s \r\n", \
-      id, pc, nrf_log_push((char*)err_info->p_file_name), err_info->line_num, err_info->err_code, nrf_log_push((char*)nrf_strerror_find(err_info->err_code)));
+    error_info_t * err_info = (error_info_t*)info;
+    NRF_LOG_ERROR (" id = %d, pc = %d, file = %s, line number: %d, error code = %d = %s \r\n", \
+                   id, pc, nrf_log_push((char*)err_info->p_file_name), 
+                   err_info->line_num, err_info->err_code, 
+                   nrf_log_push ((char*)nrf_strerror_find (err_info->err_code)));
   #endif
 
-  (void)m_ui_led_set_event(M_UI_ERROR);
+  (void)m_ui_led_set_event (M_UI_ERROR);
   NRF_LOG_FINAL_FLUSH();
-  nrf_delay_ms(5);
+  nrf_delay_ms (5);
 
   // On assert, the system can only recover with a reset.
   #ifndef DEBUG
     NVIC_SystemReset();
   #endif
 
-  app_error_save_and_stop(id, pc, info);
+  app_error_save_and_stop (id, pc, info);
   }
 //}}}
 //{{{
@@ -111,10 +128,9 @@ void app_error_fault_handler (uint32_t id, uint32_t pc, uint32_t info)
  * @param[in] line_num    Line number of the failing ASSERT call.
  * @param[in] p_file_name File name of the failing ASSERT call.
  */
-void assert_nrf_callback (uint16_t line_num, const uint8_t* p_file_name)
-{
+void assert_nrf_callback (uint16_t line_num, const uint8_t* p_file_name) {
   app_error_handler (DEAD_BEEF, line_num, p_file_name);
-}
+  }
 //}}}
 
 //{{{
@@ -122,38 +138,38 @@ static void sleepModeEnter() {
 
   NRF_LOG_INFO("Entering sleep mode \r\n");
   uint32_t err_code = m_motion_sleep_prepare(true);
-  APP_ERROR_CHECK(err_code);
+  APP_ERROR_CHECK (err_code);
 
   err_code = support_func_configure_io_shutdown();
-  APP_ERROR_CHECK(err_code);
+  APP_ERROR_CHECK (err_code);
 
   // Enable wake on button press
-  nrf_gpio_cfg_sense_input(BUTTON, NRF_GPIO_PIN_PULLUP, NRF_GPIO_PIN_SENSE_LOW);
+  nrf_gpio_cfg_sense_input (BUTTON, NRF_GPIO_PIN_PULLUP, NRF_GPIO_PIN_SENSE_LOW);
 
   // Enable wake on low power accelerometer
   //nrf_gpio_cfg_sense_input(LIS_INT1, NRF_GPIO_PIN_NOPULL, NRF_GPIO_PIN_SENSE_HIGH);
 
   NRF_LOG_FLUSH();
-  nrf_delay_ms(5);
+  nrf_delay_ms (5);
   // Go to system-off (sd_power_system_off() will not return; wakeup will cause a reset). When debugging, this function may return and code execution will continue.
   err_code = sd_power_system_off();
-  NRF_LOG_WARNING("sd_power_system_off() returned. -Probably due to debugger being used. Instructions will still run. \r\n");
+  NRF_LOG_WARNING ("sd_power_system_off() returned. -Probably due to debugger being used. Instructions will still run. \r\n");
   NRF_LOG_FLUSH();
 
   #ifdef DEBUG
     if (!support_func_sys_halt_debug_enabled()) {
-      APP_ERROR_CHECK(err_code); // If not in debug mode, return the error and the system will reboot.
+      APP_ERROR_CHECK (err_code); // If not in debug mode, return the error and the system will reboot.
       }
     else {
-      NRF_LOG_WARNING("Exec stopped, busy wait \r\n");
+      NRF_LOG_WARNING ("Exec stopped, busy wait \r\n");
       NRF_LOG_FLUSH();
 
-      while(true) { // Only reachable when entering emulated system off.
+      while (true) { // Only reachable when entering emulated system off.
         // Infinte loop to ensure that code stops in debug mode.
         }
       }
   #else
-    APP_ERROR_CHECK(err_code);
+    APP_ERROR_CHECK (err_code);
   #endif
   }
 //}}}
@@ -169,9 +185,9 @@ static void m_batt_meas_handler (m_batt_meas_event_t const* p_batt_meas_event) {
       APP_ERROR_CHECK(err_code);
 
       // Enable wake on USB detect only.
-      nrf_gpio_cfg_sense_input(USB_DETECT, NRF_GPIO_PIN_NOPULL, NRF_GPIO_PIN_SENSE_HIGH);
+      nrf_gpio_cfg_sense_input (USB_DETECT, NRF_GPIO_PIN_NOPULL, NRF_GPIO_PIN_SENSE_HIGH);
 
-      NRF_LOG_WARNING("Battery voltage low, shutting down Thingy. Connect USB to charge \r\n");
+      NRF_LOG_WARNING ("Battery voltage low, shutting down Thingy. Connect USB to charge \r\n");
       NRF_LOG_FINAL_FLUSH();
       // Go to system-off mode (This function will not return; wakeup will cause a reset).
       err_code = sd_power_system_off();
@@ -187,7 +203,7 @@ static void m_batt_meas_handler (m_batt_meas_event_t const* p_batt_meas_event) {
             // Infinte loop to ensure that code stops in debug mode.
             }
       #else
-        APP_ERROR_CHECK(err_code);
+        APP_ERROR_CHECK (err_code);
       #endif
       }
     }
@@ -220,22 +236,8 @@ static void thingy_ble_evt_handler (m_ble_evt_t* p_evt) {
 //{{{
 static void boardInit() {
 
-  static const nrf_drv_twi_config_t twi_config = {
-    .scl                = TWI_SCL,
-    .sda                = TWI_SDA,
-    .frequency          = NRF_TWI_FREQ_400K,
-    .interrupt_priority = APP_IRQ_PRIORITY_LOW
-    };
-
-  static const drv_sx1509_cfg_t sx1509_cfg = {
-    .twi_addr       = SX1509_ADDR,
-    .p_twi_instance = &m_twi_sensors,
-    .p_twi_cfg      = &twi_config
-    };
-
   drv_ext_gpio_init_t ext_gpio_init;
   ext_gpio_init.p_cfg = &sx1509_cfg;
-
   uint32_t err_code = support_func_configure_io_startup (&ext_gpio_init);
   APP_ERROR_CHECK (err_code);
 
@@ -293,14 +295,14 @@ static void thingyInit() {
   }
 //}}}
 
-int main(void) {
+int main() {
 
   uint32_t err_code = NRF_LOG_INIT (NULL);
   APP_ERROR_CHECK (err_code);
 
   NRF_LOG_INFO (NRF_LOG_COLOR_CODE_GREEN"===== Thingy started! =====\r\n");
 
-  // Initialize.
+  // initialize
   APP_SCHED_INIT (SCHED_MAX_EVENT_DATA_SIZE, SCHED_QUEUE_SIZE);
   err_code = app_timer_init();
   APP_ERROR_CHECK (err_code);
@@ -310,9 +312,9 @@ int main(void) {
 
   for (;;) {
     app_sched_execute();
-    if (!NRF_LOG_PROCESS()) { 
+    if (!NRF_LOG_PROCESS()) {
       // place application in low power state while waiting for events.
-      __set_FPSCR(__get_FPSCR()  & ~(FPU_EXCEPTION_MASK));
+      __set_FPSCR (__get_FPSCR() & ~(FPU_EXCEPTION_MASK));
       (void) __get_FPSCR();
       NVIC_ClearPendingIRQ (FPU_IRQn);
 
