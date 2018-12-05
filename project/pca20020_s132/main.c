@@ -74,10 +74,12 @@
 #include "nrf_log.h"
 #include "nrf_log_ctrl.h"
 //}}}
-#define SCHED_MAX_EVENT_DATA_SIZE  MAX(APP_TIMER_SCHED_EVENT_DATA_SIZE, BLE_STACK_HANDLER_SCHED_EVT_SIZE) // Maximum size of scheduler events
+
 #define SCHED_QUEUE_SIZE  60  // Maximum number of events in the scheduler queue
-#define FPU_EXCEPTION_MASK  0x0000009F
+#define SCHED_MAX_EVENT_DATA_SIZE  MAX(APP_TIMER_SCHED_EVENT_DATA_SIZE, BLE_STACK_HANDLER_SCHED_EVT_SIZE) // Maximum size of scheduler events
+
 #define DEAD_BEEF  0xDEADBEEF   // Value used as error code on stack dump, can be used to identify stack location on stack unwind.
+#define FPU_EXCEPTION_MASK  0x0000009F
 
 static const nrf_drv_twi_t m_twi_sensors = NRF_DRV_TWI_INSTANCE(TWI_SENSOR_INSTANCE);
 //{{{
@@ -101,7 +103,7 @@ static m_ble_service_handle_t m_ble_service_handles[THINGY_SERVICES_MAX];
 void app_error_fault_handler (uint32_t id, uint32_t pc, uint32_t info) {
 
   #if NRF_LOG_ENABLED
-    error_info_t * err_info = (error_info_t*)info;
+    error_info_t* err_info = (error_info_t*)info;
     NRF_LOG_ERROR (" id = %d, pc = %d, file = %s, line number: %d, error code = %d = %s \r\n", \
                    id, pc, nrf_log_push((char*)err_info->p_file_name),
                    err_info->line_num, err_info->err_code,
@@ -301,7 +303,7 @@ int main() {
 
   NRF_LOG_INFO (NRF_LOG_COLOR_CODE_GREEN"===== Thingy started! =====\r\n");
 
-  // initialize
+  // init
   APP_SCHED_INIT (SCHED_MAX_EVENT_DATA_SIZE, SCHED_QUEUE_SIZE);
   err_code = app_timer_init();
   APP_ERROR_CHECK (err_code);

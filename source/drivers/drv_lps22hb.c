@@ -1,3 +1,4 @@
+//{{{  copyright
 /*
   Copyright (c) 2010 - 2017, Nordic Semiconductor ASA
   All rights reserved.
@@ -35,14 +36,17 @@
   LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
   OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
+//}}}
+//{{{  includes
 #include "drv_lps22hb.h"
 #include "twi_manager.h"
 #include "nrf_error.h"
 #define  NRF_LOG_MODULE_NAME "drv_lps22hb   "
 #include "nrf_log.h"
 #include "macros_common.h"
+//}}}
 
+//{{{
 /**@brief Check if the driver is open, if not return NRF_ERROR_INVALID_STATE.
  */
 #define DRV_CFG_CHECK(PARAM)                                                                      \
@@ -50,14 +54,15 @@
         {                                                                                         \
             return NRF_ERROR_INVALID_STATE;                                                       \
         }
-
-/**@brief TWI configuration.
- */
+//}}}
+//{{{
 static struct
 {
     drv_lps22hb_twi_cfg_t const * p_cfg;
 } m_lps22hb;
+//}}}
 
+//{{{
 /**@brief Open the TWI bus for communication.
  */
 static __inline uint32_t twi_open(void)
@@ -74,8 +79,8 @@ static __inline uint32_t twi_open(void)
 
     return NRF_SUCCESS;
 }
-
-
+//}}}
+//{{{
 /**@brief Function to deinit the TWI module when this driver does not need to
  *        communicate on the TWI bus, so that other drivers can use the module.
  */
@@ -88,7 +93,9 @@ static __inline uint32_t twi_close(void)
     return NRF_SUCCESS;
 }
 
+//}}}
 
+//{{{
 /**@brief Function for reading a sensor register.
  *
  * @param[in]  reg_addr            Address of the register to read.
@@ -116,8 +123,8 @@ static uint32_t reg_read(uint8_t reg_addr, uint8_t * p_reg_val)
 
     return NRF_SUCCESS;
 }
-
-
+//}}}
+//{{{
 /**@brief Function for writing to a sensor register.
  *
  * @param[in]  reg_addr            Address of the register to write to.
@@ -141,15 +148,17 @@ static uint32_t reg_write(uint8_t reg_addr, uint8_t reg_val)
 
     return NRF_SUCCESS;
 }
+//}}}
 
-
+//{{{
 uint32_t drv_lps22hb_open(drv_lps22hb_twi_cfg_t const * const p_cfg)
 {
     m_lps22hb.p_cfg = p_cfg;
 
     return twi_open();
 }
-
+//}}}
+//{{{
 
 uint32_t drv_lps22hb_close(void)
 {
@@ -159,8 +168,9 @@ uint32_t drv_lps22hb_close(void)
 
     return err_code;
 }
+//}}}
 
-
+//{{{
 uint32_t drv_lps22hb_verify(uint8_t * who_am_i)
 {
     uint32_t err_code;
@@ -172,8 +182,9 @@ uint32_t drv_lps22hb_verify(uint8_t * who_am_i)
 
     return (*who_am_i == WHO_AM_I_REG_VALUE) ? NRF_SUCCESS : NRF_ERROR_NOT_FOUND;
 }
+//}}}
 
-
+//{{{
 uint32_t drv_lps22hb_cfg_set(drv_lps22hb_cfg_t const * const p_cfg)
 {
     uint32_t err_code;
@@ -229,8 +240,8 @@ uint32_t drv_lps22hb_cfg_set(drv_lps22hb_cfg_t const * const p_cfg)
 
     return NRF_SUCCESS;
 }
-
-
+//}}}
+//{{{
 uint32_t drv_lps22hb_cfg_get(drv_lps22hb_cfg_t *  p_cfg)
 {
     uint32_t err_code;
@@ -287,8 +298,9 @@ uint32_t drv_lps22hb_ref_pressure_set(uint32_t ref_press)
 
     return NRF_SUCCESS;
 }
+//}}}
 
-
+//{{{
 uint32_t drv_lps22hb_ref_pressure_get(uint32_t * p_ref_press)
 {
     uint32_t err_code;
@@ -312,8 +324,8 @@ uint32_t drv_lps22hb_ref_pressure_get(uint32_t * p_ref_press)
 
     return NRF_SUCCESS;
 }
-
-
+//}}}
+//{{{
 uint32_t drv_lps22hb_pressure_offset_set(uint16_t offset)
 {
     uint32_t err_code;
@@ -328,8 +340,8 @@ uint32_t drv_lps22hb_pressure_offset_set(uint16_t offset)
 
     return NRF_SUCCESS;
 }
-
-
+//}}}
+//{{{
 uint32_t drv_lps22hb_pressure_offset_get(uint16_t * p_offset)
 {
     uint32_t err_code;
@@ -349,8 +361,9 @@ uint32_t drv_lps22hb_pressure_offset_get(uint16_t * p_offset)
 
     return NRF_SUCCESS;
 }
+//}}}
 
-
+//{{{
 uint32_t drv_lps22hb_reboot(void)
 {
     uint32_t err_code;
@@ -373,8 +386,8 @@ uint32_t drv_lps22hb_reboot(void)
 
     return NRF_SUCCESS;
 }
-
-
+//}}}
+//{{{
 uint32_t drv_lps22hb_sw_reset(void)
 {
     uint32_t err_code;
@@ -397,8 +410,8 @@ uint32_t drv_lps22hb_sw_reset(void)
 
     return NRF_SUCCESS;
 }
-
-
+//}}}
+//{{{
 uint32_t drv_lps22hb_one_shot(void)
 {
     uint32_t err_code;
@@ -421,8 +434,8 @@ uint32_t drv_lps22hb_one_shot(void)
 
     return NRF_SUCCESS;
 }
-
-
+//}}}
+//{{{
 uint32_t drv_lps22hb_fifo_status_get(uint8_t * p_status)
 {
     uint32_t err_code;
@@ -435,8 +448,8 @@ uint32_t drv_lps22hb_fifo_status_get(uint8_t * p_status)
 
     return NRF_SUCCESS;
 }
-
-
+//}}}
+//{{{
 uint32_t drv_lps22hb_status_get(uint8_t * p_status)
 {
     uint32_t err_code;
@@ -449,8 +462,8 @@ uint32_t drv_lps22hb_status_get(uint8_t * p_status)
 
     return NRF_SUCCESS;
 }
-
-
+//}}}
+//{{{
 uint32_t drv_lps22hb_int_source_get(uint8_t * p_source)
 {
     uint32_t err_code;
@@ -463,8 +476,9 @@ uint32_t drv_lps22hb_int_source_get(uint8_t * p_source)
 
     return NRF_SUCCESS;
 }
+//}}}
 
-
+//{{{
 uint32_t drv_lps22hb_pressure_get(uint32_t * p_pressure)
 {
     uint32_t err_code;
@@ -488,8 +502,8 @@ uint32_t drv_lps22hb_pressure_get(uint32_t * p_pressure)
 
     return NRF_SUCCESS;
 }
-
-
+//}}}
+//{{{
 uint32_t drv_lps22hb_temperature_get(uint16_t * p_temperature)
 {
     uint32_t err_code;
@@ -509,8 +523,8 @@ uint32_t drv_lps22hb_temperature_get(uint16_t * p_temperature)
 
     return NRF_SUCCESS;
 }
-
-
+//}}}
+//{{{
 uint32_t drv_lps22hb_odr_set(drv_lps22hb_odr_t odr)
 {
     uint32_t err_code;
@@ -535,17 +549,21 @@ uint32_t drv_lps22hb_odr_set(drv_lps22hb_odr_t odr)
 
     return NRF_SUCCESS;
 }
+//}}}
 
-
+//{{{
 uint32_t drv_lps22hb_low_pass_reset(void)
 {
     return NRF_ERROR_NOT_SUPPORTED;
 }
 
+//}}}
 
+//{{{
 uint32_t drv_lps22hb_init(void)
 {
     m_lps22hb.p_cfg = NULL;
 
     return NRF_SUCCESS;
 }
+//}}}

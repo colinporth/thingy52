@@ -37,7 +37,7 @@
   OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 //}}}
-//{{{  include
+//{{{  includes
 #include "drv_color.h"
 #include "pca20020.h"
 #include "nrf_drv_gpiote.h"
@@ -83,7 +83,7 @@ static void gpiote_evt_sceduled(void * p_event_data, uint16_t event_size)
 //}}}
 
 //{{{
-static uint32_t chip_verify(void)
+static uint32_t chip_verify()
 {
     uint32_t err_code;
     uint8_t manu_id;
@@ -185,7 +185,7 @@ uint32_t drv_color_init(drv_color_init_t * p_init)
 //}}}
 
 //{{{
-uint32_t drv_color_sample(void)
+uint32_t drv_color_sample()
 {
     uint32_t err_code;
     uint8_t  int_reg;
@@ -208,7 +208,7 @@ uint32_t drv_color_sample(void)
 }
 //}}}
 //{{{
-uint32_t drv_color_start(void)
+uint32_t drv_color_start()
 {
     uint32_t err_code;
     uint8_t  persistance;
@@ -255,7 +255,7 @@ uint32_t drv_color_start(void)
 }
 //}}}
 //{{{
-uint32_t drv_color_stop(void)
+uint32_t drv_color_stop()
 {
     uint32_t err_code;
 

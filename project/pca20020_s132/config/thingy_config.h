@@ -38,6 +38,7 @@
  */
 //}}}
 #pragma once
+
 #define APP_TIMER_PRESCALER             0        // Value of the RTC1 PRESCALER register.
 #define APP_TIMER_OP_QUEUE_SIZE         75       // Size of timer operation queues: 6 LEDs, 2 buttons, 3 sensor notification timers, 3 sensor data convertion timers   .
 
@@ -79,15 +80,13 @@
 #define THINGY_NFC_URI_LEN                  sizeof(THINGY_NFC_URI_DEFAULT)
 #define THINGY_NFC_APP_ANDROID_NAME_DEFAULT "no.nordicsemi.android.nrfthingy"  // Android app name
 #define THINGY_NFC_APP_ANDROID_NAME_LEN     sizeof(THINGY_NFC_APP_ANDROID_NAME_DEFAULT)
-//The text fields will by default be filled with the MAC address and a random generated address
+// The text fields will by default be filled with the MAC address and a random generated address
 
-// Thingy FW version.
-// 0xFF indicates a custom build from source. Version numbers are changed for releases.
+// Thingy FW version 0xFF indicates a custom build from source. Version numbers are changed for releases.
 #define THINGY_FW_VERSION_MAJOR (0xFF)
 #define THINGY_FW_VERSION_MINOR (0xFF)
 #define THINGY_FW_VERSION_PATCH (0xFF)
 
-//{{{  Thingy default configuration
 #define THINGY_CONFIG_DEFAULT { \
   .dev_name = {                 \
     .name = DEVICE_NAME,        \
@@ -121,4 +120,3 @@
     .size = 23                            \
     }                                     \
   }
-//}}}

@@ -1,24 +1,19 @@
-PROJECT_NAME := ble_app_thingy_s132_pca20020
-
-export OUTPUT_FILENAME
 MAKEFILE_NAME := $(MAKEFILE_LIST)
 MAKEFILE_DIR := $(dir $(MAKEFILE_NAME) )
 TEMPLATE_PATH = ../../../sdk_components/toolchain/gcc
 GNU_INSTALL_ROOT := C:/Program Files (x86)/GNU Tools ARM Embedded/4.9 2015q3
-GNU_VERSION := 4.9.3
-GNU_PREFIX := arm-none-eabi
 
 NO_ECHO := @
 MK      := mkdir
 RM      := rm -rf
-CC      := '$(GNU_INSTALL_ROOT)/bin/$(GNU_PREFIX)-gcc'
-AS      := '$(GNU_INSTALL_ROOT)/bin/$(GNU_PREFIX)-as'
-AR      := '$(GNU_INSTALL_ROOT)/bin/$(GNU_PREFIX)-ar' -r
-LD      := '$(GNU_INSTALL_ROOT)/bin/$(GNU_PREFIX)-ld'
-NM      := '$(GNU_INSTALL_ROOT)/bin/$(GNU_PREFIX)-nm'
-OBJDUMP := '$(GNU_INSTALL_ROOT)/bin/$(GNU_PREFIX)-objdump'
-OBJCOPY := '$(GNU_INSTALL_ROOT)/bin/$(GNU_PREFIX)-objcopy'
-SIZE    := '$(GNU_INSTALL_ROOT)/bin/$(GNU_PREFIX)-size'
+CC      := '$(GNU_INSTALL_ROOT)/bin/arm-none-eabi-gcc'
+AS      := '$(GNU_INSTALL_ROOT)/bin/arm-none-eabi-as'
+AR      := '$(GNU_INSTALL_ROOT)/bin/arm-none-eabi-ar' -r
+LD      := '$(GNU_INSTALL_ROOT)/bin/arm-none-eabi-ld'
+NM      := '$(GNU_INSTALL_ROOT)/bin/arm-none-eabi-nm'
+OBJDUMP := '$(GNU_INSTALL_ROOT)/bin/arm-none-eabi-objdump'
+OBJCOPY := '$(GNU_INSTALL_ROOT)/bin/arm-none-eabi-objcopy'
+SIZE    := '$(GNU_INSTALL_ROOT)/bin/arm-none-eabi-size'
 
 CFLAGS = -DNRF52
 CFLAGS += -DNRF52832
@@ -62,14 +57,6 @@ CFLAGS += -fno-builtin --short-enums
 CFLAGS += -DNRF_LOG_USES_RTT
 CFLAGS += -DNRF_LOG_USES_RTT=1
 CFLAGS += -DNRF_LOG_ENABLED=1
-
-#function for removing duplicates in a list
-remduplicates = $(strip $(if $1,$(firstword $1) $(call remduplicates,$(filter-out $(firstword $1),$1))))
-
-LIBS += \
-$(abspath ../../../libs/liblibmplmpu_m4_hardfp/liblibmplmpu.a) \
-$(abspath ../../../sdk_components/toolchain/cmsis/dsp/GCC/libarm_cortexM4lf_math.a) \
-$(abspath ../../../sdk_components/nfc/t2t_lib/nfc_t2t_lib_gcc.a) \
 
 C_SOURCE_FILES += \
 $(abspath ../main.c) \
@@ -158,8 +145,8 @@ $(abspath ../../../sdk_components/libraries/crc32/crc32.c) \
 $(abspath ../../../sdk_components/libraries/fds/fds.c) \
 $(abspath ../../../sdk_components/libraries/fstorage/fstorage.c) \
 $(abspath ../../../sdk_components/libraries/led_softblink/led_softblink.c) \
-$(abspath ../../../sdk_components/libraries/log/src/nrf_log_frontend.c) \
-$(abspath ../../../sdk_components/libraries/log/src/nrf_log_backend_serial.c) \
+$(abspath ../../../sdk_components/libraries/log/nrf_log_frontend.c) \
+$(abspath ../../../sdk_components/libraries/log/nrf_log_backend_serial.c) \
 $(abspath ../../../sdk_components/libraries/low_power_pwm/low_power_pwm.c) \
 $(abspath ../../../sdk_components/libraries/queue/nrf_queue.c) \
 $(abspath ../../../sdk_components/libraries/uart/retarget.c) \
@@ -225,7 +212,6 @@ INC_PATHS += -I$(abspath ../../../sdk_components/libraries/fstorage)
 INC_PATHS += -I$(abspath ../../../sdk_components/libraries/fstorage)
 INC_PATHS += -I$(abspath ../../../sdk_components/libraries/led_softblink)
 INC_PATHS += -I$(abspath ../../../sdk_components/libraries/log)
-INC_PATHS += -I$(abspath ../../../sdk_components/libraries/log/src)
 INC_PATHS += -I$(abspath ../../../sdk_components/libraries/low_power_pwm)
 INC_PATHS += -I$(abspath ../../../sdk_components/libraries/scheduler)
 INC_PATHS += -I$(abspath ../../../sdk_components/libraries/strerror)
@@ -290,6 +276,14 @@ ASMFLAGS += -DMPU9250
 ASMFLAGS += -DEMPL
 ASMFLAGS += -DUSE_DMP
 ASMFLAGS += -DEMPL_TARGET_NRF52
+
+LIBS += \
+$(abspath ../../../libs/liblibmplmpu_m4_hardfp/liblibmplmpu.a) \
+$(abspath ../../../sdk_components/nfc/t2t_lib/nfc_t2t_lib_gcc.a) \
+$(abspath ../../../sdk_components/toolchain/cmsis/dsp/GCC/libarm_cortexM4lf_math.a) \
+
+#function for removing duplicates in a list
+remduplicates = $(strip $(if $1,$(firstword $1) $(call remduplicates,$(filter-out $(firstword $1),$1))))
 
 default: thingy
 

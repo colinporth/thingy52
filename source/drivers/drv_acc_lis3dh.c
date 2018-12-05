@@ -1,3 +1,4 @@
+//{{{  copyright
 /*
   Copyright (c) 2010 - 2017, Nordic Semiconductor ASA
   All rights reserved.
@@ -35,7 +36,8 @@
   LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
   OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
+//}}}
+//{{{  includes
 #include "drv_acc.h"
 #include <string.h>
 #include "drv_acc_lis3dh_types.h"
@@ -48,28 +50,28 @@
 #define  NRF_LOG_MODULE_NAME "drv_acc_lis3dh"
 #include "nrf_log.h"
 #include "macros_common.h"
-
+//}}}
+//{{{  defines
 /* Accelerometer parameters. */
 #define ACC_INT1_THRESHOLD  0x04  /**< Acceleration threshold. Actual value (G) depends on fullscale (FS) configuration. */
 #define ACC_INT1_DURATION   0x00  /**< Acceleration duration. Actual value (sec) depends on sampling rate (ODR). */
 #define I2C_TX_LEN_MAX      24    /**< Maximal number of concurrent bytes for I2C transmission. */
 #define BOOT_DELAY_MS       10    /**< Number of milliseconds delay to allow the LIS3DH to boot after init/reset. 5 ms according to datasheet. */
+//}}}
 
-/**@brief Forward declaration of lis3dh_read_regs. */
 static ret_code_t lis3dh_read_regs (uint8_t reg,       uint8_t       * const content);
-
-/**@brief Forward declaration of lis3dh_read_regs. */
 static ret_code_t lis3dh_write_regs(uint8_t first_reg, uint8_t const * const contents, uint8_t num_regs);
 
 static bool is_initalized = false; /**< Is the driver initialized. */
 
-/**@brief Configuration struct.
- */
+//{{{
 static struct
 {
     drv_acc_cfg_t p_cfg;
 } m_acc;
+//}}}
 
+//{{{
 /**@brief Open the TWI (I2C) bus for communication.
  */
 static __inline ret_code_t twi_open(void)
@@ -86,8 +88,8 @@ static __inline ret_code_t twi_open(void)
 
     return NRF_SUCCESS;
 }
-
-
+//}}}
+//{{{
 /**@brief Close the TWI (I2C) bus after communications are finished.
  */
 static __inline ret_code_t twi_close(void)
@@ -98,8 +100,9 @@ static __inline ret_code_t twi_close(void)
 
     return NRF_SUCCESS;
 }
+//}}}
 
-
+//{{{
 /**@brief Resets the memory contents to its default state.
  */
 static ret_code_t lis3dh_reboot_mem(void)
@@ -114,8 +117,8 @@ static ret_code_t lis3dh_reboot_mem(void)
 
     return DRV_ACC_STATUS_CODE_SUCCESS;
 }
-
-
+//}}}
+//{{{
 /**@brief Read and verify accelerometer ID.
  */
 static ret_code_t lis3dh_verify_id(void)
@@ -128,8 +131,8 @@ static ret_code_t lis3dh_verify_id(void)
 
     return (reg_val == I_AM_LIS3DH);
 }
-
-
+//}}}
+//{{{
 /**@brief Reads int1 interrupt register.
  */
 static ret_code_t lis3dh_int1_clear(void)
@@ -142,8 +145,8 @@ static ret_code_t lis3dh_int1_clear(void)
 
     return DRV_ACC_STATUS_CODE_SUCCESS;
 }
-
-
+//}}}
+//{{{
 /**@brief Reads one or more consecutive registers from the device.
  *
  * @param[in]  reg          Register address.
@@ -168,8 +171,8 @@ static ret_code_t lis3dh_read_regs(uint8_t reg, uint8_t * const p_content)
 
     return DRV_ACC_STATUS_CODE_SUCCESS;
 }
-
-
+//}}}
+//{{{
 /**@brief Writes one or more consecutive rgisters to the device.
  *
  * @param[in] first_reg     Address of the first register.
@@ -209,8 +212,9 @@ static ret_code_t lis3dh_write_regs(uint8_t first_reg, uint8_t const * const p_c
 
     return DRV_ACC_STATUS_CODE_SUCCESS;
 }
+//}}}
 
-
+//{{{
 ret_code_t drv_acc_wakeup_prepare(bool wakeup)
 {
     ret_code_t err_code;
@@ -277,7 +281,8 @@ ret_code_t drv_acc_wakeup_prepare(bool wakeup)
 
     return DRV_ACC_STATUS_CODE_SUCCESS;
 }
-
+//}}}
+//{{{
 ret_code_t drv_acc_init(drv_acc_cfg_t const * const p_cfg)
 {
     ret_code_t err_code;
@@ -294,16 +299,16 @@ ret_code_t drv_acc_init(drv_acc_cfg_t const * const p_cfg)
 
     err_code = twi_open();
     RETURN_IF_ERROR(err_code);
-    
-    // Reboot memory contents. 
+
+    // Reboot memory contents.
     err_code = lis3dh_reboot_mem();
     RETURN_IF_ERROR(err_code);
-    
+
     // Explicitly set the LIS3DH in power-down mode.
     uint8_t reg_val = CTRL_REG1_LPEN;
     err_code = lis3dh_write_regs(CTRL_REG1, &reg_val, 1);
     RETURN_IF_ERROR(err_code);
-    
+
     // Check correct ID.
     if (!lis3dh_verify_id())
     {
@@ -312,7 +317,7 @@ ret_code_t drv_acc_init(drv_acc_cfg_t const * const p_cfg)
 
     // Clear any interrupts.
     (void)lis3dh_int1_clear();
-    
+
     // Disable the pull-up.
     uint8_t disable_pullup[] = {CTRL_REG0_SDO_PU_DISC | CTRL_REG0_CORRECT_OPER};
     err_code = lis3dh_write_regs(CTRL_REG0,  disable_pullup, 1);
@@ -324,3 +329,4 @@ ret_code_t drv_acc_init(drv_acc_cfg_t const * const p_cfg)
     is_initalized = true;
     return NRF_SUCCESS;
 }
+//}}}
