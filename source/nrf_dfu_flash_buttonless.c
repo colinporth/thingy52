@@ -59,9 +59,9 @@ static uint32_t m_flags;
 
 #ifdef BLE_STACK_SUPPORT_REQD
   // Function prototypes
-  static void fs_evt_handler(fs_evt_t const * const evt, fs_ret_t result);
+  static void fs_evt_handler (fs_evt_t const* const evt, fs_ret_t result);
   //{{{
-  FS_REGISTER_CFG(fs_config_t fs_dfu_config) =
+  FS_REGISTER_CFG (fs_config_t fs_dfu_config) =
   {
       .callback       = fs_evt_handler,            // Function for event callbacks.
       .p_start_addr   = (uint32_t*)MBR_SIZE,
@@ -69,7 +69,7 @@ static uint32_t m_flags;
   };
   //}}}
   //{{{
-  static void fs_evt_handler(fs_evt_t const * const evt, fs_ret_t result)
+  static void fs_evt_handler (fs_evt_t const* const evt, fs_ret_t result)
   {
       // Clear the operation flag
       m_flags &= ~FLASH_FLAG_OPER;
@@ -94,9 +94,8 @@ static uint32_t m_flags;
   //}}}
 #endif
 
-
 //{{{
-uint32_t nrf_dfu_flash_init(bool sd_enabled)
+uint32_t nrf_dfu_flash_init (bool sd_enabled)
 {
     m_flags = FLASH_FLAG_SD_ENABLED;
     return NRF_SUCCESS;
@@ -104,7 +103,7 @@ uint32_t nrf_dfu_flash_init(bool sd_enabled)
 //}}}
 
 //{{{
-fs_ret_t nrf_dfu_flash_store(uint32_t const * p_dest, uint32_t const * const p_src, uint32_t len_words, dfu_flash_callback_t callback)
+fs_ret_t nrf_dfu_flash_store (uint32_t const* p_dest, uint32_t const* const p_src, uint32_t len_words, dfu_flash_callback_t callback)
 {
     fs_ret_t ret_val = FS_SUCCESS;
 
@@ -137,7 +136,7 @@ fs_ret_t nrf_dfu_flash_store(uint32_t const * p_dest, uint32_t const * const p_s
 //}}}
 //{{{
 // Internal function to initialize DFU BLE transport
-fs_ret_t nrf_dfu_flash_erase(uint32_t const * p_dest, uint32_t num_pages, dfu_flash_callback_t callback)
+fs_ret_t nrf_dfu_flash_erase (uint32_t const* p_dest, uint32_t num_pages, dfu_flash_callback_t callback)
 {
     fs_ret_t ret_val = FS_SUCCESS;
     NRF_LOG_INFO("Erasing: 0x%08x, num: %d\r\n", (uint32_t)p_dest, num_pages);
@@ -170,14 +169,14 @@ fs_ret_t nrf_dfu_flash_erase(uint32_t const * p_dest, uint32_t num_pages, dfu_fl
 //}}}
 
 //{{{
-void nrf_dfu_flash_error_clear(void)
+void nrf_dfu_flash_error_clear()
 {
     m_flags &= ~FLASH_FLAG_FAILURE_SINCE_LAST;
 }
 //}}}
 
 //{{{
-fs_ret_t nrf_dfu_flash_wait(void)
+fs_ret_t nrf_dfu_flash_wait()
 {
     NRF_LOG_INFO("Waiting for finished...\r\n");
 

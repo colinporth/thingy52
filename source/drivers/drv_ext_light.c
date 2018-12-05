@@ -40,11 +40,13 @@
 //{{{  include
 #include "drv_ext_light.h"
 #include "drv_sx1509.h"
+
 #include "math.h"
 #include "nrf_gpio.h"
 #include "sx150x_led_drv_calc.h"
 #include "sx150x_led_drv_regs.h"
 #include "nrf_delay.h"
+
 #include <stdint.h>
 //}}}
 //{{{  defines
@@ -65,21 +67,17 @@
 #include "macros_common.h"
 
 #ifdef DRV_EXT_LIGHT_DEBUG
-    #define IOEXT_OSC_RUNNING_LIGHT     5           ///< Debug LED indication of external oscillator running.
-    #define OSC_RUN_LIGHT_ON            nrf_gpio_pin_clear(IOEXT_OSC_RUNNING_LIGHT);
-    #define OSC_RUN_LIGHT_OFF           nrf_gpio_pin_set  (IOEXT_OSC_RUNNING_LIGHT);
+  #define IOEXT_OSC_RUNNING_LIGHT  5  // Debug LED indication of external oscillator running
+  #define OSC_RUN_LIGHT_ON         nrf_gpio_pin_clear(IOEXT_OSC_RUNNING_LIGHT);
+  #define OSC_RUN_LIGHT_OFF        nrf_gpio_pin_set  (IOEXT_OSC_RUNNING_LIGHT);
 #endif
-//}}}
 
-//{{{
-/**@brief Checks that light ID is within valid range
- */
-#define VALID_LIGHT_ID_CHECK(ID)                                                                                    \
-if ( (ID > (m_num_lights - 1))  || ID > DRV_EXT_LIGHT_NUM_LIGHTS_MAX)                                               \
-{                                                                                                                   \
-    NRF_LOG_ERROR("Valid light id check failed: with error code %d\r\n", DRV_EXT_LIGHT_STATUS_CODE_INVALID_PARAM);  \
-    return DRV_EXT_LIGHT_STATUS_CODE_INVALID_PARAM;                                                                 \
-}
+// Checks that light ID is within valid range
+#define VALID_LIGHT_ID_CHECK(ID)                                                                                  \
+if ( (ID > (m_num_lights - 1))  || ID > DRV_EXT_LIGHT_NUM_LIGHTS_MAX) {                                           \
+  NRF_LOG_ERROR ("Valid light id check failed: with error code %d\r\n", DRV_EXT_LIGHT_STATUS_CODE_INVALID_PARAM); \
+  return DRV_EXT_LIGHT_STATUS_CODE_INVALID_PARAM;                                                                 \
+  }
 //}}}
 
 //{{{
@@ -110,23 +108,21 @@ typedef struct
 }m_intensity_mix_t;
 //}}}
 
-
-/**@brief Array holding all requirements for the ioext osciallator dependning on drv_ext_light_ioext_osc_status_t.
- * This array holds "1" for all the IO extender oscillator statuses that requires the IO extender oscillator to run, and "0" otherwise.
- */
+// Array holding all requirements for the ioext osciallator dependning on drv_ext_light_ioext_osc_status_t.
+// This array holds "1" for all the IO extender oscillator statuses that requires the IO extender oscillator to run, and "0" otherwise.
 static const int8_t m_ioext_osc_status_use_matrix[IOEXT_OSC_STATUS_T_SIZE] = {0,1,0,1};
 
-static const drv_ext_light_conf_t * m_p_light_conf;         ///< Light configuration.
-static const drv_sx1509_cfg_t     * m_p_drv_sx1509_cfg;     ///< IO extender communications.
-static uint32_t                     m_clkx_tics_pr_sec;     ///< IO extender ticks per second.
-static drv_ext_light_clkx_div_t     m_clkx_div;             ///< IO extender clock divider.
-static uint32_t                     m_num_lights;           ///< Number of connected lights.
-static uint8_t                      m_resync_pin;           ///< Optional pin for external timer sync in IO extender.
+static const drv_ext_light_conf_t* m_p_light_conf;         ///< Light configuration.
+static const drv_sx1509_cfg_t*     m_p_drv_sx1509_cfg;     ///< IO extender communications.
+static uint32_t                    m_clkx_tics_pr_sec;     ///< IO extender ticks per second.
+static drv_ext_light_clkx_div_t    m_clkx_div;             ///< IO extender clock divider.
+static uint32_t                    m_num_lights;           ///< Number of connected lights.
+static uint8_t                     m_resync_pin;           ///< Optional pin for external timer sync in IO extender.
 
 //{{{
 /**@brief Function for checking if the given light ID is of type RGB.
  */
-__STATIC_INLINE bool m_is_rgb_light(uint32_t light_id)
+__STATIC_INLINE bool m_is_rgb_light (uint32_t light_id)
 {
     return (m_p_light_conf[light_id].type == DRV_EXT_LIGHT_TYPE_RGB);
 }
@@ -134,7 +130,7 @@ __STATIC_INLINE bool m_is_rgb_light(uint32_t light_id)
 //{{{
 /**@brief Function for checking if the given light ID is of type MONO (monochrome).
  */
-__STATIC_INLINE bool m_is_monochrome_light(uint32_t light_id)
+__STATIC_INLINE bool m_is_monochrome_light (uint32_t light_id)
 {
     return (m_p_light_conf[light_id].type == DRV_EXT_LIGHT_TYPE_MONO);
 }
@@ -142,7 +138,7 @@ __STATIC_INLINE bool m_is_monochrome_light(uint32_t light_id)
 //{{{
 /**@brief Function for checking if the given pin is within legal range.
  */
-__STATIC_INLINE ret_code_t m_pin_within_range_check(uint8_t pin)
+__STATIC_INLINE ret_code_t m_pin_within_range_check (uint8_t pin)
 {
     if (pin > DRV_EXT_LIGHT_MAX_PIN_ID_ALLOWED)
     {
@@ -156,7 +152,7 @@ __STATIC_INLINE ret_code_t m_pin_within_range_check(uint8_t pin)
 //{{{
 /**@brief Function for generating a 16 bit port mask based on the given ID and light type.
  */
-static uint32_t m_port_mask_create(uint32_t light_id, drv_ext_light_color_mix_t light_color_filter,
+static uint32_t m_port_mask_create (uint32_t light_id, drv_ext_light_color_mix_t light_color_filter,
                                    uint16_t * const port_mask)
 {
     *port_mask = 0;
@@ -190,7 +186,7 @@ static uint32_t m_port_mask_create(uint32_t light_id, drv_ext_light_color_mix_t 
 //{{{
 /**@brief Due to possible drift between the nRF52 and IO extender clocks, a margin is added to the on-time.
  */
-static uint32_t m_osc_on_margin_calculate(uint32_t desired_on_time)
+static uint32_t m_osc_on_margin_calculate (uint32_t desired_on_time)
 {
     return desired_on_time + (desired_on_time / 100) * POWER_SAVE_ON_TIME_MARGIN_PERCENT;
 }
@@ -200,7 +196,7 @@ static uint32_t m_osc_on_margin_calculate(uint32_t desired_on_time)
  *
  * @details Since the off_time of any breathe or blink sequence is controlled by the master, all such operations will appear as single-shot in the eyes of the io extender.
  */
-static ret_code_t m_led_driver_sequence_restart(uint16_t port_mask)
+static ret_code_t m_led_driver_sequence_restart (uint16_t port_mask)
 {
     ret_code_t err_code;
 
@@ -214,19 +210,11 @@ static ret_code_t m_led_driver_sequence_restart(uint16_t port_mask)
 }
 //}}}
 
-//{{{
-/**@brief Used for incrementing or decrementing the sempahore used in relation to the IO extender oscillator.
- */
-typedef enum
-{
-    GIVE_IOEXT_OSC = -1,
-    TAKE_IOEXT_OSC =  1,
-}m_ioext_osc_give_take_t;
-//}}}
+typedef enum { GIVE_IOEXT_OSC = -1, TAKE_IOEXT_OSC =  1, } m_ioext_osc_give_take_t;
 //{{{
 /**@brief Controls the IO extender oscillator as a resource using a counting semaphore.
  */
-static ret_code_t ioext_osc_start_stop(m_ioext_osc_give_take_t give_or_take_ioext_osc)
+static ret_code_t ioext_osc_start_stop (m_ioext_osc_give_take_t give_or_take_ioext_osc)
 {
     ret_code_t err_code;
     static uint8_t num_lights_curr_using_osc = 0;
@@ -284,7 +272,7 @@ static ret_code_t ioext_osc_start_stop(m_ioext_osc_give_take_t give_or_take_ioex
   //{{{
   /** @brief Prints the IO extender osc status of all lights.
    */
-  static void m_ioext_osc_status_print(void)
+  static void m_ioext_osc_status_print()
   {
       NRF_LOG_DEBUG("----- OSC status ----- \r\n");
 
@@ -319,7 +307,7 @@ static ret_code_t ioext_osc_start_stop(m_ioext_osc_give_take_t give_or_take_ioex
 //{{{
 /**@brief Master function controlling IO extender oscillator.
  */
-static ret_code_t m_ioext_osc_status_change(uint32_t id, drv_ext_light_ioext_osc_status_t new_ioext_osc_status)
+static ret_code_t m_ioext_osc_status_change (uint32_t id, drv_ext_light_ioext_osc_status_t new_ioext_osc_status)
 {
     ret_code_t err_code;
 
@@ -365,7 +353,7 @@ static ret_code_t m_ioext_osc_status_change(uint32_t id, drv_ext_light_ioext_osc
  *
  * @details Sets new values for all timers related to ioext light control.
  */
-static void m_light_timer_handler(void * light_id_in)
+static void m_light_timer_handler (void* light_id_in)
 {
     ret_code_t err_code;
     uint32_t id = (uint32_t)light_id_in;
@@ -450,7 +438,7 @@ static void m_light_timer_handler(void * light_id_in)
  * @param[out] operation mode
  * @param[out] power_optim_possible     True if power can be saved (e.g. the osc can be disabled between active intervals.
  */
-static void m_io_ext_oper_mode_chk(sx150x_led_drv_regs_vals_t const * const reg_vals,
+static void m_io_ext_oper_mode_chk (sx150x_led_drv_regs_vals_t const * const reg_vals,
                                    m_led_drv_status_t * const led_drv_status,
                                    bool * const power_optim_possible,
                                    drv_ext_light_sequence_t const * const real_vals)
@@ -507,7 +495,7 @@ static void m_io_ext_oper_mode_chk(sx150x_led_drv_regs_vals_t const * const reg_
 //{{{
 /**@brief Sets all sequence related registers for a given pin.
  */
-static ret_code_t m_ioext_led_drv_ctrl(uint32_t id, uint8_t pin_number,
+static ret_code_t m_ioext_led_drv_ctrl (uint32_t id, uint8_t pin_number,
                                      sx150x_led_drv_regs_vals_t const * const reg_vals,
                                      m_led_drv_status_t led_drv_status)
 {
@@ -578,7 +566,7 @@ static ret_code_t m_ioext_led_drv_ctrl(uint32_t id, uint8_t pin_number,
 //{{{
 /**@brief Sends rgb_intensity commands to the IO extender, and checks if the external oscillator is needed.
  */
-static ret_code_t m_ioext_cmd_process_rgb_intensity(uint32_t id, uint32_t pin_no, uint32_t intensity)
+static ret_code_t m_ioext_cmd_process_rgb_intensity (uint32_t id, uint32_t pin_no, uint32_t intensity)
 {
     sx150x_led_drv_regs_vals_t sequence_reg_vals = SEQUENCE_REG_DEFAULT_VAL;
 
@@ -602,7 +590,7 @@ static ret_code_t m_ioext_cmd_process_rgb_intensity(uint32_t id, uint32_t pin_no
  * Fully individual color mixing may only be used here and not for blinking, breathe or single-shot.
  * Other modes of operation are handled by @ref m_ioext_cmd_process.
  */
-static ret_code_t m_rgb_intensity(uint32_t id, drv_ext_light_rgb_intensity_t const * const p_intenstity)
+static ret_code_t m_rgb_intensity (uint32_t id, drv_ext_light_rgb_intensity_t const* const p_intenstity)
 {
     ret_code_t err_code;
     m_p_light_conf[id].p_data->p_status->colors = DRV_EXT_LIGHT_COLOR_NONE; // No need to set as the color is given by p_intensity in this mode of operation.
@@ -641,7 +629,7 @@ static ret_code_t m_rgb_intensity(uint32_t id, drv_ext_light_rgb_intensity_t con
 //{{{
 /**@brief Sorts by monochrome or RGB light and invokes @ref m_ioext_led_drv_ctrl accordingly.
  */
-static ret_code_t m_ioext_color_select_cmd_send(uint32_t id,
+static ret_code_t m_ioext_color_select_cmd_send (uint32_t id,
                                                 sx150x_led_drv_regs_vals_t const * const sequence_reg_vals,
                                                 drv_ext_light_color_mix_t  const * const color,
                                                 m_led_drv_status_t         const * const led_drv_status)
@@ -686,7 +674,7 @@ static ret_code_t m_ioext_color_select_cmd_send(uint32_t id,
 /**@brief Processes IO extender commands and reroutes depending on the mode of operation.
  * Fully individual color intensity mixing is handled by @ref m_rgb_intensity.
  */
-static ret_code_t m_ioext_cmd_process(uint32_t id, drv_ext_light_rgb_sequence_t * const p_sequence_real_vals)
+static ret_code_t m_ioext_cmd_process (uint32_t id, drv_ext_light_rgb_sequence_t* const p_sequence_real_vals)
 {
     ret_code_t  err_code;
     uint16_t    port_mask;
@@ -805,7 +793,7 @@ static ret_code_t m_ioext_cmd_process(uint32_t id, drv_ext_light_rgb_sequence_t 
 }
 //}}}
 //{{{
-ret_code_t drv_ext_light_reset(void)
+ret_code_t drv_ext_light_reset()
 {
     ret_code_t err_code;
 
@@ -824,7 +812,7 @@ ret_code_t drv_ext_light_reset(void)
 //{{{
 /**@brief Toggles the NRESET pin of the IO extender low to reset (resync) all counters.
  */
-void io_extender_counters_resync(void)
+void io_extender_counters_resync()
 {
     nrf_gpio_pin_clear(m_resync_pin);
 
@@ -835,7 +823,7 @@ void io_extender_counters_resync(void)
 //}}}
 
 //{{{
-ret_code_t drv_ext_light_on(uint32_t id)
+ret_code_t drv_ext_light_on (uint32_t id)
 {
     ret_code_t err_code;
 
@@ -855,7 +843,7 @@ ret_code_t drv_ext_light_on(uint32_t id)
 }
 //}}}
 //{{{
-ret_code_t drv_ext_light_off(uint32_t id)
+ret_code_t drv_ext_light_off (uint32_t id)
 {
     ret_code_t err_code;
 
@@ -875,7 +863,7 @@ ret_code_t drv_ext_light_off(uint32_t id)
 }
 //}}}
 //{{{
-ret_code_t drv_ext_light_intensity_set(uint32_t id, uint8_t intensity)
+ret_code_t drv_ext_light_intensity_set (uint32_t id, uint8_t intensity)
 {
     ret_code_t err_code;
 
@@ -895,7 +883,7 @@ ret_code_t drv_ext_light_intensity_set(uint32_t id, uint8_t intensity)
 }
 //}}}
 //{{{
-ret_code_t drv_ext_light_rgb_intensity_set(uint32_t id, drv_ext_light_rgb_intensity_t const * const p_intensity)
+ret_code_t drv_ext_light_rgb_intensity_set (uint32_t id, drv_ext_light_rgb_intensity_t const* const p_intensity)
 {
     ret_code_t err_code;
 
@@ -916,7 +904,7 @@ ret_code_t drv_ext_light_rgb_intensity_set(uint32_t id, drv_ext_light_rgb_intens
 }
 //}}}
 //{{{
-ret_code_t drv_ext_light_sequence(uint32_t id, drv_ext_light_sequence_t * p_sequence)
+ret_code_t drv_ext_light_sequence (uint32_t id, drv_ext_light_sequence_t* p_sequence)
 {
     ret_code_t err_code;
 
@@ -940,7 +928,7 @@ ret_code_t drv_ext_light_sequence(uint32_t id, drv_ext_light_sequence_t * p_sequ
 }
 //}}}
 //{{{
-ret_code_t drv_ext_light_rgb_sequence(uint32_t id, drv_ext_light_rgb_sequence_t * const p_rgb)
+ret_code_t drv_ext_light_rgb_sequence (uint32_t id, drv_ext_light_rgb_sequence_t* const p_rgb)
 {
     ret_code_t err_code;
 
@@ -964,7 +952,7 @@ ret_code_t drv_ext_light_rgb_sequence(uint32_t id, drv_ext_light_rgb_sequence_t 
 //}}}
 
 //{{{
-ret_code_t drv_ext_light_init(drv_ext_light_init_t const * const p_init, bool on_init_reset)
+ret_code_t drv_ext_light_init (drv_ext_light_init_t const* const p_init, bool on_init_reset)
 {
     ret_code_t err_code;
     uint16_t port_mask = 0;

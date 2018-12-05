@@ -38,13 +38,14 @@
  */
 //}}}
 #pragma once
-
+//{{{  includes
 #include <stdint.h>
 #include "sdk_config.h"
 #include "drv_ext_light.h"
 #include "drv_ext_gpio.h"
 #include "nrf_gpio.h"
 #include "nrf_saadc.h"
+//}}}
 
 #define LIS2DH12_ADDR  0x19 ///< On Thingy HW > v1.0.0 this is situated on a different TWI bus.
 
@@ -57,16 +58,12 @@
 
 #define TWI_SENSOR_INSTANCE 0
 
-typedef enum {
-  PIN_CLEAR,
-  PIN_SET,
-  PIN_NO_OUTPUT
-  } pin_output_state_t;
+typedef enum { PIN_CLEAR, PIN_SET, PIN_NO_OUTPUT } pin_output_state_t;
 
 // Pin configurations used when powering down
 //{{{
 // Standard output cleared
-#define NRF_PIN_OUTPUT_CLEAR   {NRF_GPIO_PIN_DIR_OUTPUT,       \
+#define NRF_PIN_OUTPUT_CLEAR    {NRF_GPIO_PIN_DIR_OUTPUT,       \
                                 NRF_GPIO_PIN_INPUT_DISCONNECT, \
                                 NRF_GPIO_PIN_NOPULL,           \
                                 NRF_GPIO_PIN_S0S1,             \
@@ -75,7 +72,7 @@ typedef enum {
 //}}}
 //{{{
 // Standard output set
-#define NRF_PIN_OUTPUT_SET     {NRF_GPIO_PIN_DIR_OUTPUT,       \
+#define NRF_PIN_OUTPUT_SET      {NRF_GPIO_PIN_DIR_OUTPUT,       \
                                 NRF_GPIO_PIN_INPUT_DISCONNECT, \
                                 NRF_GPIO_PIN_NOPULL,           \
                                 NRF_GPIO_PIN_S0S1,             \
@@ -84,7 +81,7 @@ typedef enum {
 //}}}
 //{{{
 // Standard input pullup
-#define NRF_PIN_DISCON_PULLUP  {NRF_GPIO_PIN_DIR_INPUT,        \
+#define NRF_PIN_DISCON_PULLUP   {NRF_GPIO_PIN_DIR_INPUT,        \
                                 NRF_GPIO_PIN_INPUT_DISCONNECT, \
                                 NRF_GPIO_PIN_PULLUP,           \
                                 NRF_GPIO_PIN_S0S1,             \
@@ -93,7 +90,7 @@ typedef enum {
 //}}}
 //{{{
 // Standard input nopull
-#define NRF_PIN_DISCON_NOPULL  {NRF_GPIO_PIN_DIR_INPUT,        \
+#define NRF_PIN_DISCON_NOPULL   {NRF_GPIO_PIN_DIR_INPUT,        \
                                 NRF_GPIO_PIN_INPUT_DISCONNECT, \
                                 NRF_GPIO_PIN_NOPULL,           \
                                 NRF_GPIO_PIN_S0S1,             \
@@ -102,7 +99,7 @@ typedef enum {
 //}}}
 //{{{
 // Standard input pulldown
-#define NRF_PIN_DISCON_PULLDOWN {NRF_GPIO_PIN_DIR_INPUT,       \
+#define NRF_PIN_DISCON_PULLDOWN {NRF_GPIO_PIN_DIR_INPUT,        \
                                 NRF_GPIO_PIN_INPUT_DISCONNECT, \
                                 NRF_GPIO_PIN_PULLDOWN,         \
                                 NRF_GPIO_PIN_S0S1,             \
@@ -112,7 +109,7 @@ typedef enum {
 
 /* IO extender configuration. The input buf must be enabled on all pins. */
 //{{{
-#define SX_PIN_OUTPUT_CLEAR    {DRV_EXT_GPIO_PIN_DIR_OUTPUT,                   \
+#define SX_PIN_OUTPUT_CLEAR   {DRV_EXT_GPIO_PIN_DIR_OUTPUT,                   \
                                 DRV_EXT_GPIO_PIN_INPUT_BUF_ENABLED,            \
                                 DRV_EXT_GPIO_PIN_NOPULL,                       \
                                 DRV_EXT_GPIO_PIN_DRIVE_PUSHPULL,               \
@@ -120,7 +117,7 @@ typedef enum {
                                 PIN_CLEAR}
 //}}}
 //{{{
-#define SX_PIN_OUTPUT_SET      {DRV_EXT_GPIO_PIN_DIR_OUTPUT,                   \
+#define SX_PIN_OUTPUT_SET     {DRV_EXT_GPIO_PIN_DIR_OUTPUT,                   \
                                 DRV_EXT_GPIO_PIN_INPUT_BUF_ENABLED,            \
                                 DRV_EXT_GPIO_PIN_NOPULL,                       \
                                 DRV_EXT_GPIO_PIN_DRIVE_PUSHPULL,               \
@@ -128,7 +125,7 @@ typedef enum {
                                 PIN_SET}
 //}}}
 //{{{
-#define SX_PIN_INPUT_NOPULL    {DRV_EXT_GPIO_PIN_DIR_INPUT,                    \
+#define SX_PIN_INPUT_NOPULL   {DRV_EXT_GPIO_PIN_DIR_INPUT,                    \
                                 DRV_EXT_GPIO_PIN_INPUT_BUF_ENABLED,            \
                                 DRV_EXT_GPIO_PIN_NOPULL,                       \
                                 DRV_EXT_GPIO_PIN_DRIVE_PUSHPULL,               \
@@ -136,7 +133,7 @@ typedef enum {
                                 PIN_NO_OUTPUT}
 //}}}
 //{{{
-#define SX_PIN_INPUT_PULLDOWN  {DRV_EXT_GPIO_PIN_DIR_INPUT,                    \
+#define SX_PIN_INPUT_PULLDOWN {DRV_EXT_GPIO_PIN_DIR_INPUT,                    \
                                 DRV_EXT_GPIO_PIN_INPUT_BUF_ENABLED,            \
                                 DRV_EXT_GPIO_PIN_PULLDOWN,                     \
                                 DRV_EXT_GPIO_PIN_DRIVE_PUSHPULL,               \
@@ -144,7 +141,7 @@ typedef enum {
                                 PIN_NO_OUTPUT}
 //}}}
 //{{{
-#define SX_PIN_INPUT_PULLUP    {DRV_EXT_GPIO_PIN_DIR_INPUT,                    \
+#define SX_PIN_INPUT_PULLUP   {DRV_EXT_GPIO_PIN_DIR_INPUT,                    \
                                 DRV_EXT_GPIO_PIN_INPUT_BUF_ENABLED,            \
                                 DRV_EXT_GPIO_PIN_PULLUP,                       \
                                 DRV_EXT_GPIO_PIN_DRIVE_PUSHPULL,               \
@@ -152,6 +149,7 @@ typedef enum {
                                 PIN_NO_OUTPUT}
 //}}}
 
+//{{{  struct nrf_gpio_cfg_t
 typedef struct {
   nrf_gpio_pin_dir_t   dir;
   nrf_gpio_pin_input_t input;
@@ -160,7 +158,8 @@ typedef struct {
   nrf_gpio_pin_sense_t sense;
   pin_output_state_t   state;
   } nrf_gpio_cfg_t;
-
+//}}}
+//{{{  struct sx_gpio_cfg_t
 typedef struct {
   drv_ext_gpio_pin_dir_t        dir;
   drv_ext_gpio_pin_input_buf_t  input_buf;
@@ -169,11 +168,9 @@ typedef struct {
   drv_ext_gpio_pin_slew_rate_t  slew_rate;
   pin_output_state_t            state;
   } sx_gpio_cfg_t;
+//}}}
 
-typedef enum {
-  VDD_ON  = true,
-  VDD_OFF = false
-  } vdd_state_t;
+typedef enum { VDD_ON  = true, VDD_OFF = false } vdd_state_t;
 
 //{{{  IO extender pin configuration for system off
 #define SX_IOEXT_NUM_PINS               16
@@ -249,107 +246,75 @@ typedef enum {
 //}}}
 
 //{{{  nRF pin configuration for system off
-#define NRF_NUM_GPIO_PINS              32
-
-#define OSC_XL1                      0
-#define PIN00_SYSTEM_DEFAULT_CFG     NRF_PIN_OUTPUT_CLEAR
-
-#define OSC_XL2                      1
-#define PIN01_SYSTEM_DEFAULT_CFG     NRF_PIN_OUTPUT_CLEAR
-
-#define ANA_DIG0                     2
-#define PIN02_SYSTEM_DEFAULT_CFG     NRF_PIN_DISCON_PULLDOWN
-
-#define ANA_DIG1                     3
-#define PIN03_SYSTEM_DEFAULT_CFG     NRF_PIN_DISCON_PULLDOWN
-
-#define ANA_DIG2                     4
-#define PIN04_SYSTEM_DEFAULT_CFG     NRF_PIN_DISCON_PULLDOWN
-
-#define IOEXT_OSCIO                  5
-#define PIN05_SYSTEM_DEFAULT_CFG     NRF_PIN_DISCON_PULLDOWN
-
-#define MPU_INT                      6
-#define PIN06_SYSTEM_DEFAULT_CFG     NRF_PIN_DISCON_PULLDOWN
-
-#define TWI_SDA                      7
-#define PIN07_SYSTEM_DEFAULT_CFG     NRF_PIN_DISCON_NOPULL
-
-#define TWI_SCL                      8
-#define PIN08_SYSTEM_DEFAULT_CFG     NRF_PIN_DISCON_NOPULL
-
-#define NFC1                         9
-#define PIN09_SYSTEM_DEFAULT_CFG     NRF_PIN_DISCON_NOPULL
-
-#define NFC2                         10
-#define PIN10_SYSTEM_DEFAULT_CFG     NRF_PIN_DISCON_NOPULL
-
-#define BUTTON                       11
-#define PIN11_SYSTEM_DEFAULT_CFG     NRF_PIN_DISCON_PULLUP
-
-#define LIS_INT1                     12
-#define PIN12_SYSTEM_DEFAULT_CFG     NRF_PIN_DISCON_NOPULL
-
-#define USB_DETECT                   13
-#define PIN13_SYSTEM_DEFAULT_CFG     NRF_PIN_DISCON_NOPULL
-
-#define TWI_SDA_EXT                  14
-#define PIN14_SYSTEM_DEFAULT_CFG     NRF_PIN_DISCON_NOPULL
-
-#define TWI_SCL_EXT                  15
-#define PIN15_SYSTEM_DEFAULT_CFG     NRF_PIN_DISCON_NOPULL
-
-#define SX_RESET                     16
-#define PIN16_SYSTEM_DEFAULT_CFG     NRF_PIN_DISCON_NOPULL
-
-#define BAT_CHG_STAT                 17
-#define PIN17_SYSTEM_DEFAULT_CFG     NRF_PIN_DISCON_NOPULL
-
-#define MOS_1                        18
-#define PIN18_SYSTEM_DEFAULT_CFG     NRF_PIN_OUTPUT_CLEAR
-
-#define MOS_2                        19
-#define PIN19_SYSTEM_DEFAULT_CFG     NRF_PIN_OUTPUT_CLEAR
-
-#define MOS_3                        20
-#define PIN20_SYSTEM_DEFAULT_CFG     NRF_PIN_OUTPUT_CLEAR
-
-#define MOS_4                        21
-#define PIN21_SYSTEM_DEFAULT_CFG     NRF_PIN_OUTPUT_CLEAR
-
-#define CCS_INT                      22
-#define PIN22_SYSTEM_DEFAULT_CFG     NRF_PIN_DISCON_PULLDOWN
-
-#define LPS_INT                      23
-#define PIN23_SYSTEM_DEFAULT_CFG     NRF_PIN_DISCON_PULLDOWN
-
-#define HTS_INT                      24
-#define PIN24_SYSTEM_DEFAULT_CFG      NRF_PIN_DISCON_PULLDOWN
-
-#define MIC_DOUT                     25
-#define PIN25_SYSTEM_DEFAULT_CFG     NRF_PIN_DISCON_PULLDOWN
-
-#define MIC_CLK                      26
-#define PIN26_SYSTEM_DEFAULT_CFG     NRF_PIN_DISCON_PULLDOWN
-
-#define SPEAKER                      27
-#define PIN27_SYSTEM_DEFAULT_CFG     NRF_PIN_OUTPUT_CLEAR
-
-#define BATTERY                      28                      /** If altered, BATTERY_AIN must be changed as well. */
-#define BATTERY_AIN                  NRF_SAADC_INPUT_AIN4    /** Pin->AIN mapping func removed in SDK. Hard-coded AIN definition. */
-#define PIN28_SYSTEM_DEFAULT_CFG     NRF_PIN_DISCON_NOPULL
-
-#define SPK_PWR_CTRL                 29
-#define PIN29_SYSTEM_DEFAULT_CFG     NRF_PIN_OUTPUT_CLEAR
-
+#define NRF_NUM_GPIO_PINS         32
+#define OSC_XL1                   0
+#define PIN00_SYSTEM_DEFAULT_CFG  NRF_PIN_OUTPUT_CLEAR
+#define OSC_XL2                   1
+#define PIN01_SYSTEM_DEFAULT_CFG  NRF_PIN_OUTPUT_CLEAR
+#define ANA_DIG0                  2
+#define PIN02_SYSTEM_DEFAULT_CFG  NRF_PIN_DISCON_PULLDOWN
+#define ANA_DIG1                  3
+#define PIN03_SYSTEM_DEFAULT_CFG  NRF_PIN_DISCON_PULLDOWN
+#define ANA_DIG2                  4
+#define PIN04_SYSTEM_DEFAULT_CFG  NRF_PIN_DISCON_PULLDOWN
+#define IOEXT_OSCIO               5
+#define PIN05_SYSTEM_DEFAULT_CFG  NRF_PIN_DISCON_PULLDOWN
+#define MPU_INT                   6
+#define PIN06_SYSTEM_DEFAULT_CFG  NRF_PIN_DISCON_PULLDOWN
+#define TWI_SDA                   7
+#define PIN07_SYSTEM_DEFAULT_CFG  NRF_PIN_DISCON_NOPULL
+#define TWI_SCL                   8
+#define PIN08_SYSTEM_DEFAULT_CFG  NRF_PIN_DISCON_NOPULL
+#define NFC1                      9
+#define PIN09_SYSTEM_DEFAULT_CFG  NRF_PIN_DISCON_NOPULL
+#define NFC2                      10
+#define PIN10_SYSTEM_DEFAULT_CFG  NRF_PIN_DISCON_NOPULL
+#define BUTTON                    11
+#define PIN11_SYSTEM_DEFAULT_CFG  NRF_PIN_DISCON_PULLUP
+#define LIS_INT1                  12
+#define PIN12_SYSTEM_DEFAULT_CFG  NRF_PIN_DISCON_NOPULL
+#define USB_DETECT                13
+#define PIN13_SYSTEM_DEFAULT_CFG  NRF_PIN_DISCON_NOPULL
+#define TWI_SDA_EXT               14
+#define PIN14_SYSTEM_DEFAULT_CFG  NRF_PIN_DISCON_NOPULL
+#define TWI_SCL_EXT               15
+#define PIN15_SYSTEM_DEFAULT_CFG  NRF_PIN_DISCON_NOPULL
+#define SX_RESET                  16
+#define PIN16_SYSTEM_DEFAULT_CFG  NRF_PIN_DISCON_NOPULL
+#define BAT_CHG_STAT              17
+#define PIN17_SYSTEM_DEFAULT_CFG  NRF_PIN_DISCON_NOPULL
+#define MOS_1                     18
+#define PIN18_SYSTEM_DEFAULT_CFG  NRF_PIN_OUTPUT_CLEAR
+#define MOS_2                     19
+#define PIN19_SYSTEM_DEFAULT_CFG  NRF_PIN_OUTPUT_CLEAR
+#define MOS_3                     20
+#define PIN20_SYSTEM_DEFAULT_CFG  NRF_PIN_OUTPUT_CLEAR
+#define MOS_4                     21
+#define PIN21_SYSTEM_DEFAULT_CFG  NRF_PIN_OUTPUT_CLEAR
+#define CCS_INT                   22
+#define PIN22_SYSTEM_DEFAULT_CFG  NRF_PIN_DISCON_PULLDOWN
+#define LPS_INT                   23
+#define PIN23_SYSTEM_DEFAULT_CFG  NRF_PIN_DISCON_PULLDOWN
+#define HTS_INT                   24
+#define PIN24_SYSTEM_DEFAULT_CFG  NRF_PIN_DISCON_PULLDOWN
+#define MIC_DOUT                  25
+#define PIN25_SYSTEM_DEFAULT_CFG  NRF_PIN_DISCON_PULLDOWN
+#define MIC_CLK                   26
+#define PIN26_SYSTEM_DEFAULT_CFG  NRF_PIN_DISCON_PULLDOWN
+#define SPEAKER                   27
+#define PIN27_SYSTEM_DEFAULT_CFG  NRF_PIN_OUTPUT_CLEAR
+#define BATTERY                   28                    // If altered, BATTERY_AIN must be changed as well
+#define BATTERY_AIN               NRF_SAADC_INPUT_AIN4  // Pin->AIN mapping func removed in SDK. Hard-coded AIN definition
+#define PIN28_SYSTEM_DEFAULT_CFG  NRF_PIN_DISCON_NOPULL
+#define SPK_PWR_CTRL              29
+#define PIN29_SYSTEM_DEFAULT_CFG  NRF_PIN_OUTPUT_CLEAR
 // Thingy VDD power. Is kept on in earlier versions to have power to the low power accelerometer.
 // In newer versions, the low power accelerometer is connected to a different power domain, and will
 // remain on to wake the system even if VDD is turned off
-#define VDD_PWR_CTRL                 30
-#define PIN30_SYSTEM_DEFAULT_CFG     NRF_PIN_OUTPUT_CLEAR    /** VDD OFF. */
-
-#define BH_INT                       31
-#define PIN31_SYSTEM_DEFAULT_CFG     NRF_PIN_DISCON_PULLDOWN
+#define VDD_PWR_CTRL              30
+#define PIN30_SYSTEM_DEFAULT_CFG  NRF_PIN_OUTPUT_CLEAR    /** VDD OFF. */
+#define BH_INT                    31
+#define PIN31_SYSTEM_DEFAULT_CFG  NRF_PIN_DISCON_PULLDOWN
 //}}}
 //{{{
 #define NRF_SYSTEM_DEFAULT_PIN_CFG  { \
@@ -388,12 +353,12 @@ typedef enum {
   };
 //}}}
 
-#define DRV_EXT_RGB_LED_SENSE        0
-#define DRV_EXT_RGB_LED_LIGHTWELL    1
-#define DRV_EXT_LIGHT_NUM            2
+#define DRV_EXT_RGB_LED_SENSE      0
+#define DRV_EXT_RGB_LED_LIGHTWELL  1
+#define DRV_EXT_LIGHT_NUM          2
 
-#define BATT_VOLTAGE_DIVIDER_R1      1500000
-#define BATT_VOLTAGE_DIVIDER_R2      180000
+#define BATT_VOLTAGE_DIVIDER_R1    1500000
+#define BATT_VOLTAGE_DIVIDER_R2     180000
 
 #ifdef __GNUC__
   #pragma GCC diagnostic push
@@ -423,13 +388,13 @@ DRV_EXT_LIGHT_DEF (my_led_1);
   };
 //}}}
 
-#define BATT_MEAS_INTERVAL_MS            5000 // Measurement interval [ms].
-#define BATT_MEAS_LOW_BATT_LIMIT_MV      3100 // Cutoff voltage [mV].
-#define BATT_MEAS_FULL_BATT_LIMIT_MV     4190 // Full charge definition [mV].
-#define BATT_MEAS_INVALID_PIN             255 // Invalid pin definition.
+#define BATT_MEAS_INTERVAL_MS         5000 // Measurement interval [ms].
+#define BATT_MEAS_LOW_BATT_LIMIT_MV   3100 // Cutoff voltage [mV].
+#define BATT_MEAS_FULL_BATT_LIMIT_MV  4190 // Full charge definition [mV].
+#define BATT_MEAS_INVALID_PIN          255 // Invalid pin definition.
+
 #define BATT_MEAS_VOLTAGE_TO_SOC_ELEMENTS 111 // Number of elements in the state of charge vector.
 #define BATT_MEAS_VOLTAGE_TO_SOC_DELTA_MV  10 // mV between each element in the SoC vector.
-
 //{{{
 // Converts voltage to state of charge (SoC) [%]. The first element corresponds to the voltage
 // BATT_MEAS_LOW_BATT_LIMIT_MV and each element is BATT_MEAS_VOLTAGE_TO_SOC_DELTA_MV higher than the previous.
@@ -442,8 +407,9 @@ static const uint8_t BATT_MEAS_VOLTAGE_TO_SOC[] = {
   71, 72, 74, 76, 77, 79, 81, 82, 84, 85, 85, 86, 86, 86, 87, 88, 88, 89, 90, 91,
   91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 100};
 //}}}
-#define BAT_MON_EN_PIN_USED   true
-#define BAT_MON_EN_PIN_NO     SX_BAT_MON_EN
+
+#define BAT_MON_EN_PIN_USED  true
+#define BAT_MON_EN_PIN_NO    SX_BAT_MON_EN
 //{{{
 // Battery monitoring setup.
 #define BATT_MEAS_PARAM_CFG  {                                          \
@@ -472,10 +438,13 @@ static const uint8_t BATT_MEAS_VOLTAGE_TO_SOC[] = {
      },                                                                 \
 };
 //}}}
+
 //{{{
 // Low frequency clock source to be used by the SoftDevice
-#define NRF_CLOCK_LFCLKSRC  {.source        = NRF_CLOCK_LF_SRC_XTAL,            \
-                             .rc_ctiv       = 0,                                \
-                             .rc_temp_ctiv  = 0,                                \
-                             .xtal_accuracy = NRF_CLOCK_LF_XTAL_ACCURACY_20_PPM}
+#define NRF_CLOCK_LFCLKSRC  {                        \
+  .source        = NRF_CLOCK_LF_SRC_XTAL,            \
+  .rc_ctiv       = 0,                                \
+  .rc_temp_ctiv  = 0,                                \
+  .xtal_accuracy = NRF_CLOCK_LF_XTAL_ACCURACY_20_PPM \
+  }
 //}}}
