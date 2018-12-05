@@ -74,10 +74,10 @@
 #include "nrf_log.h"
 #include "nrf_log_ctrl.h"
 //}}}
-#define SCHED_MAX_EVENT_DATA_SIZE  MAX(APP_TIMER_SCHED_EVENT_DATA_SIZE, BLE_STACK_HANDLER_SCHED_EVT_SIZE) /**< Maximum size of scheduler events. */
-#define SCHED_QUEUE_SIZE  60  /**< Maximum number of events in the scheduler queue. */
+#define SCHED_MAX_EVENT_DATA_SIZE  MAX(APP_TIMER_SCHED_EVENT_DATA_SIZE, BLE_STACK_HANDLER_SCHED_EVT_SIZE) // Maximum size of scheduler events
+#define SCHED_QUEUE_SIZE  60  // Maximum number of events in the scheduler queue
 #define FPU_EXCEPTION_MASK  0x0000009F
-#define DEAD_BEEF  0xDEADBEEF   /**< Value used as error code on stack dump, can be used to identify stack location on stack unwind. */
+#define DEAD_BEEF  0xDEADBEEF   // Value used as error code on stack dump, can be used to identify stack location on stack unwind.
 
 static const nrf_drv_twi_t m_twi_sensors = NRF_DRV_TWI_INSTANCE(TWI_SENSOR_INSTANCE);
 //{{{
