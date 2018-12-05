@@ -78,7 +78,6 @@
 #define SCHED_QUEUE_SIZE  60  // Maximum number of events in the scheduler queue
 #define SCHED_MAX_EVENT_DATA_SIZE  MAX(APP_TIMER_SCHED_EVENT_DATA_SIZE, BLE_STACK_HANDLER_SCHED_EVT_SIZE) // Maximum size of scheduler events
 
-#define DEAD_BEEF  0xDEADBEEF   // Value used as error code on stack dump, can be used to identify stack location on stack unwind.
 #define FPU_EXCEPTION_MASK  0x0000009F
 
 static const nrf_drv_twi_t m_twi_sensors = NRF_DRV_TWI_INSTANCE(TWI_SENSOR_INSTANCE);
@@ -130,14 +129,15 @@ void app_error_fault_handler (uint32_t id, uint32_t pc, uint32_t info) {
  * @param[in] p_file_name File name of the failing ASSERT call.
  */
 void assert_nrf_callback (uint16_t line_num, const uint8_t* p_file_name) {
-  app_error_handler (DEAD_BEEF, line_num, p_file_name);
+  // Value used as error code on stack dump, can be used to identify stack location on stack unwind.
+  app_error_handler (0xDEADBEEF, line_num, p_file_name);
   }
 //}}}
 
 //{{{
 static void sleepModeEnter() {
 
-  NRF_LOG_INFO("Entering sleep mode \r\n");
+  NRF_LOG_INFO ("Entering sleep mode \r\n");
   uint32_t err_code = m_motion_sleep_prepare(true);
   APP_ERROR_CHECK (err_code);
 
@@ -148,7 +148,7 @@ static void sleepModeEnter() {
   nrf_gpio_cfg_sense_input (BUTTON, NRF_GPIO_PIN_PULLUP, NRF_GPIO_PIN_SENSE_LOW);
 
   // Enable wake on low power accelerometer
-  //nrf_gpio_cfg_sense_input(LIS_INT1, NRF_GPIO_PIN_NOPULL, NRF_GPIO_PIN_SENSE_HIGH);
+  //nrf_gpio_cfg_sense_input (LIS_INT1, NRF_GPIO_PIN_NOPULL, NRF_GPIO_PIN_SENSE_HIGH);
 
   NRF_LOG_FLUSH();
   nrf_delay_ms (5);
@@ -174,6 +174,30 @@ static void sleepModeEnter() {
   #endif
   }
 //}}}
+//{{{
+static void thingy_ble_evt_handler (m_ble_evt_t* p_evt) {
+
+  switch (p_evt->evt_type) {
+    case thingy_ble_evt_connected:
+      NRF_LOG_INFO (NRF_LOG_COLOR_CODE_GREEN "Thingy_ble_evt_connected \r\n");
+      break;
+
+    case thingy_ble_evt_disconnected:
+      NRF_LOG_INFO (NRF_LOG_COLOR_CODE_YELLOW "Thingy_ble_evt_disconnected \r\n");
+      NRF_LOG_FINAL_FLUSH();
+      nrf_delay_ms (5);
+      NVIC_SystemReset();
+      break;
+
+    case thingy_ble_evt_timeout:
+      NRF_LOG_INFO (NRF_LOG_COLOR_CODE_YELLOW "Thingy_ble_evt_timeout \r\n");
+      sleepModeEnter();
+      NVIC_SystemReset();
+      break;
+    }
+  }
+//}}}
+
 //{{{
 static void m_batt_meas_handler (m_batt_meas_event_t const* p_batt_meas_event) {
 
@@ -211,60 +235,25 @@ static void m_batt_meas_handler (m_batt_meas_event_t const* p_batt_meas_event) {
   }
 //}}}
 //{{{
-static void thingy_ble_evt_handler (m_ble_evt_t* p_evt) {
-
-  switch (p_evt->evt_type) {
-    case thingy_ble_evt_connected:
-      NRF_LOG_INFO (NRF_LOG_COLOR_CODE_GREEN "Thingy_ble_evt_connected \r\n");
-      break;
-
-    case thingy_ble_evt_disconnected:
-      NRF_LOG_INFO (NRF_LOG_COLOR_CODE_YELLOW "Thingy_ble_evt_disconnected \r\n");
-      NRF_LOG_FINAL_FLUSH();
-      nrf_delay_ms (5);
-      NVIC_SystemReset();
-      break;
-
-    case thingy_ble_evt_timeout:
-      NRF_LOG_INFO (NRF_LOG_COLOR_CODE_YELLOW "Thingy_ble_evt_timeout \r\n");
-      sleepModeEnter();
-      NVIC_SystemReset();
-      break;
-    }
-  }
-//}}}
-
-//{{{
-static void boardInit() {
-
-  drv_ext_gpio_init_t ext_gpio_init;
-  ext_gpio_init.p_cfg = &sx1509_cfg;
-  uint32_t err_code = support_func_configure_io_startup (&ext_gpio_init);
-  APP_ERROR_CHECK (err_code);
-
-  nrf_delay_ms (100);
-  }
-//}}}
-//{{{
 static void thingyInit() {
 
-  /**@brief Initialize the TWI manager. */
-  uint32_t err_code = twi_manager_init(APP_IRQ_PRIORITY_THREAD);
+  /* Initialize the TWI manager. */
+  uint32_t err_code = twi_manager_init (APP_IRQ_PRIORITY_THREAD);
   APP_ERROR_CHECK (err_code);
 
-  /**@brief Initialize LED and button UI module. */
+  /* Initialize LED and button UI module. */
   m_ui_init_t ui_params;
   ui_params.p_twi_instance = &m_twi_sensors;
   err_code = m_ui_init (&m_ble_service_handles[THINGY_SERVICE_UI], &ui_params);
   APP_ERROR_CHECK (err_code);
 
-  /**@brief Initialize environment module. */
+  /* Initialize environment module. */
   m_environment_init_t env_params;
   env_params.p_twi_instance = &m_twi_sensors;
   err_code = m_environment_init (&m_ble_service_handles[THINGY_SERVICE_ENVIRONMENT], &env_params);
   APP_ERROR_CHECK (err_code);
 
-  /**@brief Initialize motion module. */
+  /* Initialize motion module. */
   m_motion_init_t motion_params;
   motion_params.p_twi_instance = &m_twi_sensors;
 
@@ -274,7 +263,7 @@ static void thingyInit() {
   err_code = m_sound_init (&m_ble_service_handles[THINGY_SERVICE_SOUND]);
   APP_ERROR_CHECK (err_code);
 
-  /**@brief Initialize the battery measurement. */
+  /* Initialize the battery measurement. */
   batt_meas_init_t batt_meas_init = BATT_MEAS_PARAM_CFG;
   batt_meas_init.evt_handler = m_batt_meas_handler;
   err_code = m_batt_meas_init (&m_ble_service_handles[THINGY_SERVICE_BATTERY], &batt_meas_init);
@@ -283,7 +272,7 @@ static void thingyInit() {
   err_code = m_batt_meas_enable (BATT_MEAS_INTERVAL_MS);
   APP_ERROR_CHECK (err_code);
 
-  /**@brief Initialize BLE handling module. */
+  /* Initialize BLE handling module. */
   m_ble_init_t ble_params;
   ble_params.evt_handler = thingy_ble_evt_handler;
   ble_params.p_service_handles = m_ble_service_handles;
@@ -308,7 +297,13 @@ int main() {
   err_code = app_timer_init();
   APP_ERROR_CHECK (err_code);
 
-  boardInit();
+  // board init
+  drv_ext_gpio_init_t ext_gpio_init;
+  ext_gpio_init.p_cfg = &sx1509_cfg;
+  err_code = support_func_configure_io_startup (&ext_gpio_init);
+  APP_ERROR_CHECK (err_code);
+  nrf_delay_ms (100);
+
   thingyInit();
 
   for (;;) {
@@ -316,7 +311,7 @@ int main() {
     if (!NRF_LOG_PROCESS()) {
       // place application in low power state while waiting for events.
       __set_FPSCR (__get_FPSCR() & ~(FPU_EXCEPTION_MASK));
-      (void) __get_FPSCR();
+      (void)__get_FPSCR();
       NVIC_ClearPendingIRQ (FPU_IRQn);
 
       uint32_t err_code = sd_app_evt_wait();

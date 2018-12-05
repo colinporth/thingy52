@@ -1,3 +1,4 @@
+//{{{  copyright
 /*
   Copyright (c) 2010 - 2017, Nordic Semiconductor ASA
   All rights reserved.
@@ -35,38 +36,78 @@
   LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
   OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
- /** @file Common macros
- *
- * @defgroup macros_common Common macros
- * @{
- * @ingroup util
- * @brief A set of useful macros.
- */
-
-#ifndef __MACROS_COMMON_H__
-#define __MACROS_COMMON_H__
-
+//}}}
+//{{{  includes
+#include "twi_manager.h"
+#include "nrf_error.h"
+#define  NRF_LOG_MODULE_NAME "twi_manager   "
 #include "nrf_log.h"
+#include "macros_common.h"
+//}}}
 
-/**@brief Check if the error code is equal to NRF_SUCCESS. If not, return the error code.
- */
-#define RETURN_IF_ERROR(err_code)                                                    \
-if ((err_code) != NRF_SUCCESS)                                                       \
-{                                                                                    \
-    NRF_LOG_WARNING("Err code returned in file: %s, line: %d, code %d \r\n",         \
-    nrf_log_push(__FILE__), __LINE__, err_code);                                     \
-    return (err_code);                                                               \
+static app_irq_priority_t s_context_limit = APP_IRQ_PRIORITY_HIGHEST;
+static uint32_t           s_collisions    = 0;
+
+//{{{
+uint32_t twi_manager_request (nrf_drv_twi_t const* p_instance,
+                             nrf_drv_twi_config_t const * p_config,
+                             nrf_drv_twi_evt_handler_t    event_handler,
+                             void *                       p_context)
+{
+    uint32_t err_code;
+    uint8_t current_context = current_int_priority_get();
+
+    if (current_context < s_context_limit)
+    {
+        NRF_LOG_ERROR("twi_manager_request: current_context < s_context_limit %d\r\n", current_context);
+        return NRF_ERROR_FORBIDDEN;
+    }
+
+    err_code = nrf_drv_twi_init(p_instance,
+                                p_config,
+                                event_handler,
+                                p_context);
+    if (err_code != NRF_SUCCESS)
+    {
+        s_collisions++;
+
+        NRF_LOG_ERROR("twi_manager_request: collision %d\r\n", s_collisions);
+        return err_code;
+    }
+
+    return NRF_SUCCESS;
 }
+//}}}
+//{{{
+uint32_t twi_manager_release (nrf_drv_twi_t const* p_instance)
+{
+    nrf_drv_twi_uninit(p_instance);
 
-/**@brief Check if the input pointer is NULL. If so, return NRF_ERROR_NULL.
- */
-#define NULL_PARAM_CHECK(param)         \
-        if ((param) == NULL)            \
-        {                               \
-            return NRF_ERROR_NULL;      \
-        }
+    return NRF_SUCCESS;
+}
+//}}}
 
-#endif /*__MACROS_COMMON_H__*/
+//{{{
+uint32_t twi_manager_collision_get()
+{
+    return s_collisions;
+}
+//}}}
+//{{{
+uint32_t twi_manager_collision_reset()
+{
+    s_collisions = 0;
 
-/** @} */
+    return NRF_SUCCESS;
+}
+//}}}
+
+//{{{
+uint32_t twi_manager_init (app_irq_priority_t context_limit)
+{
+    s_context_limit = context_limit;
+    s_collisions    = 0;
+
+    return NRF_SUCCESS;
+}
+//}}}

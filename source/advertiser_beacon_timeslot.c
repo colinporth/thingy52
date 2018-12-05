@@ -39,11 +39,13 @@
 //}}}
 //{{{  includes
 #include "advertiser_beacon.h"
+
 #include <stdio.h>
 #include <string.h>
 #include "nrf_soc.h"
 #include "app_error.h"
 #include "app_util.h"
+
 #define  NRF_LOG_MODULE_NAME "adv_beacon_..."
 #include "nrf_log.h"
 #include "macros_common.h"
@@ -60,6 +62,7 @@
 #define FREQ_ADV_CHANNEL_37     2
 #define FREQ_ADV_CHANNEL_38    26
 #define FREQ_ADV_CHANNEL_39    80
+
 #define BEACON_SLOT_LENGTH   5500
 //}}}
 
@@ -87,11 +90,10 @@ enum mode_t
   ADV_RX_CH39,                                              /** Advertising on Rx channel 39. */
   ADV_DONE                                                  /** Done advertising. */
 };
-
 //}}}
 
 //{{{
-nrf_radio_request_t * m_configure_next_event(void)
+nrf_radio_request_t* m_configure_next_event(void)
 {
     m_beacon.timeslot_request.request_type              = NRF_RADIO_REQ_TYPE_NORMAL;
     m_beacon.timeslot_request.params.normal.hfclk       = NRF_RADIO_HFCLK_CFG_XTAL_GUARANTEED;
@@ -102,7 +104,7 @@ nrf_radio_request_t * m_configure_next_event(void)
 }
 //}}}
 //{{{
-uint32_t m_request_earliest(enum NRF_RADIO_PRIORITY priority)
+uint32_t m_request_earliest (enum NRF_RADIO_PRIORITY priority)
 {
     m_beacon.timeslot_request.request_type                = NRF_RADIO_REQ_TYPE_EARLIEST;
     m_beacon.timeslot_request.params.earliest.hfclk       = NRF_RADIO_HFCLK_CFG_XTAL_GUARANTEED;
@@ -113,9 +115,8 @@ uint32_t m_request_earliest(enum NRF_RADIO_PRIORITY priority)
 }
 //}}}
 
-
 //{{{
-static uint8_t * m_get_adv_packet(void)
+static uint8_t* m_get_adv_packet()
 {
     static uint8_t adv_pdu[40];
     uint8_t packet_len_start_idx, service_data_len_idx;
@@ -164,7 +165,7 @@ static uint8_t * m_get_adv_packet(void)
 }
 //}}}
 //{{{
-static void m_set_adv_ch(uint32_t channel)
+static void m_set_adv_ch (uint32_t channel)
 {
     if (channel == ADV_CHANNEL_37)
     {
@@ -216,7 +217,7 @@ static void m_configure_radio()
 //}}}
 
 //{{{
-void m_handle_start(void)
+void m_handle_start()
 {
     // Configure TX_EN on TIMER EVENT_0.
     NRF_PPI->CH[8].TEP    = (uint32_t)(&NRF_RADIO->TASKS_TXEN);
@@ -229,7 +230,7 @@ void m_handle_start(void)
 }
 //}}}
 //{{{
-void m_handle_radio_disabled(enum mode_t mode)
+void m_handle_radio_disabled (enum mode_t mode)
 {
     switch (mode)
     {
@@ -254,7 +255,7 @@ void m_handle_radio_disabled(enum mode_t mode)
 //}}}
 
 //{{{
-static nrf_radio_signal_callback_return_param_t * m_timeslot_callback(uint8_t signal_type)
+static nrf_radio_signal_callback_return_param_t* m_timeslot_callback (uint8_t signal_type)
 {
   static nrf_radio_signal_callback_return_param_t signal_callback_return_param;
   static enum mode_t mode;
@@ -308,7 +309,7 @@ static nrf_radio_signal_callback_return_param_t * m_timeslot_callback(uint8_t si
 //}}}
 
 //{{{
-void app_beacon_on_sys_evt(uint32_t event)
+void app_beacon_on_sys_evt (uint32_t event)
 {
     uint32_t err_code;
 
@@ -348,7 +349,7 @@ void app_beacon_on_sys_evt(uint32_t event)
 //}}}
 
 //{{{
-void app_beacon_init(ble_beacon_init_t * p_init)
+void app_beacon_init (ble_beacon_init_t * p_init)
 {
     NRF_LOG_INFO("app_beacon_init:\r\n");
     m_beacon.adv_interval  = p_init->adv_interval;
@@ -361,7 +362,7 @@ void app_beacon_init(ble_beacon_init_t * p_init)
 //}}}
 
 //{{{
-void app_beacon_start(void)
+void app_beacon_start()
 {
     if (m_beacon.is_running || m_beacon.keep_running)
     {
@@ -387,7 +388,7 @@ void app_beacon_start(void)
 
 //}}}
 //{{{
-void app_beacon_stop(void)
+void app_beacon_stop()
 {
     NRF_LOG_INFO("app_beacon_stop:\r\n");
     m_beacon.keep_running = false;

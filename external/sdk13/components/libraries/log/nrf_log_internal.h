@@ -53,7 +53,7 @@
 #endif
 
 #ifndef NRF_LOG_USES_COLORS
-  #define NRF_LOG_USES_COLORS        0
+  #define NRF_LOG_USES_COLORS  0
 #endif
 
 #define NRF_LOG_LEVEL_ERROR        1U
@@ -76,28 +76,29 @@
 #define NRF_LOG_COLOR_CODE_CYAN    "\x1B[1;36m"
 #define NRF_LOG_COLOR_CODE_WHITE   "\x1B[1;37m"
 
-#define NRF_LOG_COLOR_0            NRF_LOG_COLOR_CODE_DEFAULT
-#define NRF_LOG_COLOR_1            NRF_LOG_COLOR_CODE_BLACK
-#define NRF_LOG_COLOR_2            NRF_LOG_COLOR_CODE_RED
-#define NRF_LOG_COLOR_3            NRF_LOG_COLOR_CODE_GREEN
-#define NRF_LOG_COLOR_4            NRF_LOG_COLOR_CODE_YELLOW
-#define NRF_LOG_COLOR_5            NRF_LOG_COLOR_CODE_BLUE
-#define NRF_LOG_COLOR_6            NRF_LOG_COLOR_CODE_MAGENTA
-#define NRF_LOG_COLOR_7            NRF_LOG_COLOR_CODE_CYAN
-#define NRF_LOG_COLOR_8            NRF_LOG_COLOR_CODE_WHITE
+#define NRF_LOG_COLOR_0  NRF_LOG_COLOR_CODE_DEFAULT
+#define NRF_LOG_COLOR_1  NRF_LOG_COLOR_CODE_BLACK
+#define NRF_LOG_COLOR_2  NRF_LOG_COLOR_CODE_RED
+#define NRF_LOG_COLOR_3  NRF_LOG_COLOR_CODE_GREEN
+#define NRF_LOG_COLOR_4  NRF_LOG_COLOR_CODE_YELLOW
+#define NRF_LOG_COLOR_5  NRF_LOG_COLOR_CODE_BLUE
+#define NRF_LOG_COLOR_6  NRF_LOG_COLOR_CODE_MAGENTA
+#define NRF_LOG_COLOR_7  NRF_LOG_COLOR_CODE_CYAN
+#define NRF_LOG_COLOR_8  NRF_LOG_COLOR_CODE_WHITE
 
 #define NRF_LOG_COLOR_DECODE(N) CONCAT_2(NRF_LOG_COLOR_, N)
+
 #if NRF_LOG_USES_COLORS
   #define NRF_LOG_ERROR_COLOR_CODE   NRF_LOG_COLOR_DECODE(NRF_LOG_ERROR_COLOR)
   #define NRF_LOG_WARNING_COLOR_CODE NRF_LOG_COLOR_DECODE(NRF_LOG_WARNING_COLOR)
   #define NRF_LOG_INFO_COLOR_CODE    NRF_LOG_COLOR_DECODE(NRF_LOG_INFO_COLOR)
   #define NRF_LOG_DEBUG_COLOR_CODE   NRF_LOG_COLOR_DECODE(NRF_LOG_DEBUG_COLOR)
-#else // NRF_LOG_USES_COLORS
+#else
   #define NRF_LOG_ERROR_COLOR_CODE
   #define NRF_LOG_WARNING_COLOR_CODE
   #define NRF_LOG_INFO_COLOR_CODE
   #define NRF_LOG_DEBUG_COLOR_CODE
-#endif // NRF_LOG_USES_COLORS
+#endif
 
 //{{{
 #define LOG_INTERNAL_0(type, prefix, str) \
@@ -128,12 +129,12 @@
     nrf_log_frontend_std_6(type, prefix str, arg0, arg1, arg2, arg3, arg4, arg5)
 //}}}
 
-#define LOG_INTERNAL_X(N, ...)          CONCAT_2(LOG_INTERNAL_, N) (__VA_ARGS__)
+#define LOG_INTERNAL_X(N, ...)  CONCAT_2(LOG_INTERNAL_, N) (__VA_ARGS__)
 //{{{
 #define LOG_INTERNAL(type, prefix, ...) LOG_INTERNAL_X(NUM_VA_ARGS_LESS_1( \
                                                            __VA_ARGS__), type, prefix, __VA_ARGS__)
 //}}}
-#define NRF_LOG_BREAK      ":"
+#define NRF_LOG_BREAK  ":"
 
 #define LOG_ERROR_PREFIX   NRF_LOG_ERROR_COLOR_CODE NRF_LOG_MODULE_NAME NRF_LOG_BREAK "ERROR:"
 #define LOG_WARNING_PREFIX NRF_LOG_WARNING_COLOR_CODE NRF_LOG_MODULE_NAME NRF_LOG_BREAK "WARNING:"
@@ -234,7 +235,7 @@
  * @param severity Severity.
  * @param p_str    A pointer to a string.
  */
-void nrf_log_frontend_std_0(uint8_t severity, char const * const p_str);
+void nrf_log_frontend_std_0 (uint8_t severity, char const* const p_str);
 //}}}
 //{{{
 /**
@@ -244,7 +245,7 @@ void nrf_log_frontend_std_0(uint8_t severity, char const * const p_str);
  * @param p_str    A pointer to a formatted string.
  * @param val0     An argument.
  */
-void nrf_log_frontend_std_1(uint8_t            severity,
+void nrf_log_frontend_std_1 (uint8_t severity,
                             char const * const p_str,
                             uint32_t           val0);
 
@@ -257,7 +258,7 @@ void nrf_log_frontend_std_1(uint8_t            severity,
  * @param p_str      A pointer to a formatted string.
  * @param val0, val1 Arguments for formatting string.
  */
-void nrf_log_frontend_std_2(uint8_t            severity,
+void nrf_log_frontend_std_2 (uint8_t severity,
                             char const * const p_str,
                             uint32_t           val0,
                             uint32_t           val1);
@@ -270,7 +271,7 @@ void nrf_log_frontend_std_2(uint8_t            severity,
  * @param p_str            A pointer to a formatted string.
  * @param val0, val1, val2 Arguments for formatting string.
  */
-void nrf_log_frontend_std_3(uint8_t            severity,
+void nrf_log_frontend_std_3 (uint8_t severity,
                             char const * const p_str,
                             uint32_t           val0,
                             uint32_t           val1,
@@ -284,7 +285,7 @@ void nrf_log_frontend_std_3(uint8_t            severity,
  * @param p_str                  A pointer to a formatted string.
  * @param val0, val1, val2, val3 Arguments for formatting string.
  */
-void nrf_log_frontend_std_4(uint8_t            severity,
+void nrf_log_frontend_std_4 (uint8_t severity,
                             char const * const p_str,
                             uint32_t           val0,
                             uint32_t           val1,
@@ -299,7 +300,7 @@ void nrf_log_frontend_std_4(uint8_t            severity,
  * @param p_str                        A pointer to a formatted string.
  * @param val0, val1, val2, val3, val4 Arguments for formatting string.
  */
-void nrf_log_frontend_std_5(uint8_t            severity,
+void nrf_log_frontend_std_5 (uint8_t severity,
                             char const * const p_str,
                             uint32_t           val0,
                             uint32_t           val1,
@@ -315,7 +316,7 @@ void nrf_log_frontend_std_5(uint8_t            severity,
  * @param p_str                              A pointer to a formatted string.
  * @param val0, val1, val2, val3, val4, val5 Arguments for formatting string.
  */
-void nrf_log_frontend_std_6(uint8_t            severity,
+void nrf_log_frontend_std_6 (uint8_t severity,
                             char const * const p_str,
                             uint32_t           val0,
                             uint32_t           val1,
@@ -334,7 +335,7 @@ void nrf_log_frontend_std_6(uint8_t            severity,
  * @param length   Length of data (in bytes).
  *
  */
-void nrf_log_frontend_hexdump(uint8_t            severity,
+void nrf_log_frontend_hexdump (uint8_t severity,
                               char const * const p_str,
                               const void * const p_data,
                               uint16_t           length);
@@ -346,5 +347,5 @@ void nrf_log_frontend_hexdump(uint8_t            severity,
  *
  * @return Byte.
  */
-uint8_t nrf_log_getchar(void);
+uint8_t nrf_log_getchar();
 //}}}

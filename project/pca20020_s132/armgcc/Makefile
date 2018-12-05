@@ -60,11 +60,11 @@ CFLAGS += -DNRF_LOG_ENABLED=1
 
 C_SOURCE_FILES += \
 $(abspath ../main.c) \
-$(abspath ../../../source/ble_services/ble_tes.c) \
-$(abspath ../../../source/ble_services/ble_tcs.c) \
-$(abspath ../../../source/ble_services/ble_uis.c) \
-$(abspath ../../../source/ble_services/ble_tms.c) \
-$(abspath ../../../source/ble_services/ble_tss.c) \
+$(abspath ../../../source/ble_tes.c) \
+$(abspath ../../../source/ble_tcs.c) \
+$(abspath ../../../source/ble_uis.c) \
+$(abspath ../../../source/ble_tms.c) \
+$(abspath ../../../source/ble_tss.c) \
 $(abspath ../../../source/drivers/drv_gas_sensor.c) \
 $(abspath ../../../source/drivers/drv_ccs811.c) \
 $(abspath ../../../source/drivers/drv_pressure.c) \
@@ -92,11 +92,11 @@ $(abspath ../../../source/modules/m_motion_flash.c) \
 $(abspath ../../../source/modules/m_ui.c) \
 $(abspath ../../../source/modules/m_ui_flash.c) \
 $(abspath ../../../source/modules/m_batt_meas.c) \
-$(abspath ../../../source/util/advertiser_beacon_timeslot.c) \
-$(abspath ../../../source/util/nrf_dfu_flash_buttonless.c) \
-$(abspath ../../../source/util/support_func.c) \
-$(abspath ../../../source/util/sx150x_led_drv_calc.c) \
-$(abspath ../../../source/util/twi_manager.c) \
+$(abspath ../../../source/advertiser_beacon_timeslot.c) \
+$(abspath ../../../source/nrf_dfu_flash_buttonless.c) \
+$(abspath ../../../source/support_func.c) \
+$(abspath ../../../source/sx150x_led_drv_calc.c) \
+$(abspath ../../../source/twi_manager.c) \
 $(abspath ../../../libs/dvi_adpcm/dvi_adpcm.c) \
 $(abspath ../../../libs/eMD6/core/driver/eMPL/inv_mpu.c) \
 $(abspath ../../../libs/eMD6/core/driver/eMPL/inv_mpu_dmp_motion_driver.c) \
@@ -168,12 +168,9 @@ ASM_SOURCE_FILES  = $(abspath ../../../sdk_components/toolchain/gcc/gcc_startup_
 
 INC_PATHS += -I$(abspath ../config)
 INC_PATHS += -I$(abspath ../../../external/segger_rtt)
-INC_PATHS += -I$(abspath ../../../include/ble_services)
-INC_PATHS += -I$(abspath ../../../include/board)
+INC_PATHS += -I$(abspath ../../../include)
 INC_PATHS += -I$(abspath ../../../include/drivers)
-INC_PATHS += -I$(abspath ../../../include/macros)
 INC_PATHS += -I$(abspath ../../../include/modules)
-INC_PATHS += -I$(abspath ../../../include/util)
 INC_PATHS += -I$(abspath ../../../libs/bv32fp-1.2)
 INC_PATHS += -I$(abspath ../../../libs/dvi_adpcm)
 INC_PATHS += -I$(abspath ../../../libs/eMD6/core/driver/eMPL)

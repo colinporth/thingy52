@@ -46,18 +46,17 @@
 #if NRF_MODULE_ENABLED(NRF_LOG)
   #include "app_util_platform.h"
 
-  #define NRF_LOG_INTERNAL_INIT(timestamp_func) \
-      nrf_log_init(timestamp_func)
+  #define NRF_LOG_INTERNAL_INIT(timestamp_func)  nrf_log_init(timestamp_func)
 
   #if (NRF_LOG_DEFERRED == 0)
     #define NRF_LOG_INTERNAL_PROCESS() false
     #define NRF_LOG_INTERNAL_FLUSH()
     #define NRF_LOG_INTERNAL_FINAL_FLUSH()
   #else
-    #define NRF_LOG_INTERNAL_PROCESS() nrf_log_frontend_dequeue()
-    #define NRF_LOG_INTERNAL_FLUSH()        \
-      do {                                  \
-        while (NRF_LOG_INTERNAL_PROCESS()); \
+    #define NRF_LOG_INTERNAL_PROCESS()  nrf_log_frontend_dequeue()
+    #define NRF_LOG_INTERNAL_FLUSH()         \
+      do {                                   \
+        while (NRF_LOG_INTERNAL_PROCESS());  \
         } while(0)
 
     #if NRF_LOG_BACKEND_SERIAL_USES_RTT
@@ -66,24 +65,21 @@
       #define NRF_LOG_INTERNAL_BACKEND_FINAL
     #endif
 
-    #define NRF_LOG_INTERNAL_FINAL_FLUSH()    \
-        do {                                  \
-        (void)nrf_log_blocking_backend_set(); \
-            NRF_LOG_INTERNAL_FLUSH();         \
-            NRF_LOG_INTERNAL_BACKEND_FINAL;   \
+    #define NRF_LOG_INTERNAL_FINAL_FLUSH()     \
+      do {                                     \
+        (void)nrf_log_blocking_backend_set();  \
+        NRF_LOG_INTERNAL_FLUSH();              \
+        NRF_LOG_INTERNAL_BACKEND_FINAL;        \
         } while(0)
-
     #endif
 
-  #define NRF_LOG_INTERNAL_HANDLERS_SET(default_handler, bytes_handler) \
-      nrf_log_handlers_set(default_handler, bytes_handler)
+  #define NRF_LOG_INTERNAL_HANDLERS_SET(default_handler, bytes_handler)  nrf_log_handlers_set(default_handler, bytes_handler)
 
   #else // NRF_MODULE_ENABLED(NRF_LOG)
     #define NRF_LOG_INTERNAL_PROCESS()  false
     #define NRF_LOG_INTERNAL_FLUSH()
     #define NRF_LOG_INTERNAL_INIT(timestamp_func) NRF_SUCCESS
     #define NRF_LOG_INTERNAL_HANDLERS_SET(default_handler, bytes_handler) \
-        UNUSED_PARAMETER(default_handler); UNUSED_PARAMETER(bytes_handler)
+      UNUSED_PARAMETER(default_handler); UNUSED_PARAMETER(bytes_handler)
     #define NRF_LOG_INTERNAL_FINAL_FLUSH()
-
-#endif // NRF_MODULE_ENABLED(NRF_LOG)
+#endif 
