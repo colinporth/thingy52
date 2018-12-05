@@ -46,7 +46,7 @@
 #define CENTRAL_LINK_COUNT              0        /**< Number of central links used by the application. When changing this number remember to adjust the RAM settings*/
 #define PERIPHERAL_LINK_COUNT           1        /**< Number of peripheral links used by the application. When changing this number remember to adjust the RAM settings*/
 
-#define DEVICE_NAME                     "thingy" /**< Name of device. Will be included in the advertising data. */
+#define DEVICE_NAME                     "Colins" /**< Name of device. Will be included in the advertising data. */
 #define NORDIC_COMPANY_ID               0x0059   /**< Nordic Semiconductor ASA company identifier. */
 
 #define APP_ADV_INTERVAL_MS             380      /**< The advertising interval in ms. */

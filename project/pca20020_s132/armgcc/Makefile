@@ -8,20 +8,60 @@ GNU_INSTALL_ROOT := C:/Program Files (x86)/GNU Tools ARM Embedded/4.9 2015q3
 GNU_VERSION := 4.9.3
 GNU_PREFIX := arm-none-eabi
 
-MK := mkdir
-RM := rm -rf
-#NO_ECHO :=
 NO_ECHO := @
+MK      := mkdir
+RM      := rm -rf
+CC      := '$(GNU_INSTALL_ROOT)/bin/$(GNU_PREFIX)-gcc'
+AS      := '$(GNU_INSTALL_ROOT)/bin/$(GNU_PREFIX)-as'
+AR      := '$(GNU_INSTALL_ROOT)/bin/$(GNU_PREFIX)-ar' -r
+LD      := '$(GNU_INSTALL_ROOT)/bin/$(GNU_PREFIX)-ld'
+NM      := '$(GNU_INSTALL_ROOT)/bin/$(GNU_PREFIX)-nm'
+OBJDUMP := '$(GNU_INSTALL_ROOT)/bin/$(GNU_PREFIX)-objdump'
+OBJCOPY := '$(GNU_INSTALL_ROOT)/bin/$(GNU_PREFIX)-objcopy'
+SIZE    := '$(GNU_INSTALL_ROOT)/bin/$(GNU_PREFIX)-size'
 
-# Toolchain commands
-CC              := '$(GNU_INSTALL_ROOT)/bin/$(GNU_PREFIX)-gcc'
-AS              := '$(GNU_INSTALL_ROOT)/bin/$(GNU_PREFIX)-as'
-AR              := '$(GNU_INSTALL_ROOT)/bin/$(GNU_PREFIX)-ar' -r
-LD              := '$(GNU_INSTALL_ROOT)/bin/$(GNU_PREFIX)-ld'
-NM              := '$(GNU_INSTALL_ROOT)/bin/$(GNU_PREFIX)-nm'
-OBJDUMP         := '$(GNU_INSTALL_ROOT)/bin/$(GNU_PREFIX)-objdump'
-OBJCOPY         := '$(GNU_INSTALL_ROOT)/bin/$(GNU_PREFIX)-objcopy'
-SIZE            := '$(GNU_INSTALL_ROOT)/bin/$(GNU_PREFIX)-size'
+CFLAGS = -DNRF52
+CFLAGS += -DNRF52832
+CFLAGS += -DNRF52832_XXAA
+CFLAGS += -DBLE_STACK_SUPPORT_REQD
+CFLAGS += -D__HEAP_SIZE=0
+CFLAGS += -DS132
+CFLAGS += -DNRF_SD_BLE_API_VERSION=4
+CFLAGS += -DNRF52_PAN_12
+CFLAGS += -DNRF52_PAN_15
+CFLAGS += -DNRF52_PAN_20
+CFLAGS += -DNRF52_PAN_30
+CFLAGS += -DNRF52_PAN_31
+CFLAGS += -DNRF52_PAN_36
+CFLAGS += -DNRF52_PAN_51
+CFLAGS += -DNRF52_PAN_53
+CFLAGS += -DNRF52_PAN_54
+CFLAGS += -DNRF52_PAN_55
+CFLAGS += -DNRF52_PAN_58
+CFLAGS += -DNRF52_PAN_62
+CFLAGS += -DNRF52_PAN_63
+CFLAGS += -DNRF52_PAN_64
+CFLAGS += -DSOFTDEVICE_PRESENT
+CFLAGS += -DSWI_DISABLE0
+CFLAGS += -DBSP_DEFINES_ONLY
+CFLAGS += -DARM_MATH_CM4
+CFLAGS += -DMPU9250
+CFLAGS += -DEMPL
+CFLAGS += -DUSE_DMP
+CFLAGS += -DEMPL_TARGET_NRF52
+CFLAGS += -DBLE_DFU_APP_SUPPORT
+CFLAGS += -DNRF_DFU_SETTINGS_VERSION=1
+CFLAGS += -DAUDIO_EQ_DEF=3
+CFLAGS += -DHAL_NFC_ENGINEERING_BC_FTPAN_WORKAROUND
+CFLAGS += -mcpu=cortex-m4
+CFLAGS += -mthumb -mabi=aapcs --std=gnu99
+CFLAGS += -Wall -Werror -O3 -g3
+CFLAGS += -mfloat-abi=hard -mfpu=fpv4-sp-d16
+CFLAGS += -ffunction-sections -fdata-sections -fno-strict-aliasing
+CFLAGS += -fno-builtin --short-enums
+CFLAGS += -DNRF_LOG_USES_RTT
+CFLAGS += -DNRF_LOG_USES_RTT=1
+CFLAGS += -DNRF_LOG_ENABLED=1
 
 #function for removing duplicates in a list
 remduplicates = $(strip $(if $1,$(firstword $1) $(call remduplicates,$(filter-out $(firstword $1),$1))))
@@ -112,24 +152,24 @@ $(abspath ../../../sdk_components/nfc/ndef/generic/message/nfc_ndef_msg.c) \
 $(abspath ../../../sdk_components/nfc/ndef/generic/record/nfc_ndef_record.c) \
 $(abspath ../../../sdk_components/nfc/ndef/text/nfc_text_rec.c) \
 $(abspath ../../../sdk_components/nfc/t2t_lib/hal_t2t/hal_nfc_t2t.c) \
+$(abspath ../../../sdk_components/libraries/bootloader/dfu/nrf_dfu_settings.c) \
 $(abspath ../../../sdk_components/libraries/button/app_button.c) \
-$(abspath ../../../sdk_components/libraries/util/app_error.c) \
-$(abspath ../../../sdk_components/libraries/scheduler/app_scheduler.c) \
-$(abspath ../../../sdk_components/libraries/timer/app_timer.c) \
-$(abspath ../../../sdk_components/libraries/util/nrf_assert.c) \
-$(abspath ../../../sdk_components/libraries/uart/retarget.c) \
-$(abspath ../../../sdk_components/libraries/led_softblink/led_softblink.c) \
-$(abspath ../../../sdk_components/libraries/low_power_pwm/low_power_pwm.c) \
-$(abspath ../../../sdk_components/libraries/fstorage/fstorage.c) \
+$(abspath ../../../sdk_components/libraries/crc32/crc32.c) \
 $(abspath ../../../sdk_components/libraries/fds/fds.c) \
-$(abspath ../../../sdk_components/libraries/util/app_util_platform.c) \
-$(abspath ../../../sdk_components/libraries/util/sdk_mapped_flags.c) \
-$(abspath ../../../sdk_components/libraries/queue/nrf_queue.c) \
+$(abspath ../../../sdk_components/libraries/fstorage/fstorage.c) \
+$(abspath ../../../sdk_components/libraries/led_softblink/led_softblink.c) \
 $(abspath ../../../sdk_components/libraries/log/src/nrf_log_frontend.c) \
 $(abspath ../../../sdk_components/libraries/log/src/nrf_log_backend_serial.c) \
-$(abspath ../../../sdk_components/libraries/bootloader/dfu/nrf_dfu_settings.c) \
-$(abspath ../../../sdk_components/libraries/crc32/crc32.c) \
+$(abspath ../../../sdk_components/libraries/low_power_pwm/low_power_pwm.c) \
+$(abspath ../../../sdk_components/libraries/queue/nrf_queue.c) \
+$(abspath ../../../sdk_components/libraries/uart/retarget.c) \
+$(abspath ../../../sdk_components/libraries/util/app_error.c) \
+$(abspath ../../../sdk_components/libraries/util/app_util_platform.c) \
+$(abspath ../../../sdk_components/libraries/util/nrf_assert.c) \
+$(abspath ../../../sdk_components/libraries/util/sdk_mapped_flags.c) \
+$(abspath ../../../sdk_components/libraries/scheduler/app_scheduler.c) \
 $(abspath ../../../sdk_components/libraries/strerror/nrf_strerror.c) \
+$(abspath ../../../sdk_components/libraries/timer/app_timer.c) \
 $(abspath ../../../sdk_components/softdevice/common/softdevice_handler/softdevice_handler.c) \
 $(abspath ../../../sdk_components/toolchain/system_nrf52.c) \
 $(abspath ../../../external/segger_rtt/RTT_Syscalls_GCC.c) \
@@ -215,49 +255,6 @@ OUTPUT_BINARY_DIRECTORY = $(OBJECT_DIRECTORY)
 # Sorting removes duplicates
 BUILD_DIRECTORIES := $(sort $(OBJECT_DIRECTORY) $(OUTPUT_BINARY_DIRECTORY) $(LISTING_DIRECTORY) )
 
-CFLAGS = -DNRF52
-CFLAGS += -DNRF52832
-CFLAGS += -DNRF52832_XXAA
-CFLAGS += -DBLE_STACK_SUPPORT_REQD
-CFLAGS += -D__HEAP_SIZE=0
-CFLAGS += -DS132
-CFLAGS += -DNRF_SD_BLE_API_VERSION=4
-CFLAGS += -DNRF52_PAN_12
-CFLAGS += -DNRF52_PAN_15
-CFLAGS += -DNRF52_PAN_20
-CFLAGS += -DNRF52_PAN_30
-CFLAGS += -DNRF52_PAN_31
-CFLAGS += -DNRF52_PAN_36
-CFLAGS += -DNRF52_PAN_51
-CFLAGS += -DNRF52_PAN_53
-CFLAGS += -DNRF52_PAN_54
-CFLAGS += -DNRF52_PAN_55
-CFLAGS += -DNRF52_PAN_58
-CFLAGS += -DNRF52_PAN_62
-CFLAGS += -DNRF52_PAN_63
-CFLAGS += -DNRF52_PAN_64
-CFLAGS += -DSOFTDEVICE_PRESENT
-CFLAGS += -DSWI_DISABLE0
-CFLAGS += -DBSP_DEFINES_ONLY
-CFLAGS += -DARM_MATH_CM4
-CFLAGS += -DMPU9250
-CFLAGS += -DEMPL
-CFLAGS += -DUSE_DMP
-CFLAGS += -DEMPL_TARGET_NRF52
-CFLAGS += -DNRF_LOG_USES_RTT
-CFLAGS += -DNRF_LOG_USES_RTT=1
-CFLAGS += -DBLE_DFU_APP_SUPPORT
-CFLAGS += -DNRF_DFU_SETTINGS_VERSION=1
-CFLAGS += -DAUDIO_EQ_DEF=3
-CFLAGS += -DHAL_NFC_ENGINEERING_BC_FTPAN_WORKAROUND
-CFLAGS += -mcpu=cortex-m4
-CFLAGS += -mthumb -mabi=aapcs --std=gnu99
-CFLAGS += -Wall -Werror -O3 -g3
-CFLAGS += -mfloat-abi=hard -mfpu=fpv4-sp-d16
-CFLAGS += -ffunction-sections -fdata-sections -fno-strict-aliasing
-CFLAGS += -fno-builtin --short-enums
-#CFLAGS += -NRF_LOG_ENABLED=1 # Use if RTT output is desired.
-
 LDFLAGS += -Xlinker -Map=$(LISTING_DIRECTORY)/$(OUTPUT_FILENAME).map
 LDFLAGS += -mthumb -mabi=aapcs -L $(TEMPLATE_PATH) -T$(LINKER_SCRIPT)
 LDFLAGS += -mcpu=cortex-m4
@@ -297,8 +294,8 @@ ASMFLAGS += -DEMPL_TARGET_NRF52
 default: thingy
 
 all: clean
-	$(NO_ECHO)$(MAKE) -f $(MAKEFILE_NAME) -C $(MAKEFILE_DIR) -e cleanobj
-	$(NO_ECHO)$(MAKE) -f $(MAKEFILE_NAME) -C $(MAKEFILE_DIR) -e thingy
+	$(NO_ECHO)$(MAKE) -f $(MAKEFILE_NAME) -C $(MAKEFILE_DIR) -e clean
+	$(NO_ECHO)$(MAKE) -f $(MAKEFILE_NAME) -C $(MAKEFILE_DIR) -j 4
 
 C_SOURCE_FILE_NAMES = $(notdir $(C_SOURCE_FILES))
 C_PATHS = $(call remduplicates, $(dir $(C_SOURCE_FILES) ) )
@@ -331,12 +328,12 @@ $(BUILD_DIRECTORIES):
 	echo $(MAKEFILE_NAME)
 	$(MK) $@
 
-# compile C files
+# compile .C files
 $(OBJECT_DIRECTORY)/%.o: %.c
 	@echo Compiling file: $(notdir $<)
 	$(NO_ECHO)$(CC) $(CFLAGS) $(INC_PATHS) -c -o $@ $<
 
-# assemble files
+# assemble .S files
 $(OBJECT_DIRECTORY)/%.o: %.S
 	@echo Assembly file: $(notdir $<)
 	$(NO_ECHO)$(CC) $(ASMFLAGS) $(INC_PATHS) -c -o $@ $<
@@ -346,7 +343,7 @@ $(OUTPUT_BINARY_DIRECTORY)/$(OUTPUT_FILENAME).out: $(BUILD_DIRECTORIES) $(OBJECT
 	@echo Linking target: $(OUTPUT_FILENAME).out
 	$(NO_ECHO)$(CC) $(LDFLAGS) $(OBJECTS) $(LIBS) -lm -o $(OUTPUT_BINARY_DIRECTORY)/$(OUTPUT_FILENAME).out
 
-# create .hex from .out
+# .hex from .out
 $(OUTPUT_BINARY_DIRECTORY)/$(OUTPUT_FILENAME).hex: $(OUTPUT_BINARY_DIRECTORY)/$(OUTPUT_FILENAME).out
 	@echo Preparing: $(OUTPUT_FILENAME).hex
 	$(NO_ECHO)$(OBJCOPY) -O ihex $(OUTPUT_BINARY_DIRECTORY)/$(OUTPUT_FILENAME).out $(OUTPUT_BINARY_DIRECTORY)/$(OUTPUT_FILENAME).hex

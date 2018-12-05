@@ -1,30 +1,31 @@
+//{{{  copyright
 /**
  * Copyright (c) 2016 - 2017, Nordic Semiconductor ASA
- * 
+ *
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without modification,
  * are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice, this
  *    list of conditions and the following disclaimer.
- * 
+ *
  * 2. Redistributions in binary form, except as embedded into a Nordic
  *    Semiconductor ASA integrated circuit in a product or a software update for
  *    such product, must reproduce the above copyright notice, this list of
  *    conditions and the following disclaimer in the documentation and/or other
  *    materials provided with the distribution.
- * 
+ *
  * 3. Neither the name of Nordic Semiconductor ASA nor the names of its
  *    contributors may be used to endorse or promote products derived from this
  *    software without specific prior written permission.
- * 
+ *
  * 4. This software, with or without modification, must only be used with a
  *    Nordic Semiconductor ASA integrated circuit.
- * 
+ *
  * 5. Any software provided in binary form under this license must not be reverse
  *    engineered, decompiled, modified and/or disassembled.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY NORDIC SEMICONDUCTOR ASA "AS IS" AND ANY EXPRESS
  * OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
  * OF MERCHANTABILITY, NONINFRINGEMENT, AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -35,9 +36,12 @@
  * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
  * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- * 
+ *
  */
+//}}}
+//{{{  includes
 #include "sdk_common.h"
+
 #if NRF_MODULE_ENABLED(NRF_LOG)
 #include "nrf_log_backend.h"
 #include "nrf_error.h"
@@ -47,57 +51,61 @@
 #include <ctype.h>
 
 #if NRF_LOG_BACKEND_SERIAL_USES_RTT
-#include <SEGGER_RTT_Conf.h>
-#include <SEGGER_RTT.h>
+  #include <SEGGER_RTT_Conf.h>
+  #include <SEGGER_RTT.h>
 #endif
 
 #if NRF_LOG_BACKEND_SERIAL_USES_UART
-#include "nrf_drv_uart.h"
+  #include "nrf_drv_uart.h"
 #endif
+//}}}
 
 #if NRF_LOG_BACKEND_SERIAL_USES_UART
-static char m_uart_buffer[NRF_LOG_BACKEND_MAX_STRING_LENGTH];
-static nrf_drv_uart_t m_uart = NRF_DRV_UART_INSTANCE(NRF_LOG_BACKEND_UART_INSTANCE);
+  //{{{
+  static char m_uart_buffer[NRF_LOG_BACKEND_MAX_STRING_LENGTH];
+  static nrf_drv_uart_t m_uart = NRF_DRV_UART_INSTANCE(NRF_LOG_BACKEND_UART_INSTANCE);
 
-#if !NRF_MODULE_ENABLED(UART)
-#error "UART driver must be enabled to use UART in nrf_log."
+  #if !NRF_MODULE_ENABLED(UART)
+    #error "UART driver must be enabled to use UART in nrf_log."
+  #endif
+  //}}}
 #endif
 
-#endif //NRF_LOG_BACKEND_SERIAL_USES_UART
-
+//{{{  defines
 #define HEXDUMP_BYTES_PER_LINE               16
 #define HEXDUMP_HEXBYTE_AREA                 3 // Two bytes for hexbyte and space to separate
 #define TIMESTAMP_STR(val) "[%0" STRINGIFY(val) "d]"
-
 #define RTT_RETRY_COUNTER 10 //Number of retries before skipping processing
-
 #define HEXDUMP_MAX_STR_LEN (NRF_LOG_BACKEND_MAX_STRING_LENGTH -          \
                             (HEXDUMP_HEXBYTE_AREA*HEXDUMP_BYTES_PER_LINE +\
                              NRF_LOG_TIMESTAMP_DIGITS +                   \
                              4 +/* Color ANSI Escape Code */              \
                              2)) /* Separators */
+//}}}
 
 static bool m_initialized   = false;
 static bool m_blocking_mode = false;
 static const char m_default_color[] = "\x1B[0m";
 
 #if (NRF_LOG_BACKEND_SERIAL_USES_UART)
-static volatile bool m_rx_done = false;
+  static volatile bool m_rx_done = false;
 #endif
 
 #if (NRF_LOG_BACKEND_SERIAL_USES_UART)
-static void uart_event_handler(nrf_drv_uart_event_t * p_event, void * p_context)
-{
-    // Dummy handler since is_busy feature is used for determining readiness.
-    if (p_event->type == NRF_DRV_UART_EVT_RX_DONE)
-    {
-        m_rx_done = true;
-    }
-}
-#endif //NRF_LOG_BACKEND_SERIAL_USES_UART
+  //{{{
+  static void uart_event_handler (nrf_drv_uart_event_t* p_event, void* p_context)
+  {
+      // Dummy handler since is_busy feature is used for determining readiness.
+      if (p_event->type == NRF_DRV_UART_EVT_RX_DONE)
+      {
+          m_rx_done = true;
+      }
+  }
+  //}}}
+#endif
 
-
-ret_code_t nrf_log_backend_init(bool blocking)
+//{{{
+ret_code_t nrf_log_backend_init (bool blocking)
 {
 
     if (m_initialized && (blocking == m_blocking_mode))
@@ -132,9 +140,10 @@ ret_code_t nrf_log_backend_init(bool blocking)
     m_blocking_mode = blocking;
     return NRF_SUCCESS;
 }
+//}}}
 
-
-static bool serial_is_busy(void)
+//{{{
+static bool serial_is_busy()
 {
     bool res = false;
 
@@ -148,9 +157,9 @@ static bool serial_is_busy(void)
 
     return res;
 }
-
-
-static bool serial_tx(uint8_t * p_buf, uint32_t len)
+//}}}
+//{{{
+static bool serial_tx (uint8_t* p_buf, uint32_t len)
 {
     bool ret = true;
 
@@ -186,9 +195,9 @@ static bool serial_tx(uint8_t * p_buf, uint32_t len)
 #endif //NRF_LOG_BACKEND_SERIAL_USES_RTT
     return ret;
 }
-
-
-static uint8_t serial_get_byte(void)
+//}}}
+//{{{
+static uint8_t serial_get_byte()
 {
     uint8_t data;
 #if NRF_LOG_BACKEND_SERIAL_USES_UART
@@ -207,9 +216,10 @@ static uint8_t serial_get_byte(void)
 #endif //NRF_LOG_BACKEND_SERIAL_USES_RTT
     return data;
 }
+//}}}
 
-
-static bool buf_len_update(uint32_t * p_buf_len, int32_t new_len)
+//{{{
+static bool buf_len_update (uint32_t * p_buf_len, int32_t new_len)
 {
     bool ret;
     if (new_len < 0)
@@ -224,8 +234,9 @@ static bool buf_len_update(uint32_t * p_buf_len, int32_t new_len)
     return ret;
 }
 
-
-static bool timestamp_process(const uint32_t * const p_timestamp, char * p_str, uint32_t * p_len)
+//}}}
+//{{{
+static bool timestamp_process (const uint32_t* const p_timestamp, char* p_str, uint32_t* p_len)
 {
     int32_t len = 0;
     bool    ret = true;
@@ -245,8 +256,8 @@ static bool timestamp_process(const uint32_t * const p_timestamp, char * p_str, 
     }
     return ret;
 }
-
-
+//}}}
+//{{{
 static bool nrf_log_backend_serial_std_handler(
     uint8_t                severity_level,
     const uint32_t * const p_timestamp,
@@ -345,9 +356,9 @@ static bool nrf_log_backend_serial_std_handler(
         return false;
     }
 }
-
-
-static void byte2hex(const uint8_t c, char * p_out)
+//}}}
+//{{{
+static void byte2hex (const uint8_t c, char* p_out)
 {
     uint8_t  nibble;
     uint32_t i = 2;
@@ -358,9 +369,10 @@ static void byte2hex(const uint8_t c, char * p_out)
         p_out[1 - i] = (nibble > 9) ? ('A' + nibble - 10) : ('0' + nibble);
     }
 }
+//}}}
 
-
-static uint32_t nrf_log_backend_serial_hexdump_handler(
+//{{{
+static uint32_t nrf_log_backend_serial_hexdump_handler (
     uint8_t                severity_level,
     const uint32_t * const p_timestamp,
     const char * const     p_str,
@@ -474,23 +486,22 @@ static uint32_t nrf_log_backend_serial_hexdump_handler(
     while (byte_cnt < length);
     return byte_cnt;
 }
+//}}}
+//{{{
+nrf_log_std_handler_t nrf_log_backend_std_handler_get() {
+  return nrf_log_backend_serial_std_handler;
+  }
+//}}}
+//{{{
+nrf_log_hexdump_handler_t nrf_log_backend_hexdump_handler_get() {
+  return nrf_log_backend_serial_hexdump_handler;
+  }
+//}}}
 
-
-nrf_log_std_handler_t nrf_log_backend_std_handler_get(void)
-{
-    return nrf_log_backend_serial_std_handler;
-}
-
-
-nrf_log_hexdump_handler_t nrf_log_backend_hexdump_handler_get(void)
-{
-    return nrf_log_backend_serial_hexdump_handler;
-}
-
-
-uint8_t nrf_log_backend_getchar(void)
-{
+//{{{
+uint8_t nrf_log_backend_getchar() {
     return serial_get_byte();
 }
+//}}}
 
 #endif // NRF_MODULE_ENABLED(NRF_LOG)

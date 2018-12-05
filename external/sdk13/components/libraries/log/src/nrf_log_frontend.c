@@ -1,30 +1,31 @@
+//{{{  copyright
 /**
  * Copyright (c) 2016 - 2017, Nordic Semiconductor ASA
- * 
+ *
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without modification,
  * are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice, this
  *    list of conditions and the following disclaimer.
- * 
+ *
  * 2. Redistributions in binary form, except as embedded into a Nordic
  *    Semiconductor ASA integrated circuit in a product or a software update for
  *    such product, must reproduce the above copyright notice, this list of
  *    conditions and the following disclaimer in the documentation and/or other
  *    materials provided with the distribution.
- * 
+ *
  * 3. Neither the name of Nordic Semiconductor ASA nor the names of its
  *    contributors may be used to endorse or promote products derived from this
  *    software without specific prior written permission.
- * 
+ *
  * 4. This software, with or without modification, must only be used with a
  *    Nordic Semiconductor ASA integrated circuit.
- * 
+ *
  * 5. Any software provided in binary form under this license must not be reverse
  *    engineered, decompiled, modified and/or disassembled.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY NORDIC SEMICONDUCTOR ASA "AS IS" AND ANY EXPRESS
  * OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
  * OF MERCHANTABILITY, NONINFRINGEMENT, AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -35,9 +36,12 @@
  * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
  * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- * 
+ *
  */
+//}}}
+//{{{  includes
 #include "sdk_common.h"
+
 #if NRF_MODULE_ENABLED(NRF_LOG)
 #include "app_util.h"
 #include "app_util_platform.h"
@@ -46,13 +50,15 @@
 #include "nrf_log_backend.h"
 #include "nrf_log_ctrl.h"
 #include <string.h>
+//}}}
 
 #if NRF_LOG_DEFERRED
-STATIC_ASSERT((NRF_LOG_DEFERRED_BUFSIZE == 0) || IS_POWER_OF_TWO(NRF_LOG_DEFERRED_BUFSIZE));
+  STATIC_ASSERT((NRF_LOG_DEFERRED_BUFSIZE == 0) || IS_POWER_OF_TWO(NRF_LOG_DEFERRED_BUFSIZE));
 #else
-#define NRF_LOG_DEFERRED_BUFSIZE 1
+  #define NRF_LOG_DEFERRED_BUFSIZE 1
 #endif
 
+//{{{  struct log_data_2
 /**
  * brief An internal control block of the logger
  *
@@ -71,12 +77,14 @@ typedef struct
     nrf_log_std_handler_t     std_handler;     // A handler used for processing standard log calls
     nrf_log_hexdump_handler_t hexdump_handler; // A handler for processing hex dumps
 } log_data_t;
+//}}}
 
 static log_data_t   m_log_data;
 #if (NRF_LOG_DEFERRED == 1)
-static const char * m_overflow_info = NRF_LOG_ERROR_COLOR_CODE "Overflow\r\n";
-#endif //(NRF_LOG_DEFERRED == 1)
+  static const char * m_overflow_info = NRF_LOG_ERROR_COLOR_CODE "Overflow\r\n";
+#endif
 
+//{{{  description
 /**
  * Set of macros for encoding and decoding header for log entries.
  * There are 3 types of entries:
@@ -134,6 +142,8 @@ static const char * m_overflow_info = NRF_LOG_ERROR_COLOR_CODE "Overflow\r\n";
  *    |  STRING |     dummy          |
  *    --------------------------------
  */
+//}}}
+//{{{  log types
 #define HEADER_SIZE         ((NRF_LOG_USES_TIMESTAMP) ? 2 : 1)
 
 #define STD_ADDR_MASK       ((uint32_t)(1U << 22) - 1U)
@@ -257,7 +267,9 @@ typedef union
     }
 
 #endif
+//}}}
 
+//{{{
 ret_code_t nrf_log_init(nrf_log_timestamp_func_t timestamp_func)
 {
     if (NRF_LOG_USES_TIMESTAMP && (timestamp_func == NULL))
@@ -275,15 +287,16 @@ ret_code_t nrf_log_init(nrf_log_timestamp_func_t timestamp_func)
     }
     return err_code;
 }
-
-
+//}}}
+//{{{
 ret_code_t nrf_log_blocking_backend_set(void)
 {
     // Return value is ommited because
     return nrf_log_backend_init(true);
 }
 
-
+//}}}
+//{{{
 void nrf_log_frontend_init(nrf_log_std_handler_t     std_handler,
                            nrf_log_hexdump_handler_t hexdump_handler,
                            nrf_log_timestamp_func_t  timestamp_func)
@@ -298,137 +311,141 @@ void nrf_log_frontend_init(nrf_log_std_handler_t     std_handler,
 #endif //NRF_LOG_USES_TIMESTAMP
     nrf_log_handlers_set(std_handler, hexdump_handler);
 }
-
-
+//}}}
+//{{{
 void nrf_log_handlers_set(nrf_log_std_handler_t     std_handler,
                           nrf_log_hexdump_handler_t hexdump_handler)
 {
     m_log_data.std_handler     = std_handler;
     m_log_data.hexdump_handler = hexdump_handler;
 }
+//}}}
 
 #if (NRF_LOG_DEFERRED == 1)
-/**
- * @brief Allocates chunk in a buffer for one entry and injects overflow if
- * there is no room for requested entry.
- *
- * @param nargs    Number of 32bit arguments. In case of allocating for hex dump it
- * is the size of the buffer in 32bit words (ceiled).
- * @param p_wr_idx Pointer to write index.
- *
- * @return True if successful allocation, false otherwise.
- *
- */
-static inline bool buf_prealloc(uint32_t nargs, uint32_t * p_wr_idx)
-{
-    nargs += HEADER_SIZE;
-    uint32_t ovflw_tag_size = HEADER_SIZE;
-    bool     ret            = true;
-    CRITICAL_REGION_ENTER();
-    *p_wr_idx = m_log_data.wr_idx;
-    uint32_t available_words = (m_log_data.mask + 1) - (m_log_data.wr_idx - m_log_data.rd_idx);
-    uint32_t required_words  = nargs + ovflw_tag_size; // room for current entry and overflow
-    if (required_words > available_words)
-    {
-        if (available_words >= HEADER_SIZE)
-        {
-            // Overflow entry is injected
-            STD_HEADER_DEF(header, m_overflow_info, NRF_LOG_LEVEL_INTERNAL, 0);
-            m_log_data.buffer[m_log_data.wr_idx++ & m_log_data.mask] =
-                header.raw;
-#if NRF_LOG_USES_TIMESTAMP
-            m_log_data.buffer[m_log_data.wr_idx++ & m_log_data.mask] =
-                m_log_data.timestamp_func();
-#endif //NRF_LOG_USES_TIMESTAMP
-        }
-        // overflow case
-        ret = false;
-    }
-    else
-    {
-        m_log_data.wr_idx += nargs;
-    }
-    CRITICAL_REGION_EXIT();
-    return ret;
-}
+  //{{{
+  /**
+   * @brief Allocates chunk in a buffer for one entry and injects overflow if
+   * there is no room for requested entry.
+   *
+   * @param nargs    Number of 32bit arguments. In case of allocating for hex dump it
+   * is the size of the buffer in 32bit words (ceiled).
+   * @param p_wr_idx Pointer to write index.
+   *
+   * @return True if successful allocation, false otherwise.
+   *
+   */
+  static inline bool buf_prealloc(uint32_t nargs, uint32_t * p_wr_idx)
+  {
+      nargs += HEADER_SIZE;
+      uint32_t ovflw_tag_size = HEADER_SIZE;
+      bool     ret            = true;
+      CRITICAL_REGION_ENTER();
+      *p_wr_idx = m_log_data.wr_idx;
+      uint32_t available_words = (m_log_data.mask + 1) - (m_log_data.wr_idx - m_log_data.rd_idx);
+      uint32_t required_words  = nargs + ovflw_tag_size; // room for current entry and overflow
+      if (required_words > available_words)
+      {
+          if (available_words >= HEADER_SIZE)
+          {
+              // Overflow entry is injected
+              STD_HEADER_DEF(header, m_overflow_info, NRF_LOG_LEVEL_INTERNAL, 0);
+              m_log_data.buffer[m_log_data.wr_idx++ & m_log_data.mask] =
+                  header.raw;
+  #if NRF_LOG_USES_TIMESTAMP
+              m_log_data.buffer[m_log_data.wr_idx++ & m_log_data.mask] =
+                  m_log_data.timestamp_func();
+  #endif //NRF_LOG_USES_TIMESTAMP
+          }
+          // overflow case
+          ret = false;
+      }
+      else
+      {
+          m_log_data.wr_idx += nargs;
+      }
+      CRITICAL_REGION_EXIT();
+      return ret;
+  }
+  //}}}
+  //{{{
+  /**
+   * @brief Function for preallocating a continuous chunk of memory from circular buffer.
+   *
+   * If buffer does not fit starting from current position it will be allocated at
+   * the beginning of the circular buffer and offset will be returned indicating
+   * how much memory has been ommited at the end of the buffer. Function is
+   * using critical section.
+   *
+   * @param len32    Length of buffer to allocate. Given in words.
+   * @param p_offset Offset of the buffer.
+   * @param p_wr_idx Pointer to write index.
+   *
+   * @return A pointer to the allocated buffer. NULL if allocation failed.
+   */
+  static inline uint32_t * cont_buf_prealloc(uint32_t len32,
+                                             uint32_t * p_offset,
+                                             uint32_t * p_wr_idx)
+  {
+      uint32_t * p_buf = NULL;
 
+      len32++; // Increment because 32bit header is needed to be stored.
 
-/**
- * @brief Function for preallocating a continuous chunk of memory from circular buffer.
- *
- * If buffer does not fit starting from current position it will be allocated at
- * the beginning of the circular buffer and offset will be returned indicating
- * how much memory has been ommited at the end of the buffer. Function is
- * using critical section.
- *
- * @param len32    Length of buffer to allocate. Given in words.
- * @param p_offset Offset of the buffer.
- * @param p_wr_idx Pointer to write index.
- *
- * @return A pointer to the allocated buffer. NULL if allocation failed.
- */
-static inline uint32_t * cont_buf_prealloc(uint32_t len32,
-                                           uint32_t * p_offset,
-                                           uint32_t * p_wr_idx)
-{
-    uint32_t * p_buf = NULL;
+      CRITICAL_REGION_ENTER();
+      *p_wr_idx = m_log_data.wr_idx;
+      uint32_t available_words = (m_log_data.mask + 1) -
+                                 (m_log_data.wr_idx & m_log_data.mask);
+      if (len32 <= available_words)
+      {
+          // buffer will fit as is
+          p_buf              = &m_log_data.buffer[(m_log_data.wr_idx + 1) & m_log_data.mask];
+          m_log_data.wr_idx += len32;
+          *p_offset          = 0;
+      }
+      else if (len32 < (m_log_data.rd_idx & m_log_data.mask))
+      {
+          // wraping to the begining of the buffer
+          m_log_data.wr_idx += (len32 + available_words - 1);
+          *p_offset          = available_words - 1;
+          p_buf              = m_log_data.buffer;
+      }
+      available_words = (m_log_data.mask + 1) - (m_log_data.wr_idx - m_log_data.rd_idx);
+      // If there is no more room for even overflow tag indicate failed allocation.
+      if (available_words < HEADER_SIZE)
+      {
+          p_buf = NULL;
+      }
+      CRITICAL_REGION_EXIT();
 
-    len32++; // Increment because 32bit header is needed to be stored.
-
-    CRITICAL_REGION_ENTER();
-    *p_wr_idx = m_log_data.wr_idx;
-    uint32_t available_words = (m_log_data.mask + 1) -
-                               (m_log_data.wr_idx & m_log_data.mask);
-    if (len32 <= available_words)
-    {
-        // buffer will fit as is
-        p_buf              = &m_log_data.buffer[(m_log_data.wr_idx + 1) & m_log_data.mask];
-        m_log_data.wr_idx += len32;
-        *p_offset          = 0;
-    }
-    else if (len32 < (m_log_data.rd_idx & m_log_data.mask))
-    {
-        // wraping to the begining of the buffer
-        m_log_data.wr_idx += (len32 + available_words - 1);
-        *p_offset          = available_words - 1;
-        p_buf              = m_log_data.buffer;
-    }
-    available_words = (m_log_data.mask + 1) - (m_log_data.wr_idx - m_log_data.rd_idx);
-    // If there is no more room for even overflow tag indicate failed allocation.
-    if (available_words < HEADER_SIZE)
-    {
-        p_buf = NULL;
-    }
-    CRITICAL_REGION_EXIT();
-
-    return p_buf;
-}
-#endif //(NRF_LOG_DEFERRED == 1)
-
+      return p_buf;
+  }
+  //}}}
+#endif
 
 #if (NRF_LOG_DEFERRED == 0)
-static inline void nrf_log_direct_feed(uint8_t            type,
-                                       char const * const p_str,
-                                       uint32_t         * p_args,
-                                       uint32_t           nargs)
-{
-    uint32_t   timestamp   = 0;
-    uint32_t * p_timestamp = NRF_LOG_USES_TIMESTAMP ? &timestamp : NULL;
+  //{{{
+  static inline void nrf_log_direct_feed (uint8_t type,
+                                         char const * const p_str,
+                                         uint32_t         * p_args,
+                                         uint32_t           nargs)
+  {
+      uint32_t   timestamp   = 0;
+      uint32_t * p_timestamp = NRF_LOG_USES_TIMESTAMP ? &timestamp : NULL;
 
-#if NRF_LOG_USES_TIMESTAMP
-    timestamp = m_log_data.timestamp_func();
-#else //NRF_LOG_USES_TIMESTAMP
-    UNUSED_VARIABLE(timestamp);
-#endif //NRF_LOG_USES_TIMESTAMP
+  #if NRF_LOG_USES_TIMESTAMP
+      timestamp = m_log_data.timestamp_func();
+  #else //NRF_LOG_USES_TIMESTAMP
+      UNUSED_VARIABLE(timestamp);
+  #endif //NRF_LOG_USES_TIMESTAMP
 
-    UNUSED_VARIABLE
-      (m_log_data.std_handler(type, p_timestamp, (char *)p_str, p_args, nargs));
+      UNUSED_VARIABLE
+        (m_log_data.std_handler(type, p_timestamp, (char *)p_str, p_args, nargs));
 
-}
-#endif //(NRF_LOG_DEFERRED == 0)
+  }
+  //}}}
+#endif
 
-
-uint32_t nrf_log_push(char * const p_str)
+//{{{
+uint32_t nrf_log_push (char* const p_str)
 {
 #if (NRF_LOG_DEFERRED == 0)
     return (uint32_t)p_str;
@@ -448,9 +465,9 @@ uint32_t nrf_log_push(char * const p_str)
     return (uint32_t)p_dst_str;
 #endif //(NRF_LOG_DEFERRED == 0)
 }
-
-
-void nrf_log_frontend_std_0(uint8_t severity, char const * const p_str)
+//}}}
+//{{{
+void nrf_log_frontend_std_0 (uint8_t severity, char const* const p_str)
 {
 #if (NRF_LOG_DEFERRED == 0)
     nrf_log_direct_feed(severity, p_str, NULL, 0);
@@ -469,9 +486,9 @@ void nrf_log_frontend_std_0(uint8_t severity, char const * const p_str)
     }
 #endif //(NRF_LOG_DEFERRED == 0)
 }
-
-
-void nrf_log_frontend_std_1(uint8_t            severity,
+//}}}
+//{{{
+void nrf_log_frontend_std_1 (uint8_t severity,
                             char const * const p_str,
                             uint32_t           val0)
 {
@@ -494,9 +511,9 @@ void nrf_log_frontend_std_1(uint8_t            severity,
     }
 #endif //(NRF_LOG_DEFERRED == 0)
 }
-
-
-void nrf_log_frontend_std_2(uint8_t            severity,
+//}}}
+//{{{
+void nrf_log_frontend_std_2 (uint8_t severity,
                             char const * const p_str,
                             uint32_t           val0,
                             uint32_t           val1)
@@ -521,9 +538,9 @@ void nrf_log_frontend_std_2(uint8_t            severity,
     }
 #endif //(NRF_LOG_DEFERRED == 0)
 }
-
-
-void nrf_log_frontend_std_3(uint8_t            severity,
+//}}}
+//{{{
+void nrf_log_frontend_std_3 (uint8_t severity,
                             char const * const p_str,
                             uint32_t           val0,
                             uint32_t           val1,
@@ -550,9 +567,9 @@ void nrf_log_frontend_std_3(uint8_t            severity,
     }
 #endif //(NRF_LOG_DEFERRED == 0)
 }
-
-
-void nrf_log_frontend_std_4(uint8_t            severity,
+//}}}
+//{{{
+void nrf_log_frontend_std_4 (uint8_t severity,
                             char const * const p_str,
                             uint32_t           val0,
                             uint32_t           val1,
@@ -581,9 +598,9 @@ void nrf_log_frontend_std_4(uint8_t            severity,
     }
 #endif //(NRF_LOG_DEFERRED == 0)
 }
-
-
-void nrf_log_frontend_std_5(uint8_t            severity,
+//}}}
+//{{{
+void nrf_log_frontend_std_5 (uint8_t severity,
                             char const * const p_str,
                             uint32_t           val0,
                             uint32_t           val1,
@@ -614,9 +631,9 @@ void nrf_log_frontend_std_5(uint8_t            severity,
     }
 #endif //(NRF_LOG_DEFERRED == 0)
 }
-
-
-void nrf_log_frontend_std_6(uint8_t            severity,
+//}}}
+//{{{
+void nrf_log_frontend_std_6 (uint8_t severity,
                             char const * const p_str,
                             uint32_t           val0,
                             uint32_t           val1,
@@ -650,8 +667,9 @@ void nrf_log_frontend_std_6(uint8_t            severity,
 #endif //(NRF_LOG_DEFERRED == 0)
 }
 
-
-void nrf_log_frontend_hexdump(uint8_t            severity,
+//}}}
+//{{{
+void nrf_log_frontend_hexdump (uint8_t severity,
                               char const * const p_str,
                               const void * const p_data,
                               uint16_t           length)
@@ -704,14 +722,15 @@ void nrf_log_frontend_hexdump(uint8_t            severity,
     }
 #endif //(NRF_LOG_DEFERRED == 0)
 }
+//}}}
 
-
+//{{{
 bool buffer_is_empty(void)
 {
     return (m_log_data.rd_idx == m_log_data.wr_idx);
 }
-
-
+//}}}
+//{{{
 bool nrf_log_frontend_dequeue(void)
 {
     if (buffer_is_empty())
@@ -817,10 +836,13 @@ bool nrf_log_frontend_dequeue(void)
     return buffer_is_empty() ? false : true;
 
 }
+//}}}
 
+//{{{
 uint8_t nrf_log_getchar(void)
 {
     return nrf_log_backend_getchar();
 }
+//}}}
 
 #endif // NRF_MODULE_ENABLED(NRF_LOG)
