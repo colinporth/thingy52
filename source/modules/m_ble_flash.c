@@ -60,20 +60,18 @@
 //{{{  struct tc_flash_config_data_t
 /**@brief Data structure of configuration data stored to flash.
  */
-typedef struct
-{
-    uint32_t         valid;
-    ble_tcs_params_t config;
-} tc_flash_config_data_t;
+typedef struct {
+  uint32_t         valid;
+  ble_tcs_params_t config;
+  } tc_flash_config_data_t;
 //}}}
 //{{{  union tc_flash_config_t
 /**@brief Configuration data with size.
  */
-typedef union
-{
-    tc_flash_config_data_t data;
-    uint32_t               padding[CEIL_DIV(sizeof(tc_flash_config_data_t), 4)];
-} tc_flash_config_t;
+typedef union {
+  tc_flash_config_data_t data;
+  uint32_t padding[CEIL_DIV(sizeof(tc_flash_config_data_t), 4)];
+  } tc_flash_config_t;
 //}}}
 
 static fds_record_desc_t m_record_desc;
@@ -83,180 +81,162 @@ static bool m_fds_write_success = false;
 static bool m_fds_gc_run = false;
 
 //{{{
-/**@brief Function for handling flash data storage events.
- */
-static void tc_fds_evt_handler (fds_evt_t const* const p_fds_evt )
-{
-    switch (p_fds_evt->id)
-    {
-        case FDS_EVT_INIT:
-            if (p_fds_evt->result == FDS_SUCCESS)
-            {
-                m_fds_initialized = true;
-            }
-            else
-            {
-                // Initialization failed.
-                NRF_LOG_ERROR("FDS init failed!\r\n");
-                APP_ERROR_CHECK_BOOL(false);
-            }
-            break;
-        case FDS_EVT_WRITE:
-            if (p_fds_evt->result == FDS_SUCCESS)
-            {
-                if (p_fds_evt->write.file_id == TC_FILE_ID)
-                {
-                    NRF_LOG_INFO("FDS write success! %d FileId: 0x%x RecKey:0x%x\r\n", p_fds_evt->write.is_record_updated,
-                                                                                       p_fds_evt->write.file_id,
-                                                                                       p_fds_evt->write.record_key);
-                    m_fds_write_success = true;
-                }
-            }
-            else
-            {
-                // Initialization failed.
-                NRF_LOG_ERROR("FDS write failed!\r\n");
-                APP_ERROR_CHECK_BOOL(false);
-            }
-            break;
-        case FDS_EVT_GC:
-            if (p_fds_evt->result == FDS_SUCCESS)
-            {
-                NRF_LOG_INFO("garbage collect success\r\n");
-                m_fds_gc_run = true;
-            }
-            break;
-        default:
-            NRF_LOG_INFO("FDS handler - %d - %d\r\n", p_fds_evt->id, p_fds_evt->result);
-            APP_ERROR_CHECK(p_fds_evt->result);
-            break;
+static void tc_fds_evt_handler (fds_evt_t const* const p_fds_evt ) {
+
+  switch (p_fds_evt->id) {
+    case FDS_EVT_INIT:
+      if (p_fds_evt->result == FDS_SUCCESS)
+        m_fds_initialized = true;
+      else {
+        // Initialization failed.
+        NRF_LOG_ERROR ("FDS init failed!\r\n");
+        APP_ERROR_CHECK_BOOL (false);
+        }
+      break;
+
+    case FDS_EVT_WRITE:
+      if (p_fds_evt->result == FDS_SUCCESS) {
+        if (p_fds_evt->write.file_id == TC_FILE_ID) {
+          NRF_LOG_INFO ("FDS write success! %d FileId: 0x%x RecKey:0x%x\r\n", p_fds_evt->write.is_record_updated,
+                                                                              p_fds_evt->write.file_id,
+                                                                              p_fds_evt->write.record_key);
+          m_fds_write_success = true;
+          }
+        }
+      else {
+        // Initialization failed.
+        NRF_LOG_ERROR ("FDS write failed!\r\n");
+        APP_ERROR_CHECK_BOOL (false);
+        }
+      break;
+
+    case FDS_EVT_GC:
+      if (p_fds_evt->result == FDS_SUCCESS) {
+        NRF_LOG_INFO ("garbage collect success\r\n");
+        m_fds_gc_run = true;
+        }
+      break;
+
+    default:
+      NRF_LOG_INFO ("FDS handler - %d - %d\r\n", p_fds_evt->id, p_fds_evt->result);
+      APP_ERROR_CHECK (p_fds_evt->result);
+      break;
     }
-}
+  }
 //}}}
 
 //{{{
-uint32_t m_ble_flash_config_store (const ble_tcs_params_t* p_config)
-{
-    uint32_t            err_code;
-    fds_record_t        record;
-    fds_record_chunk_t  record_chunk;
+uint32_t m_ble_flash_config_store (const ble_tcs_params_t* p_config) {
 
-    NRF_LOG_INFO("Storing configuration \r\n");
+  uint32_t err_code;
+  fds_record_t record;
+  fds_record_chunk_t record_chunk;
 
-    NULL_PARAM_CHECK(p_config);
+  NRF_LOG_INFO ("Storing configuration \r\n");
 
-    memcpy(&m_config.data.config, p_config, sizeof(ble_tcs_params_t));
+  NULL_PARAM_CHECK (p_config);
+
+  memcpy (&m_config.data.config, p_config, sizeof(ble_tcs_params_t));
+  m_config.data.valid = TC_FLASH_CONFIG_VALID;
+
+  // Set up data.
+  record_chunk.p_data = &m_config;
+  record_chunk.length_words = sizeof(tc_flash_config_t)/4;
+
+  // Set up record.
+  record.file_id = TC_FILE_ID;
+  record.key = TC_REC_KEY;
+  record.data.p_chunks = &record_chunk;
+  record.data.num_chunks = 1;
+
+  err_code = fds_record_update (&m_record_desc, &record);
+  RETURN_IF_ERROR (err_code);
+
+  return NRF_SUCCESS;
+  }
+//}}}
+//{{{
+uint32_t m_ble_flash_config_load (ble_tcs_params_t** p_config) {
+
+  uint32_t err_code;
+  fds_flash_record_t flash_record;
+  fds_find_token_t ftok;
+
+  memset (&ftok, 0x00, sizeof(fds_find_token_t));
+
+  NRF_LOG_INFO ("Loading configuration\r\n");
+
+  err_code = fds_record_find (TC_FILE_ID, TC_REC_KEY, &m_record_desc, &ftok);
+  RETURN_IF_ERROR (err_code);
+
+  err_code = fds_record_open (&m_record_desc, &flash_record);
+  RETURN_IF_ERROR (err_code);
+
+  memcpy (&m_config, flash_record.p_data, sizeof(tc_flash_config_t));
+
+  err_code = fds_record_close (&m_record_desc);
+  RETURN_IF_ERROR (err_code);
+
+  *p_config = &m_config.data.config;
+
+  return NRF_SUCCESS;
+  }
+//}}}
+
+//{{{
+uint32_t m_ble_flash_init (const ble_tcs_params_t* p_default_config, ble_tcs_params_t** p_config) {
+
+  NRF_LOG_INFO ("Initialization\r\n");
+  NULL_PARAM_CHECK (p_default_config);
+
+  uint32_t err_code = fds_register (tc_fds_evt_handler);
+  RETURN_IF_ERROR (err_code);
+
+  err_code = fds_init();
+  RETURN_IF_ERROR (err_code);
+
+  while (m_fds_initialized == false)
+    app_sched_execute();
+
+  err_code = fds_gc();
+  RETURN_IF_ERROR (err_code);
+
+  while (m_fds_gc_run == false)
+    app_sched_execute();
+
+  err_code = m_ble_flash_config_load(p_config);
+
+  if (err_code == FDS_ERR_NOT_FOUND) {
+    fds_record_t record;
+    fds_record_chunk_t record_chunk;
+
+    NRF_LOG_INFO ("Writing default config\r\n");
+
+    memcpy(&m_config.data.config, p_default_config, sizeof(ble_tcs_params_t));
     m_config.data.valid = TC_FLASH_CONFIG_VALID;
 
     // Set up data.
-    record_chunk.p_data         = &m_config;
-    record_chunk.length_words   = sizeof(tc_flash_config_t)/4;
+    record_chunk.p_data = &m_config;
+    record_chunk.length_words = sizeof(tc_flash_config_t)/4;
     // Set up record.
-    record.file_id              = TC_FILE_ID;
-    record.key                  = TC_REC_KEY;
-    record.data.p_chunks        = &record_chunk;
-    record.data.num_chunks      = 1;
+    record.file_id = TC_FILE_ID;
+    record.key = TC_REC_KEY;
+    record.data.p_chunks = &record_chunk;
+    record.data.num_chunks = 1;
 
-    err_code = fds_record_update(&m_record_desc, &record);
-    RETURN_IF_ERROR(err_code);
-
-    return NRF_SUCCESS;
-}
-
-
-//}}}
-//{{{
-uint32_t m_ble_flash_config_load (ble_tcs_params_t** p_config)
-{
-    uint32_t            err_code;
-    fds_flash_record_t  flash_record;
-    fds_find_token_t    ftok;
-
-    memset(&ftok, 0x00, sizeof(fds_find_token_t));
-
-    NRF_LOG_INFO("Loading configuration\r\n");
-
-    err_code = fds_record_find(TC_FILE_ID, TC_REC_KEY, &m_record_desc, &ftok);
-    RETURN_IF_ERROR(err_code);
-
-    err_code = fds_record_open(&m_record_desc, &flash_record);
-    RETURN_IF_ERROR(err_code);
-
-    memcpy(&m_config, flash_record.p_data, sizeof(tc_flash_config_t));
-
-    err_code = fds_record_close(&m_record_desc);
-    RETURN_IF_ERROR(err_code);
+    m_fds_write_success = false;
+    err_code = fds_record_write (&m_record_desc, &record);
+    RETURN_IF_ERROR (err_code);
 
     *p_config = &m_config.data.config;
 
-    return NRF_SUCCESS;
-}
-//}}}
-//{{{
-uint32_t m_ble_flash_init (const ble_tcs_params_t* p_default_config,
-                          ble_tcs_params_t         ** p_config)
-{
-    uint32_t                err_code;
-
-    NRF_LOG_INFO("Initialization\r\n");
-    NULL_PARAM_CHECK(p_default_config);
-
-    err_code = fds_register(tc_fds_evt_handler);
+    while (m_fds_write_success != true)
+      app_sched_execute();
+    }
+  else {
     RETURN_IF_ERROR(err_code);
-
-    err_code = fds_init();
-    RETURN_IF_ERROR(err_code);
-
-    while (m_fds_initialized == false)
-    {
-        app_sched_execute();
     }
 
-    err_code = fds_gc();
-    RETURN_IF_ERROR(err_code);
-
-    while (m_fds_gc_run == false)
-    {
-        app_sched_execute();
-    }
-
-    err_code = m_ble_flash_config_load(p_config);
-
-    if (err_code == FDS_ERR_NOT_FOUND)
-    {
-        fds_record_t        record;
-        fds_record_chunk_t  record_chunk;
-
-        NRF_LOG_INFO("Writing default config\r\n");
-
-        memcpy(&m_config.data.config, p_default_config, sizeof(ble_tcs_params_t));
-        m_config.data.valid = TC_FLASH_CONFIG_VALID;
-
-        // Set up data.
-        record_chunk.p_data         = &m_config;
-        record_chunk.length_words   = sizeof(tc_flash_config_t)/4;
-        // Set up record.
-        record.file_id              = TC_FILE_ID;
-        record.key                  = TC_REC_KEY;
-        record.data.p_chunks        = &record_chunk;
-        record.data.num_chunks      = 1;
-
-        m_fds_write_success = false;
-        err_code = fds_record_write(&m_record_desc, &record);
-        RETURN_IF_ERROR(err_code);
-
-        *p_config = &m_config.data.config;
-
-        while(m_fds_write_success != true)
-        {
-            app_sched_execute();
-        }
-    }
-    else
-    {
-        RETURN_IF_ERROR(err_code);
-    }
-
-    return NRF_SUCCESS;
-}
+  return NRF_SUCCESS;
+  }
 //}}}

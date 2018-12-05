@@ -59,22 +59,16 @@
 //}}}
 
 //{{{  struct m_ui_flash_config_data_t
-/**@brief Data structure of configuration data stored to flash.
- */
-typedef struct
-{
-    uint32_t         valid;
-    ble_uis_led_t    config;
-} m_ui_flash_config_data_t;
+typedef struct {
+  uint32_t valid;
+  ble_uis_led_t config;
+  } m_ui_flash_config_data_t;
 //}}}
-//{{{  union  m_ui_flash_config_t
-/**@brief Configuration data with size.
- */
-typedef union
-{
-    m_ui_flash_config_data_t data;
-    uint32_t                 padding[CEIL_DIV(sizeof(m_ui_flash_config_data_t), 4)];
-} m_ui_flash_config_t;
+//{{{  union m_ui_flash_config_t
+typedef union {
+  m_ui_flash_config_data_t data;
+  uint32_t                 padding[CEIL_DIV(sizeof(m_ui_flash_config_data_t), 4)];
+  } m_ui_flash_config_t;
 //}}}
 
 static fds_record_desc_t    m_record_desc;

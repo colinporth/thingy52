@@ -1,4 +1,4 @@
-//{{{
+//{{{  copyright
 /**
  * Copyright (c) 2012 - 2017, Nordic Semiconductor ASA
  *
@@ -77,21 +77,22 @@
  * @image html scheduler_working.svg The high level design of the scheduler
  */
 //}}}
-
-#ifndef APP_SCHEDULER_H__
-#define APP_SCHEDULER_H__
-
+#pragma once
+//{{{  includes
 #include "sdk_config.h"
 #include <stdint.h>
 #include "app_error.h"
 #include "app_util.h"
-
+//}}}
+//{{{
 #ifdef __cplusplus
-extern "C" {
+  extern "C" {
 #endif
+//}}}
 
 #define APP_SCHED_EVENT_HEADER_SIZE 8       /**< Size of app_scheduler.event_header_t (only for use inside APP_SCHED_BUF_SIZE()). */
 
+//{{{
 /**@brief Compute number of bytes required to hold the scheduler buffer.
  *
  * @param[in] EVENT_SIZE   Maximum size of events to be passed through the scheduler.
@@ -102,10 +103,12 @@ extern "C" {
  */
 #define APP_SCHED_BUF_SIZE(EVENT_SIZE, QUEUE_SIZE)                                                 \
             (((EVENT_SIZE) + APP_SCHED_EVENT_HEADER_SIZE) * ((QUEUE_SIZE) + 1))
-
+//}}}
+//{{{
 /**@brief Scheduler event handler type. */
 typedef void (*app_sched_event_handler_t)(void * p_event_data, uint16_t event_size);
-
+//}}}
+//{{{
 /**@brief Macro for initializing the event scheduler.
  *
  * @details It will also handle dimensioning and allocation of the memory buffer required by the
@@ -126,7 +129,9 @@ typedef void (*app_sched_event_handler_t)(void * p_event_data, uint16_t event_si
         uint32_t ERR_CODE = app_sched_init((EVENT_SIZE), (QUEUE_SIZE), APP_SCHED_BUF);             \
         APP_ERROR_CHECK(ERR_CODE);                                                                 \
     } while (0)
+//}}}
 
+//{{{
 /**@brief Function for initializing the Scheduler.
  *
  * @details It must be called before entering the main loop.
@@ -145,15 +150,17 @@ typedef void (*app_sched_event_handler_t)(void * p_event_data, uint16_t event_si
  * @retval      NRF_ERROR_INVALID_PARAM   Invalid parameter (buffer not aligned to a 4 byte
  *                                        boundary).
  */
-uint32_t app_sched_init(uint16_t max_event_size, uint16_t queue_size, void * p_evt_buffer);
-
+uint32_t app_sched_init (uint16_t max_event_size, uint16_t queue_size, void * p_evt_buffer);
+//}}}
+//{{{
 /**@brief Function for executing all scheduled events.
  *
  * @details This function must be called from within the main loop. It will execute all events
  *          scheduled since the last time it was called.
  */
-void app_sched_execute(void);
-
+void app_sched_execute();
+//}}}
+//{{{
 /**@brief Function for scheduling an event.
  *
  * @details Puts an event into the event queue.
@@ -164,10 +171,11 @@ void app_sched_execute(void);
  *
  * @return      NRF_SUCCESS on success, otherwise an error code.
  */
-uint32_t app_sched_event_put(void *                    p_event_data,
+uint32_t app_sched_event_put (void* p_event_data,
                              uint16_t                  event_size,
                              app_sched_event_handler_t handler);
-
+//}}}
+//{{{
 /**@brief Function for getting the maximum observed queue utilization.
  *
  * Function for tuning the module and determining QUEUE_SIZE value and thus module RAM usage.
@@ -176,8 +184,9 @@ uint32_t app_sched_event_put(void *                    p_event_data,
  *
  * @return Maximum number of events in queue observed so far.
  */
-uint16_t app_sched_queue_utilization_get(void);
-
+uint16_t app_sched_queue_utilization_get();
+//}}}
+//{{{
 /**@brief Function for getting the current amount of free space in the queue.
  *
  * @details The real amount of free space may be less if entries are being added from an interrupt.
@@ -185,8 +194,10 @@ uint16_t app_sched_queue_utilization_get(void);
  *
  * @return Amount of free space in the queue.
  */
-uint16_t app_sched_queue_space_get(void);
+uint16_t app_sched_queue_space_get();
+//}}}
 
+//{{{
 /**@brief A function to pause the scheduler.
  *
  * @details When the scheduler is paused events are not pulled from the scheduler queue for
@@ -195,8 +206,9 @@ uint16_t app_sched_queue_space_get(void);
  *
  * @note @ref APP_SCHEDULER_WITH_PAUSE must be enabled to use this functionality.
  */
-void app_sched_pause(void);
-
+void app_sched_pause();
+//}}}
+//{{{
 /**@brief A function to resume a scheduler.
  *
  * @details To unblock the scheduler this function has to be called the same number of times as
@@ -204,12 +216,11 @@ void app_sched_pause(void);
  *
  * @note @ref APP_SCHEDULER_WITH_PAUSE must be enabled to use this functionality.
  */
-void app_sched_resume(void);
+void app_sched_resume();
+//}}}
 
+//{{{
 #ifdef __cplusplus
 }
 #endif
-
-#endif // APP_SCHEDULER_H__
-
-/** @} */
+//}}}

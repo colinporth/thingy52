@@ -73,8 +73,7 @@
   #endif
 
   #if APP_SCHEDULER_WITH_PAUSE
-    static uint32_t m_scheduler_paused_counter = 0; /**< Counter storing the difference between pausing
-                                                       and resuming the scheduler. */
+    static uint32_t m_scheduler_paused_counter = 0; // Counter storing the difference between pausing and resuming scheduler
   #endif
 
   //{{{
@@ -151,7 +150,7 @@
 
   #if APP_SCHEDULER_WITH_PROFILER
     //{{{
-    static void queue_utilization_check(void)
+    static void queue_utilization_check()
     {
         uint16_t start = m_queue_start_index;
         uint16_t end   = m_queue_end_index;
@@ -165,7 +164,7 @@
     }
     //}}}
     //{{{
-    uint16_t app_sched_queue_utilization_get(void)
+    uint16_t app_sched_queue_utilization_get()
     {
         return m_max_queue_utilization;
     }
@@ -173,20 +172,16 @@
   #endif // APP_SCHEDULER_WITH_PROFILER
 
   //{{{
-  uint32_t app_sched_event_put(void                    * p_event_data,
-                               uint16_t                  event_data_size,
-                               app_sched_event_handler_t handler)
-  {
+  uint32_t app_sched_event_put(void* p_event_data, uint16_t event_data_size, app_sched_event_handler_t handler) {
+
       uint32_t err_code;
 
-      if (event_data_size <= m_queue_event_size)
-      {
+      if (event_data_size <= m_queue_event_size) {
           uint16_t event_index = 0xFFFF;
 
           CRITICAL_REGION_ENTER();
 
-          if (!APP_SCHED_QUEUE_FULL())
-          {
+          if (!APP_SCHED_QUEUE_FULL()) {
               event_index       = m_queue_end_index;
               m_queue_end_index = next_index(m_queue_end_index);
 
@@ -199,34 +194,26 @@
 
           CRITICAL_REGION_EXIT();
 
-          if (event_index != 0xFFFF)
-          {
+          if (event_index != 0xFFFF) {
               // NOTE: This can be done outside the critical region since the event consumer will
               //       always be called from the main loop, and will thus never interrupt this code.
               m_queue_event_headers[event_index].handler = handler;
-              if ((p_event_data != NULL) && (event_data_size > 0))
-              {
+              if ((p_event_data != NULL) && (event_data_size > 0)) {
                   memcpy(&m_queue_event_data[event_index * m_queue_event_size],
                          p_event_data,
                          event_data_size);
                   m_queue_event_headers[event_index].event_data_size = event_data_size;
               }
               else
-              {
                   m_queue_event_headers[event_index].event_data_size = 0;
-              }
 
               err_code = NRF_SUCCESS;
           }
           else
-          {
               err_code = NRF_ERROR_NO_MEM;
-          }
       }
       else
-      {
           err_code = NRF_ERROR_INVALID_LENGTH;
-      }
 
       return err_code;
   }
