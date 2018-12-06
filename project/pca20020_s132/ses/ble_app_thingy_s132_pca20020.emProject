@@ -17,19 +17,15 @@
       debug_start_from_entry_point_symbol="No"
       debug_target_connection="J-Link"
       link_linker_script_file="$(StudioDir)/samples/SEGGER_Flash.icf"
-      linker_section_placements_segments="FLASH RX 0x00000000 0x00080000;RAM RWX 0x20000000 0x00010000"
+      linker_section_placements_segments="FLASH RX 0x0001F000 0x00061000;RAM RWX 0x20004170 0x0000BE90"
       project_directory=""
       project_type="Executable" />
-    <folder Name="Internal Files">
-      <file file_name="$(StudioDir)/samples/Cortex_M_Startup.s" />
-      <file file_name="$(StudioDir)/samples/SEGGER_THUMB_Startup.s" />
-    </folder>
     <configuration
       CMSIS_CORE="Yes"
       Name="release_v1_0_0"
       c_preprocessor_definitions=""
       c_user_include_directories="" />
-    <folder Name="Thingy">
+    <folder Name="thingy">
       <file file_name="../main.c" />
       <file file_name="../../../source/modules/m_ble.c" />
       <file file_name="../../../source/modules/m_ble_flash.c" />
@@ -50,7 +46,7 @@
         <file file_name="../../../include/board/pca20020.h" />
       </folder>
     </folder>
-    <folder Name="Thingy drivers">
+    <folder Name="thingy drivers">
       <file file_name="../../../source/drivers/drv_ext_light.c" />
       <file file_name="../../../source/drivers/drv_ccs811.c" />
       <file file_name="../../../source/drivers/drv_gas_sensor.c" />
@@ -93,7 +89,7 @@
         <file file_name="../../../include/drivers/sounds.h" />
       </folder>
     </folder>
-    <folder Name="Thingy_libraries">
+    <folder Name="thingy libs">
       <file file_name="../../../libs/eMD6/core/driver/eMPL/inv_mpu.c" />
       <file file_name="../../../libs/eMD6/core/driver/eMPL/inv_mpu_dmp_motion_driver.c" />
       <file file_name="../../../libs/eMD6/core/mllite/data_builder.c" />
@@ -153,7 +149,6 @@
       <folder Name="inc" />
     </folder>
     <folder Name="nRF_SoftDevice">
-      <file file_name="../../../external/sdk13/components/softdevice/s132/doc/s132_nrf52_4.0.2_licence-agreement.txt" />
       <file file_name="../../../sdk_components/softdevice/common/softdevice_handler/softdevice_handler.c" />
       <file file_name="../../../external/sdk13_override/softdevice_handler_appsh.c" />
     </folder>
@@ -169,16 +164,7 @@
         <file file_name="../../../sdk_components/libraries/log/nrf_log_internal.h" />
       </folder>
     </folder>
-    <folder Name="nRF_Segger_RTT">
-      <file file_name="../../../external/segger_rtt/SEGGER_RTT.c" />
-      <file file_name="../../../external/segger_rtt/SEGGER_RTT_printf.c" />
-      <file file_name="../../../external/segger_rtt/RTT_Syscalls_GCC.c" />
-      <folder Name="inc">
-        <file file_name="../../../external/segger_rtt/SEGGER_RTT.h" />
-        <file file_name="../../../external/segger_rtt/SEGGER_RTT_Conf.h" />
-      </folder>
-    </folder>
-    <folder Name="Codec: BV32FP">
+    <folder Name="BV32FP">
       <file file_name="../../../libs/bv32fp-1.2/a2lsp.c" />
       <file file_name="../../../libs/bv32fp-1.2/allpole.c" />
       <file file_name="../../../libs/bv32fp-1.2/allzero.c" />
@@ -206,7 +192,7 @@
       <file file_name="../../../libs/bv32fp-1.2/tables.c" />
       <file file_name="../../../libs/bv32fp-1.2/utility.c" />
     </folder>
-    <folder Name="Codec: ADPCM">
+    <folder Name="ADPCM">
       <file file_name="../../../libs/dvi_adpcm/dvi_adpcm.c" />
     </folder>
     <folder Name="SR3_Audio">
@@ -218,9 +204,6 @@
       <folder Name="inc" />
     </folder>
     <folder Name="nRF_NFC">
-      <file file_name="../../../sdk_components/nfc/t2t_lib/nfc_t2t_lib_keil.lib">
-        <configuration Name="External Keil ARMCC" file_type="Library" />
-      </file>
       <file file_name="../../../sdk_components/nfc/t2t_lib/hal_t2t/hal_nfc_t2t.c" />
       <file file_name="../../../sdk_components/nfc/ndef/text/nfc_text_rec.c" />
       <file file_name="../../../sdk_components/nfc/ndef/generic/message/nfc_ndef_msg.c" />
@@ -239,10 +222,22 @@
       Name="debug_v1_0_0"
       c_preprocessor_definitions="DEBUG"
       c_user_include_directories="" />
-    <folder Name="libs">
+    <folder Name="link libs">
       <file file_name="../../../sdk_components/toolchain/cmsis/dsp/GCC/libarm_cortexM4lf_math.a" />
       <file file_name="../../../libs/liblibmplmpu_m4_hardfp/liblibmplmpu.a" />
       <file file_name="../../../sdk_components/nfc/t2t_lib/nfc_t2t_lib_gcc.a" />
+    </folder>
+    <folder Name="sys">
+      <file file_name="../../../sdk_components/toolchain/gcc/gcc_startup_nrf52.S" />
+      <file file_name="../../../sdk_components/toolchain/system_nrf52.c" />
+      <file file_name="../../../external/segger_rtt/RTT_Syscalls_GCC.c" />
+      <file file_name="../../../external/segger_rtt/SEGGER_RTT.c" />
+      <file file_name="../../../external/segger_rtt/SEGGER_RTT_printf.c" />
+      <folder Name="inc">
+        <file file_name="../../../external/segger_rtt/SEGGER_RTT.h" />
+        <file file_name="../../../external/segger_rtt/SEGGER_RTT_Conf.h" />
+        <file file_name="../../../sdk_components/toolchain/system_nrf52.h" />
+      </folder>
     </folder>
   </project>
   <configuration Name="Internal" hidden="Yes" />

@@ -13,7 +13,7 @@
  <Project>
   <ProjectSessionItem path="ble_app_thingy_s132_pca20020"/>
   <ProjectSessionItem path="ble_app_thingy_s132_pca20020;ble_app_thingy_s132_pca20020"/>
-  <ProjectSessionItem path="ble_app_thingy_s132_pca20020;ble_app_thingy_s132_pca20020;Codec: ADPCM"/>
+  <ProjectSessionItem path="ble_app_thingy_s132_pca20020;ble_app_thingy_s132_pca20020;sys"/>
  </Project>
  <Register1/>
  <Register2/>
