@@ -13,7 +13,10 @@
  <Project>
   <ProjectSessionItem path="ble_app_thingy_s132_pca20020"/>
   <ProjectSessionItem path="ble_app_thingy_s132_pca20020;ble_app_thingy_s132_pca20020"/>
-  <ProjectSessionItem path="ble_app_thingy_s132_pca20020;ble_app_thingy_s132_pca20020;sys"/>
+  <ProjectSessionItem path="ble_app_thingy_s132_pca20020;ble_app_thingy_s132_pca20020;nRF_Log"/>
+  <ProjectSessionItem path="ble_app_thingy_s132_pca20020;ble_app_thingy_s132_pca20020;nRF_Log;inc"/>
+  <ProjectSessionItem path="ble_app_thingy_s132_pca20020;ble_app_thingy_s132_pca20020;thingy"/>
+  <ProjectSessionItem path="ble_app_thingy_s132_pca20020;ble_app_thingy_s132_pca20020;thingy;inc"/>
  </Project>
  <Register1/>
  <Register2/>
