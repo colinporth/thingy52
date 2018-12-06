@@ -61,7 +61,7 @@
 #define NEXT_CONN_PARAMS_UPDATE_DELAY   APP_TIMER_TICKS(30000) // Time between each call to sd_ble_gap_conn_param_update after the first call (30 seconds).
 #define MAX_CONN_PARAMS_UPDATE_COUNT    3   // Number of attempts before giving up the connection parameter negotiation.
 
-#define THINGY_SERVICE_ENVIRONMENT      0 
+#define THINGY_SERVICE_ENVIRONMENT      0
 #define THINGY_SERVICE_MOTION           1
 #define THINGY_SERVICE_UI               2
 #define THINGY_SERVICE_SOUND            3
@@ -83,17 +83,15 @@
 // The text fields will by default be filled with the MAC address and a random generated address
 
 #define THINGY_CONFIG_DEFAULT { \
-  .dev_name = { .name = DEVICE_NAME, .len = 6 }, \
-  .fw_version = { .major = 1, .minor = 2, .patch = 3 }, \
-  .mtu = { .req = 0x00, .size = 23 }, \
-  .eddystone_url = { .data = THINGY_BEACON_URL_DEFAULT, .len  = THINGY_BEACON_URL_LEN },  \
-  .adv_params = { .interval = MSEC_TO_UNITS(APP_ADV_INTERVAL_MS, UNIT_0_625_MS), .timeout = APP_ADV_TIMEOUT_IN_SECONDS }, \
-  .conn_params = {                        \
-    .min_conn_int  = (uint16_t)MSEC_TO_UNITS(MIN_CONN_INTERVAL_MS, UNIT_1_25_MS), \
-    .max_conn_int  = MSEC_TO_UNITS(MAX_CONN_INTERVAL_MS, UNIT_1_25_MS),           \
-    .slave_latency = SLAVE_LATENCY,                                               \
-    .sup_timeout   = MSEC_TO_UNITS(CONN_SUP_TIMEOUT_MS, UNIT_10_MS) },            \
-  .cloud_token = {                        \
-    .token = THINGY_CLOUD_TOKEN_DEFAULT,  \
-    .len   = THINGY_CLOUD_TOKEN_LEN },    \
+  .dev_name      = { .name = DEVICE_NAME, .len = 6 }, \
+  .fw_version    = { .major = 3, .minor = 0, .patch = 0 }, \
+  .mtu           = { .req = 0x00, .size = 23 }, \
+  .eddystone_url = { .data = THINGY_BEACON_URL_DEFAULT, .len  = THINGY_BEACON_URL_LEN }, \
+  .adv_params    = { .interval = MSEC_TO_UNITS(APP_ADV_INTERVAL_MS, UNIT_0_625_MS), \
+                     .timeout = APP_ADV_TIMEOUT_IN_SECONDS }, \
+  .conn_params = { .min_conn_int  = (uint16_t)MSEC_TO_UNITS(MIN_CONN_INTERVAL_MS, UNIT_1_25_MS), \
+                   .max_conn_int  = MSEC_TO_UNITS(MAX_CONN_INTERVAL_MS, UNIT_1_25_MS), \
+                   .slave_latency = SLAVE_LATENCY, \
+                   .sup_timeout   = MSEC_TO_UNITS(CONN_SUP_TIMEOUT_MS, UNIT_10_MS) }, \
+  .cloud_token = { .token = THINGY_CLOUD_TOKEN_DEFAULT, .len = THINGY_CLOUD_TOKEN_LEN }, \
   }
