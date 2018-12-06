@@ -122,15 +122,15 @@ $(abspath ../../../sdk_components/ble/common/ble_srv_common.c) \
 $(abspath ../../../sdk_components/ble/common/ble_conn_state.c) \
 $(abspath ../../../sdk_components/ble/ble_services/ble_dfu/ble_dfu.c) \
 $(abspath ../../../sdk_components/ble/ble_services/ble_bas/ble_bas.c) \
+$(abspath ../../../sdk_components/drivers_nrf/clock/nrf_drv_clock.c) \
 $(abspath ../../../sdk_components/drivers_nrf/common/nrf_drv_common.c) \
 $(abspath ../../../sdk_components/drivers_nrf/gpiote/nrf_drv_gpiote.c) \
-$(abspath ../../../sdk_components/drivers_nrf/twi_master/nrf_drv_twi.c) \
-$(abspath ../../../sdk_components/drivers_nrf/pwm/nrf_drv_pwm.c) \
-$(abspath ../../../sdk_components/drivers_nrf/pdm/nrf_drv_pdm.c) \
-$(abspath ../../../sdk_components/drivers_nrf/clock/nrf_drv_clock.c) \
-$(abspath ../../../sdk_components/drivers_nrf/saadc/nrf_drv_saadc.c) \
 $(abspath ../../../sdk_components/drivers_nrf/hal/nrf_saadc.c) \
+$(abspath ../../../sdk_components/drivers_nrf/pdm/nrf_drv_pdm.c) \
+$(abspath ../../../sdk_components/drivers_nrf/pwm/nrf_drv_pwm.c) \
 $(abspath ../../../sdk_components/drivers_nrf/rng/nrf_drv_rng.c) \
+$(abspath ../../../sdk_components/drivers_nrf/saadc/nrf_drv_saadc.c) \
+$(abspath ../../../sdk_components/drivers_nrf/twi_master/nrf_drv_twi.c) \
 $(abspath ../../../sdk_components/nfc/ndef/launchapp/nfc_launchapp_msg.c) \
 $(abspath ../../../sdk_components/nfc/ndef/launchapp/nfc_launchapp_rec.c) \
 $(abspath ../../../sdk_components/nfc/ndef/uri/nfc_uri_msg.c) \
@@ -187,12 +187,10 @@ INC_PATHS += -I$(abspath ../../../sdk_components/ble/common)
 INC_PATHS += -I$(abspath ../../../sdk_components/device)
 INC_PATHS += -I$(abspath ../../../sdk_components/drivers_nrf/clock)
 INC_PATHS += -I$(abspath ../../../sdk_components/drivers_nrf/common)
-INC_PATHS += -I$(abspath ../../../sdk_components/drivers_nrf/config)
 INC_PATHS += -I$(abspath ../../../sdk_components/drivers_nrf/delay)
 INC_PATHS += -I$(abspath ../../../sdk_components/drivers_nrf/gpiote)
 INC_PATHS += -I$(abspath ../../../sdk_components/drivers_nrf/hal)
 INC_PATHS += -I$(abspath ../../../sdk_components/drivers_nrf/pdm)
-INC_PATHS += -I$(abspath ../../../sdk_components/drivers_nrf/pstorage)
 INC_PATHS += -I$(abspath ../../../sdk_components/drivers_nrf/pwm)
 INC_PATHS += -I$(abspath ../../../sdk_components/drivers_nrf/rng)
 INC_PATHS += -I$(abspath ../../../sdk_components/drivers_nrf/saadc)
@@ -202,20 +200,17 @@ INC_PATHS += -I$(abspath ../../../sdk_components/libraries/bootloader/dfu)
 INC_PATHS += -I$(abspath ../../../sdk_components/libraries/button)
 INC_PATHS += -I$(abspath ../../../sdk_components/libraries/crc32)
 INC_PATHS += -I$(abspath ../../../sdk_components/libraries/experimental_section_vars)
-INC_PATHS += -I$(abspath ../../../sdk_components/libraries/experimental_section_vars)
 INC_PATHS += -I$(abspath ../../../sdk_components/libraries/fds)
-INC_PATHS += -I$(abspath ../../../sdk_components/libraries/fifo)
-INC_PATHS += -I$(abspath ../../../sdk_components/libraries/fstorage)
 INC_PATHS += -I$(abspath ../../../sdk_components/libraries/fstorage)
 INC_PATHS += -I$(abspath ../../../sdk_components/libraries/led_softblink)
 INC_PATHS += -I$(abspath ../../../sdk_components/libraries/log)
 INC_PATHS += -I$(abspath ../../../sdk_components/libraries/low_power_pwm)
+INC_PATHS += -I$(abspath ../../../sdk_components/libraries/queue)
 INC_PATHS += -I$(abspath ../../../sdk_components/libraries/scheduler)
 INC_PATHS += -I$(abspath ../../../sdk_components/libraries/strerror)
 INC_PATHS += -I$(abspath ../../../sdk_components/libraries/timer)
 INC_PATHS += -I$(abspath ../../../sdk_components/libraries/uart)
 INC_PATHS += -I$(abspath ../../../sdk_components/libraries/util)
-INC_PATHS += -I$(abspath ../../../sdk_components/libraries/queue)
 INC_PATHS += -I$(abspath ../../../sdk_components/nfc/ndef/generic/record)
 INC_PATHS += -I$(abspath ../../../sdk_components/nfc/ndef/generic/message)
 INC_PATHS += -I$(abspath ../../../sdk_components/nfc/ndef/launchapp)
