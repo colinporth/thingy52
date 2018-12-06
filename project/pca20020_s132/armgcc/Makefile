@@ -159,15 +159,14 @@ $(abspath ../../../sdk_components/libraries/strerror/nrf_strerror.c) \
 $(abspath ../../../sdk_components/libraries/timer/app_timer.c) \
 $(abspath ../../../sdk_components/softdevice/common/softdevice_handler/softdevice_handler.c) \
 $(abspath ../../../sdk_components/toolchain/system_nrf52.c) \
-$(abspath ../../../external/segger_rtt/RTT_Syscalls_GCC.c) \
-$(abspath ../../../external/segger_rtt/SEGGER_RTT.c) \
-$(abspath ../../../external/segger_rtt/SEGGER_RTT_printf.c) \
-$(abspath ../../../external/sdk13_override/softdevice_handler_appsh.c) \
+$(abspath ../../../sdk_components/RTT_Syscalls_GCC.c) \
+$(abspath ../../../sdk_components/SEGGER_RTT.c) \
+$(abspath ../../../sdk_components/SEGGER_RTT_printf.c) \
+$(abspath ../../../sdk_components/softdevice_handler_appsh.c) \
 
 ASM_SOURCE_FILES  = $(abspath ../../../sdk_components/toolchain/gcc/gcc_startup_nrf52.S)
 
 INC_PATHS += -I$(abspath ../config)
-INC_PATHS += -I$(abspath ../../../external/segger_rtt)
 INC_PATHS += -I$(abspath ../../../include)
 INC_PATHS += -I$(abspath ../../../include/drivers)
 INC_PATHS += -I$(abspath ../../../include/modules)
@@ -180,6 +179,7 @@ INC_PATHS += -I$(abspath ../../../libs/eMD6/core/eMPL-hal)
 INC_PATHS += -I$(abspath ../../../libs/eMD6/core/mllite)
 INC_PATHS += -I$(abspath ../../../libs/eMD6/core/mpl)
 INC_PATHS += -I$(abspath ../../../libs/sr3_audio)
+INC_PATHS += -I$(abspath ../../../sdk_components)
 INC_PATHS += -I$(abspath ../../../sdk_components/ble/ble_advertising)
 INC_PATHS += -I$(abspath ../../../sdk_components/ble/ble_services/ble_bas)
 INC_PATHS += -I$(abspath ../../../sdk_components/ble/ble_services/ble_dfu)
