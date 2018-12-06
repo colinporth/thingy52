@@ -13,12 +13,6 @@
  <Project>
   <ProjectSessionItem path="ble_app_thingy_s132_pca20020"/>
   <ProjectSessionItem path="ble_app_thingy_s132_pca20020;ble_app_thingy_s132_pca20020"/>
-  <ProjectSessionItem path="ble_app_thingy_s132_pca20020;ble_app_thingy_s132_pca20020;nRF_Libraries"/>
-  <ProjectSessionItem path="ble_app_thingy_s132_pca20020;ble_app_thingy_s132_pca20020;SR3_Audio"/>
-  <ProjectSessionItem path="ble_app_thingy_s132_pca20020;ble_app_thingy_s132_pca20020;sys"/>
-  <ProjectSessionItem path="ble_app_thingy_s132_pca20020;ble_app_thingy_s132_pca20020;sys;inc"/>
-  <ProjectSessionItem path="ble_app_thingy_s132_pca20020;ble_app_thingy_s132_pca20020;thingy"/>
-  <ProjectSessionItem path="ble_app_thingy_s132_pca20020;ble_app_thingy_s132_pca20020;thingy libs"/>
  </Project>
  <Register1/>
  <Register2/>

@@ -59,7 +59,7 @@ CFLAGS += -DNRF_LOG_USES_RTT=1
 CFLAGS += -DNRF_LOG_ENABLED=1
 
 C_SOURCE_FILES += \
-$(abspath ../main.c) \
+$(abspath ../../../source/main.c) \
 $(abspath ../../../source/ble_tes.c) \
 $(abspath ../../../source/ble_tcs.c) \
 $(abspath ../../../source/ble_uis.c) \
@@ -224,7 +224,6 @@ INC_PATHS += -I$(abspath ../../../sdk_components/softdevice/s132/headers/nrf52)
 INC_PATHS += -I$(abspath ../../../sdk_components/toolchain)
 INC_PATHS += -I$(abspath ../../../sdk_components/toolchain/cmsis/include)
 INC_PATHS += -I$(abspath ../../../sdk_components/toolchain/gcc)
-INC_PATHS += -I$(abspath ../../../tools/sound)
 
 OBJECT_DIRECTORY = _build
 LISTING_DIRECTORY = $(OBJECT_DIRECTORY)

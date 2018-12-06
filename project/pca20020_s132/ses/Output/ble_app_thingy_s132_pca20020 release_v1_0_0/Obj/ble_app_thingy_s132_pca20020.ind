@@ -1,4 +1,3 @@
-"Output/ble_app_thingy_s132_pca20020 release_v1_0_0/Obj/main.o"
 "Output/ble_app_thingy_s132_pca20020 release_v1_0_0/Obj/m_ble.o"
 "Output/ble_app_thingy_s132_pca20020 release_v1_0_0/Obj/m_ble_flash.o"
 "Output/ble_app_thingy_s132_pca20020 release_v1_0_0/Obj/m_environment.o"
@@ -12,6 +11,7 @@
 "Output/ble_app_thingy_s132_pca20020 release_v1_0_0/Obj/support_func.o"
 "Output/ble_app_thingy_s132_pca20020 release_v1_0_0/Obj/twi_manager.o"
 "Output/ble_app_thingy_s132_pca20020 release_v1_0_0/Obj/advertiser_beacon_timeslot.o"
+"Output/ble_app_thingy_s132_pca20020 release_v1_0_0/Obj/main.o"
 "Output/ble_app_thingy_s132_pca20020 release_v1_0_0/Obj/drv_ext_light.o"
 "Output/ble_app_thingy_s132_pca20020 release_v1_0_0/Obj/drv_ccs811.o"
 "Output/ble_app_thingy_s132_pca20020 release_v1_0_0/Obj/drv_gas_sensor.o"
