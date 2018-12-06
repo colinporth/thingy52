@@ -44,6 +44,7 @@
         <file file_name="../config/sdk_config.h" />
         <file file_name="../config/thingy_config.h" />
         <file file_name="../../../include/board/pca20020.h" />
+        <file file_name="../config/fstorage_config.h" />
       </folder>
     </folder>
     <folder Name="thingy drivers">

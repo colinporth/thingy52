@@ -1,4 +1,4 @@
-//{{{
+//{{{  copyright
 /*
   Copyright (c) 2010 - 2017, Nordic Semiconductor ASA
   All rights reserved.
@@ -37,9 +37,7 @@
   OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 //}}}
-
-#ifndef __DRV_AUDIO_CONFIG_H
-#define __DRV_AUDIO_CONFIG_H
+#pragma once
 
 #include "app_util.h"
 #include "pca20020.h"
@@ -187,5 +185,3 @@
 #endif
 
 # define CONFIG_PDM_BUFFER_SIZE_SAMPLES (1 * CONFIG_AUDIO_FRAME_SIZE_SAMPLES)
-
-#endif /* __DRV_AUDIO_CONFIG_H */

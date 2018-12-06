@@ -1,4 +1,4 @@
-//{{{
+//{{{  copyright
 /*
   Copyright (c) 2010 - 2017, Nordic Semiconductor ASA
   All rights reserved.
@@ -37,18 +37,7 @@
   OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 //}}}
-
-#ifndef FS_CONFIG_H__
-#define FS_CONFIG_H__
-
-/**
- * @defgroup fstorage_config fstorage configuration
- * @ingroup fstorage
- * @{
- *
- * @brief fstorage configuration options.
- */
-
+#pragma once
 
 /**@brief   Configures the size of fstorage internal queue.
  * @details Increase this if there are many users, or if it is likely that many operation will be
@@ -76,11 +65,7 @@
  *          @ref sd_flash_write, which is 256 words for nRF51 ICs and 1024 words for nRF52 ICs.
  */
 #if   defined (NRF51)
-    #define FS_MAX_WRITE_SIZE_WORDS     (256)
+  #define FS_MAX_WRITE_SIZE_WORDS     (256)
 #elif defined (NRF52)
-    #define FS_MAX_WRITE_SIZE_WORDS     (1024)
+  #define FS_MAX_WRITE_SIZE_WORDS     (1024)
 #endif
-
-/** @} */
-
-#endif // FS_CONFIG_H__
