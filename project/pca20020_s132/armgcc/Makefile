@@ -269,7 +269,7 @@ ASMFLAGS += -DUSE_DMP
 ASMFLAGS += -DEMPL_TARGET_NRF52
 
 LIBS += \
-$(abspath ../../../libs/liblibmplmpu_m4_hardfp/liblibmplmpu.a) \
+$(abspath ../../../libs/liblibmplmpu.a) \
 $(abspath ../../../sdk_components/nfc/t2t_lib/nfc_t2t_lib_gcc.a) \
 $(abspath ../../../sdk_components/toolchain/cmsis/dsp/GCC/libarm_cortexM4lf_math.a) \
 
