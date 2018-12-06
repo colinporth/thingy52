@@ -83,7 +83,7 @@
    *
    * @return      New (incremented) index.
    */
-  static __INLINE uint8_t next_index(uint8_t index)
+  static __INLINE uint8_t next_index (uint8_t index)
   {
       return (index < m_queue_size) ? (index + 1) : 0;
   }
@@ -169,10 +169,10 @@
         return m_max_queue_utilization;
     }
     //}}}
-  #endif // APP_SCHEDULER_WITH_PROFILER
+  #endif 
 
   //{{{
-  uint32_t app_sched_event_put(void* p_event_data, uint16_t event_data_size, app_sched_event_handler_t handler) {
+  uint32_t app_sched_event_put (void* p_event_data, uint16_t event_data_size, app_sched_event_handler_t handler) {
 
       uint32_t err_code;
 
@@ -221,7 +221,7 @@
 
   #if APP_SCHEDULER_WITH_PAUSE
     //{{{
-    void app_sched_pause(void)
+    void app_sched_pause()
     {
         CRITICAL_REGION_ENTER();
 
@@ -233,7 +233,7 @@
     }
     //}}}
     //{{{
-    void app_sched_resume(void)
+    void app_sched_resume()
     {
         CRITICAL_REGION_ENTER();
 
@@ -244,7 +244,7 @@
         CRITICAL_REGION_EXIT();
     }
     //}}}
-  #endif //APP_SCHEDULER_WITH_PAUSE
+  #endif 
 
   //{{{
   /**@brief Function for checking if scheduler is paused which means that should break processing
@@ -252,7 +252,7 @@
    *
    * @return    Boolean value - true if scheduler is paused, false otherwise.
    */
-  static __INLINE bool is_app_sched_paused(void)
+  static __INLINE bool is_app_sched_paused()
   {
   #if APP_SCHEDULER_WITH_PAUSE
       return (m_scheduler_paused_counter > 0);
@@ -263,7 +263,7 @@
   //}}}
 
   //{{{
-  void app_sched_execute(void)
+  void app_sched_execute()
   {
       while (!is_app_sched_paused() && !APP_SCHED_QUEUE_EMPTY())
       {
@@ -289,4 +289,4 @@
       }
   }
   //}}}
-#endif //NRF_MODULE_ENABLED(APP_SCHEDULER)
+#endif

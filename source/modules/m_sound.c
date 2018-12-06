@@ -83,7 +83,6 @@ static void drv_speaker_evt_handler(drv_speaker_evt_t evt)
     }
 }
 //}}}
-
 //{{{
 static uint32_t drv_mic_data_handler(m_audio_frame_t* p_frame)
 {
@@ -214,7 +213,7 @@ static void ble_tss_evt_handler (ble_tss_t* p_tes,
  *
  * @retval NRF_SUCCESS If initialization was successful.
  */
-static uint32_t sound_service_init(bool major_minor_fw_ver_changed)
+static uint32_t sound_service_init (bool major_minor_fw_ver_changed)
 {
     uint32_t              err_code;
     ble_tss_init_t        tss_init;
@@ -241,42 +240,38 @@ static uint32_t sound_service_init(bool major_minor_fw_ver_changed)
 
 //{{{
 /**@brief Function for passing the BLE event to the Thingy Sound service.
- *
  * @details This callback function will be called from the BLE handling module.
- *
  * @param[in] p_ble_evt    Pointer to the BLE event.
  */
-static void sound_on_ble_evt (ble_evt_t* p_ble_evt)
-{
-    uint32_t err_code;
-    ble_tss_on_ble_evt(&m_tss, p_ble_evt);
+static void sound_on_ble_evt (ble_evt_t* p_ble_evt) {
 
-    if (p_ble_evt->header.evt_id == BLE_GAP_EVT_DISCONNECTED)
-    {
-        err_code = drv_mic_stop();
-        APP_ERROR_CHECK(err_code);
+  uint32_t err_code;
+  ble_tss_on_ble_evt(&m_tss, p_ble_evt);
+
+  if (p_ble_evt->header.evt_id == BLE_GAP_EVT_DISCONNECTED) {
+    err_code = drv_mic_stop();
+    APP_ERROR_CHECK(err_code);
     }
-}
+  }
 //}}}
 
 //{{{
+uint32_t m_sound_init (m_ble_service_handle_t* p_handle) {
 
-uint32_t m_sound_init (m_ble_service_handle_t* p_handle)
-{
-    uint32_t           err_code;
-    drv_speaker_init_t speaker_init;
+  uint32_t           err_code;
+  drv_speaker_init_t speaker_init;
 
-    NULL_PARAM_CHECK(p_handle);
+  NULL_PARAM_CHECK(p_handle);
 
-    NRF_LOG_INFO("Sound_init \r\n");
+  NRF_LOG_INFO("Sound_init \r\n");
 
-    p_handle->ble_evt_cb = sound_on_ble_evt;
-    p_handle->init_cb    = sound_service_init;
+  p_handle->ble_evt_cb = sound_on_ble_evt;
+  p_handle->init_cb    = sound_service_init;
 
-    speaker_init.evt_handler = drv_speaker_evt_handler;
-    err_code = drv_speaker_init(&speaker_init);
-    APP_ERROR_CHECK(err_code);
+  speaker_init.evt_handler = drv_speaker_evt_handler;
+  err_code = drv_speaker_init(&speaker_init);
+  APP_ERROR_CHECK(err_code);
 
-    return drv_mic_init(drv_mic_data_handler);
-}
+  return drv_mic_init(drv_mic_data_handler);
+  }
 //}}}

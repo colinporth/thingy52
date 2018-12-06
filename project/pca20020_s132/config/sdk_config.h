@@ -39,17 +39,17 @@
  *
  */
 //}}}
-
 #ifndef SDK_CONFIG_H
 #define SDK_CONFIG_H
+
 // <<< Use Configuration Wizard in Context Menu >>>\n
 #ifdef USE_APP_CONFIG
 #include "app_config.h"
 #endif
 
 #define NRF_BLE_GATT_MAX_MTU_SIZE BLE_GATT_ATT_MTU_DEFAULT*12
-// <h> nRF_ANT
 
+//{{{
 //==========================================================
 // <e> ANTFS_ENABLED - ant_fs - ANT File Share module.
 //==========================================================
@@ -153,8 +153,8 @@
 #endif
 
 #endif //ANTFS_ENABLED
-// </e>
-
+//}}}
+//{{{
 // <e> ANT_BPWR_ENABLED - ant_bpwr - Bicycle Power Profile
 //==========================================================
 #ifndef ANT_BPWR_ENABLED
@@ -421,10 +421,8 @@
 // </e>
 
 #endif //ANT_BPWR_ENABLED
-// </e>
-
-// <e> ANT_BSC_ENABLED - ant_bsc - Bicycle Speed and Cadence Profile
-//==========================================================
+//}}}
+//{{{
 #ifndef ANT_BSC_ENABLED
 #define ANT_BSC_ENABLED 0
 #endif
@@ -464,10 +462,8 @@
 #endif
 
 #endif //ANT_BSC_LOG_ENABLED
-// </e>
 
-// <e> ANT_BSC_COMBINED_PAGE_0_LOG_ENABLED - Enables logging of BSC Combined page 0 in the module.
-//==========================================================
+//{{{
 #ifndef ANT_BSC_COMBINED_PAGE_0_LOG_ENABLED
 #define ANT_BSC_COMBINED_PAGE_0_LOG_ENABLED 0
 #endif
@@ -501,10 +497,8 @@
 #endif
 
 #endif //ANT_BSC_COMBINED_PAGE_0_LOG_ENABLED
-// </e>
-
-// <e> ANT_BSC_PAGE_0_LOG_ENABLED - Enables logging of BSC page 0 in the module.
-//==========================================================
+//}}}
+//{{{
 #ifndef ANT_BSC_PAGE_0_LOG_ENABLED
 #define ANT_BSC_PAGE_0_LOG_ENABLED 0
 #endif
@@ -538,10 +532,8 @@
 #endif
 
 #endif //ANT_BSC_PAGE_0_LOG_ENABLED
-// </e>
-
-// <e> ANT_BSC_PAGE_1_LOG_ENABLED - Enables logging of BSC page 1 in the module.
-//==========================================================
+//}}}
+//{{{
 #ifndef ANT_BSC_PAGE_1_LOG_ENABLED
 #define ANT_BSC_PAGE_1_LOG_ENABLED 0
 #endif
@@ -575,10 +567,8 @@
 #endif
 
 #endif //ANT_BSC_PAGE_1_LOG_ENABLED
-// </e>
-
-// <e> ANT_BSC_PAGE_2_LOG_ENABLED - Enables logging of BSC page 2 in the module.
-//==========================================================
+//}}}
+//{{{
 #ifndef ANT_BSC_PAGE_2_LOG_ENABLED
 #define ANT_BSC_PAGE_2_LOG_ENABLED 0
 #endif
@@ -612,10 +602,8 @@
 #endif
 
 #endif //ANT_BSC_PAGE_2_LOG_ENABLED
-// </e>
-
-// <e> ANT_BSC_PAGE_3_LOG_ENABLED - Enables logging of BSC page 3 in the module.
-//==========================================================
+//}}}
+//{{{
 #ifndef ANT_BSC_PAGE_3_LOG_ENABLED
 #define ANT_BSC_PAGE_3_LOG_ENABLED 0
 #endif
@@ -649,10 +637,8 @@
 #endif
 
 #endif //ANT_BSC_PAGE_3_LOG_ENABLED
-// </e>
-
-// <e> ANT_BSC_PAGE_4_LOG_ENABLED - Enables logging of BSC page 4 in the module.
-//==========================================================
+//}}}
+//{{{
 #ifndef ANT_BSC_PAGE_4_LOG_ENABLED
 #define ANT_BSC_PAGE_4_LOG_ENABLED 0
 #endif
@@ -686,10 +672,8 @@
 #endif
 
 #endif //ANT_BSC_PAGE_4_LOG_ENABLED
-// </e>
-
-// <e> ANT_BSC_PAGE_5_LOG_ENABLED - Enables logging of BSC page 5 in the module.
-//==========================================================
+//}}}
+//{{{
 #ifndef ANT_BSC_PAGE_5_LOG_ENABLED
 #define ANT_BSC_PAGE_5_LOG_ENABLED 0
 #endif
@@ -723,14 +707,10 @@
 #endif
 
 #endif //ANT_BSC_PAGE_5_LOG_ENABLED
-// </e>
-
+//}}}
 #endif //ANT_BSC_ENABLED
-// </e>
-
-// <q> ANT_CHANNEL_CONFIG_ENABLED  - ant_channel_config - ANT common channel configuration
-
-
+//}}}
+//{{{
 #ifndef ANT_CHANNEL_CONFIG_ENABLED
 #define ANT_CHANNEL_CONFIG_ENABLED 0
 #endif
@@ -872,26 +852,21 @@
 
 #endif //ANT_COMMON_PAGE_81_ENABLED
 // </e>
-
-// <q> ANT_ENCRYPT_CONFIG_ENABLED  - ant_encrypt_config - Cryptographic ANT stack configuration
-
+//}}}
 
 #ifndef ANT_ENCRYPT_CONFIG_ENABLED
 #define ANT_ENCRYPT_CONFIG_ENABLED 0
 #endif
 
-// <q> ANT_ENCRYPT_NEGOTIATION_SLAVE_ENABLED  - ant_encrypt_negotiation_slave - Encryption negotiation for encrypted ANT slave channels
-
-
 #ifndef ANT_ENCRYPT_NEGOTIATION_SLAVE_ENABLED
 #define ANT_ENCRYPT_NEGOTIATION_SLAVE_ENABLED 0
 #endif
 
-// <e> ANT_HRM_ENABLED - ant_hrm - Heart Rate Monitor Profile
-//==========================================================
+//{{{
 #ifndef ANT_HRM_ENABLED
 #define ANT_HRM_ENABLED 0
 #endif
+
 #if  ANT_HRM_ENABLED
 // <e> ANT_HRM_LOG_ENABLED - Enables general logging in the module.
 //==========================================================
@@ -1116,24 +1091,16 @@
 // </e>
 
 #endif //ANT_HRM_ENABLED
-// </e>
-
-// <q> ANT_KEY_MANAGER_ENABLED  - ant_key_manager - Software Component
-
-
+//}}}
 #ifndef ANT_KEY_MANAGER_ENABLED
 #define ANT_KEY_MANAGER_ENABLED 0
 #endif
-
-// <q> ANT_REQUEST_CONTROLLER_ENABLED  - ant_request_controller - ANT+ request controller
-
 
 #ifndef ANT_REQUEST_CONTROLLER_ENABLED
 #define ANT_REQUEST_CONTROLLER_ENABLED 0
 #endif
 
-// <e> ANT_SDM_ENABLED - ant_sdm - Stride Based Speed and Distance Monitor Profile
-//==========================================================
+//{{{
 #ifndef ANT_SDM_ENABLED
 #define ANT_SDM_ENABLED 0
 #endif
@@ -1361,10 +1328,8 @@
 // </e>
 
 #endif //ANT_SDM_ENABLED
-// </e>
+//}}}
 
-// <e> ANT_SEARCH_CONFIG_ENABLED - ant_search_config - ANT common search configuration
-//==========================================================
 #ifndef ANT_SEARCH_CONFIG_ENABLED
 #define ANT_SEARCH_CONFIG_ENABLED 0
 #endif
@@ -3315,8 +3280,7 @@
 #endif //RTC_ENABLED
 // </e>
 
-// <e> SAADC_ENABLED - nrf_drv_saadc - SAADC peripheral driver
-//==========================================================
+//{{{
 #ifndef SAADC_ENABLED
 #define SAADC_ENABLED 1
 #endif
@@ -3426,10 +3390,8 @@
 // </e>
 
 #endif //SAADC_ENABLED
-// </e>
-
-// <e> SPIS_ENABLED - nrf_drv_spis - SPI Slave driver
-//==========================================================
+//}}}
+//{{{
 #ifndef SPIS_ENABLED
 #define SPIS_ENABLED 0
 #endif
@@ -3733,7 +3695,6 @@
 #endif
 
 #endif //SPI_CONFIG_LOG_ENABLED
-// </e>
 
 // <q> SPIM_NRF52_ANOMALY_109_WORKAROUND_ENABLED  - Enables nRF52 anomaly 109 workaround for SPIM.
 
@@ -3750,10 +3711,8 @@
 #endif
 
 #endif //SPI_ENABLED
-// </e>
-
-// <e> TIMER_ENABLED - nrf_drv_timer - TIMER periperal driver
-//==========================================================
+//}}}
+//{{{
 #ifndef TIMER_ENABLED
 #define TIMER_ENABLED 0
 #endif
@@ -3901,10 +3860,8 @@
 // </e>
 
 #endif //TIMER_ENABLED
-// </e>
-
-// <e> TWIS_ENABLED - nrf_drv_twis - TWIS peripheral driver
-//==========================================================
+//}}}
+//{{{
 #ifndef TWIS_ENABLED
 #define TWIS_ENABLED 0
 #endif
@@ -4190,10 +4147,8 @@
 #endif
 
 #endif //TWI_ENABLED
-// </e>
-
-// <e> UART_ENABLED - nrf_drv_uart - UART/UARTE peripheral driver
-//==========================================================
+//}}}
+//{{{
 #ifndef UART_ENABLED
 #define UART_ENABLED 1
 #endif
@@ -4340,10 +4295,8 @@
 // </e>
 
 #endif //UART_ENABLED
-// </e>
-
-// <e> USBD_ENABLED - nrf_drv_usbd - USB driver
-//==========================================================
+//}}}
+//{{{
 #ifndef USBD_ENABLED
 #define USBD_ENABLED 0
 #endif
@@ -4382,10 +4335,8 @@
 #endif
 
 #endif //USBD_ENABLED
-// </e>
-
-// <e> WDT_ENABLED - nrf_drv_wdt - WDT peripheral driver
-//==========================================================
+//}}}
+//{{{
 #ifndef WDT_ENABLED
 #define WDT_ENABLED 0
 #endif
@@ -4479,53 +4430,33 @@
 // </e>
 
 #endif //WDT_ENABLED
-// </e>
-
-// </h>
-//==========================================================
-
-// <h> nRF_Libraries
-
-//==========================================================
-// <q> APP_GPIOTE_ENABLED  - app_gpiote - GPIOTE events dispatcher
-
+//}}}
 
 #ifndef APP_GPIOTE_ENABLED
 #define APP_GPIOTE_ENABLED 0
 #endif
 
-// <q> APP_PWM_ENABLED  - app_pwm - PWM functionality
-
-
 #ifndef APP_PWM_ENABLED
 #define APP_PWM_ENABLED 0
 #endif
 
-// <e> APP_SCHEDULER_ENABLED - app_scheduler - Events scheduler
-//==========================================================
+//{{{
 #ifndef APP_SCHEDULER_ENABLED
 #define APP_SCHEDULER_ENABLED 1
 #endif
 #if  APP_SCHEDULER_ENABLED
-// <q> APP_SCHEDULER_WITH_PAUSE  - Enabling pause feature
-
 
 #ifndef APP_SCHEDULER_WITH_PAUSE
 #define APP_SCHEDULER_WITH_PAUSE 0
 #endif
-
-// <q> APP_SCHEDULER_WITH_PROFILER  - Enabling scheduler profiling
-
 
 #ifndef APP_SCHEDULER_WITH_PROFILER
 #define APP_SCHEDULER_WITH_PROFILER 0
 #endif
 
 #endif //APP_SCHEDULER_ENABLED
-// </e>
-
-// <e> APP_SDCARD_ENABLED - app_sdcard - SD/MMC card support using SPI
-//==========================================================
+//}}}
+//{{{
 #ifndef APP_SDCARD_ENABLED
 #define APP_SDCARD_ENABLED 0
 #endif
@@ -4569,10 +4500,8 @@
 #endif
 
 #endif //APP_SDCARD_ENABLED
-// </e>
-
-// <e> APP_TIMER_ENABLED - app_timer - Application timer functionality
-//==========================================================
+//}}}
+//{{{
 #ifndef APP_TIMER_ENABLED
 #define APP_TIMER_ENABLED 1
 #endif
@@ -4651,80 +4580,49 @@
 #endif
 
 #endif //APP_TIMER_ENABLED
-// </e>
-
-// <q> APP_TWI_ENABLED  - app_twi - TWI transaction manager
-
+//}}}
 
 #ifndef APP_TWI_ENABLED
 #define APP_TWI_ENABLED 0
 #endif
 
-// <q> APP_USBD_CLASS_AUDIO_ENABLED  - app_usbd_audio - USB AUDIO class
-
-
 #ifndef APP_USBD_CLASS_AUDIO_ENABLED
 #define APP_USBD_CLASS_AUDIO_ENABLED 0
 #endif
-
-// <q> APP_USBD_CLASS_HID_ENABLED  - app_usbd_hid - USB HID class
-
 
 #ifndef APP_USBD_CLASS_HID_ENABLED
 #define APP_USBD_CLASS_HID_ENABLED 0
 #endif
 
-// <q> APP_USBD_HID_GENERIC_ENABLED  - app_usbd_hid_generic - USB HID generic
-
-
 #ifndef APP_USBD_HID_GENERIC_ENABLED
 #define APP_USBD_HID_GENERIC_ENABLED 0
 #endif
-
-// <q> APP_USBD_HID_KBD_ENABLED  - app_usbd_hid_kbd - USB HID keyboard
-
 
 #ifndef APP_USBD_HID_KBD_ENABLED
 #define APP_USBD_HID_KBD_ENABLED 0
 #endif
 
-// <q> APP_USBD_HID_MOUSE_ENABLED  - app_usbd_hid_mouse - USB HID mouse
-
-
 #ifndef APP_USBD_HID_MOUSE_ENABLED
 #define APP_USBD_HID_MOUSE_ENABLED 0
 #endif
-
-// <q> BUTTON_ENABLED  - app_button - buttons handling module
-
 
 #ifndef BUTTON_ENABLED
 #define BUTTON_ENABLED 1
 #endif
 
-// <q> CRC16_ENABLED  - crc16 - CRC16 calculation routines
-
-
 #ifndef CRC16_ENABLED
 #define CRC16_ENABLED 0
 #endif
-
-// <q> CRC32_ENABLED  - crc32 - CRC32 calculation routines
-
 
 #ifndef CRC32_ENABLED
 #define CRC32_ENABLED 1
 #endif
 
-// <q> ECC_ENABLED  - ecc - Elliptic Curve Cryptography Library
-
-
 #ifndef ECC_ENABLED
 #define ECC_ENABLED 0
 #endif
 
-// <e> FDS_ENABLED - fds - Flash data storage module
-//==========================================================
+//{{{
 #ifndef FDS_ENABLED
 #define FDS_ENABLED 1
 #endif
@@ -4805,16 +4703,13 @@
 #endif
 
 #endif //FSTORAGE_ENABLED
-// </e>
-
-// <q> HARDFAULT_HANDLER_ENABLED  - hardfault_default - HardFault default handler for debugging and release
-
+//}}}
 
 #ifndef HARDFAULT_HANDLER_ENABLED
 #define HARDFAULT_HANDLER_ENABLED 1
 #endif
 
-// <e> HCI_MEM_POOL_ENABLED - hci_mem_pool - memory pool implementation used by HCI
+//{{{
 //==========================================================
 #ifndef HCI_MEM_POOL_ENABLED
 #define HCI_MEM_POOL_ENABLED 0
@@ -4911,24 +4806,17 @@
 #endif
 
 #endif //HCI_TRANSPORT_ENABLED
-// </e>
-
-// <q> LED_SOFTBLINK_ENABLED  - led_softblink - led_softblink module
-
+//}}}
 
 #ifndef LED_SOFTBLINK_ENABLED
 #define LED_SOFTBLINK_ENABLED 0
 #endif
 
-// <q> LOW_POWER_PWM_ENABLED  - low_power_pwm - low_power_pwm module
-
-
 #ifndef LOW_POWER_PWM_ENABLED
 #define LOW_POWER_PWM_ENABLED 1
 #endif
 
-// <e> MEM_MANAGER_ENABLED - mem_manager - Dynamic memory allocator
-//==========================================================
+//{{{
 #ifndef MEM_MANAGER_ENABLED
 #define MEM_MANAGER_ENABLED 0
 #endif
@@ -5046,10 +4934,8 @@
 #endif
 
 #endif //MEM_MANAGER_ENABLED
-// </e>
-
-// <e> NRF_BALLOC_ENABLED - nrf_balloc - Block allocator module
-//==========================================================
+//}}}
+//{{{
 #ifndef NRF_BALLOC_ENABLED
 #define NRF_BALLOC_ENABLED 0
 #endif
@@ -5152,10 +5038,8 @@
 // </e>
 
 #endif //NRF_BALLOC_ENABLED
-// </e>
-
-// <e> NRF_CSENSE_ENABLED - nrf_csense - Capacitive sensor module
-//==========================================================
+//}}}
+//{{{
 #ifndef NRF_CSENSE_ENABLED
 #define NRF_CSENSE_ENABLED 0
 #endif
@@ -5232,17 +5116,13 @@
 // </e>
 
 #endif //NRF_DRV_CSENSE_ENABLED
-// </e>
-
-// <q> NRF_GFX_ENABLED  - nrf_gfx - GFX module
-
+//}}}
 
 #ifndef NRF_GFX_ENABLED
 #define NRF_GFX_ENABLED 0
 #endif
 
-// <e> NRF_PWR_MGMT_ENABLED - nrf_pwr_mgmt - Power management module
-//==========================================================
+//{{{
 #ifndef NRF_PWR_MGMT_ENABLED
 #define NRF_PWR_MGMT_ENABLED 0
 #endif
@@ -5405,49 +5285,29 @@
 #endif
 
 #endif //NRF_PWR_MGMT_ENABLED
-// </e>
-
-// <q> NRF_QUEUE_ENABLED  - nrf_queue - Queue module
-
+//}}}
 
 #ifndef NRF_QUEUE_ENABLED
 #define NRF_QUEUE_ENABLED 1
 #endif
 
-// <q> NRF_SERIAL_ENABLED  - nrf_serial - Serial port interface
-
-
 #ifndef NRF_SERIAL_ENABLED
 #define NRF_SERIAL_ENABLED 0
 #endif
-
-// <q> NRF_SPI_MNGR_ENABLED  - nrf_spi_mngr - SPI transaction manager
-
 
 #ifndef NRF_SPI_MNGR_ENABLED
 #define NRF_SPI_MNGR_ENABLED 0
 #endif
 
-// <q> NRF_STRERROR_ENABLED  - nrf_strerror - Library for converting error code to string.
-
-
 #ifndef NRF_STRERROR_ENABLED
 #define NRF_STRERROR_ENABLED 1
 #endif
-
-// <q> SLIP_ENABLED  - slip - SLIP encoding and decoding
-
 
 #ifndef SLIP_ENABLED
 #define SLIP_ENABLED 1
 #endif
 
-// <h> app_usbd_cdc_acm - USB CDC ACM class
-
-//==========================================================
-// <q> APP_USBD_CLASS_CDC_ACM_ENABLED  - Enabling USBD CDC ACM Class library
-
-
+//{{{
 #ifndef APP_USBD_CLASS_CDC_ACM_ENABLED
 #define APP_USBD_CLASS_CDC_ACM_ENABLED 0
 #endif
@@ -5478,16 +5338,8 @@
 #ifndef APP_USBD_MSC_CLASS_LOG_ENABLED
 #define APP_USBD_MSC_CLASS_LOG_ENABLED 0
 #endif
-
-// </h>
-//==========================================================
-
-// <h> nrf_cli - Command line interface.
-
-//==========================================================
-// <q> NRF_CLI_ENABLED  - Enable/disable CLI module.
-
-
+//}}}
+//{{{
 #ifndef NRF_CLI_ENABLED
 #define NRF_CLI_ENABLED 0
 #endif
@@ -5516,18 +5368,8 @@
 #ifndef NRF_CLI_VT100_COLORS
 #define NRF_CLI_VT100_COLORS 1
 #endif
-
-// </h>
-//==========================================================
-
-// </h>
-//==========================================================
-
-// <h> nRF_Log
-
-//==========================================================
-// <e> NRF_LOG_ENABLED - nrf_log - Logging
-//==========================================================
+//}}}
+//{{{
 #ifndef NRF_LOG_ENABLED
 #define NRF_LOG_ENABLED 0
 #endif
@@ -5733,19 +5575,8 @@
 #endif
 
 #endif //NRF_LOG_BACKEND_SERIAL_USES_RTT
-// </e>
-
-// </h>
-//==========================================================
-
-// </h>
-//==========================================================
-
-// <h> nRF_NFC
-
-//==========================================================
-// <e> NFC_BLE_PAIR_LIB_ENABLED - nfc_ble_pair_lib - Library parameters
-//==========================================================
+//}}}
+//{{{
 #ifndef NFC_BLE_PAIR_LIB_ENABLED
 #define NFC_BLE_PAIR_LIB_ENABLED 0
 #endif
@@ -5801,15 +5632,8 @@
 #endif
 
 #endif //NFC_BLE_PAIR_LIB_LOG_ENABLED
-// </e>
 
-// <h> NFC_BLE_PAIR_LIB_SECURITY_PARAMETERS - Common Peer Manager security parameters.
-
-//==========================================================
-// <e> BLE_NFC_SEC_PARAM_BOND - Enables device bonding.
-
-// <i> If bonding is enabled at least one of the BLE_NFC_SEC_PARAM_KDIST options must be enabled.
-//==========================================================
+//{{{
 #ifndef BLE_NFC_SEC_PARAM_BOND
 #define BLE_NFC_SEC_PARAM_BOND 1
 #endif
@@ -5843,8 +5667,8 @@
 #endif
 
 #endif //BLE_NFC_SEC_PARAM_BOND
-// </e>
-
+//}}}
+//{{{
 // <o> BLE_NFC_SEC_PARAM_MIN_KEY_SIZE  - Minimal size of a security key.
 
 // <7=> 7
@@ -5861,7 +5685,8 @@
 #ifndef BLE_NFC_SEC_PARAM_MIN_KEY_SIZE
 #define BLE_NFC_SEC_PARAM_MIN_KEY_SIZE 7
 #endif
-
+//}}}
+//{{{
 // <o> BLE_NFC_SEC_PARAM_MAX_KEY_SIZE  - Maximal size of a security key.
 
 // <7=> 7
@@ -5878,19 +5703,10 @@
 #ifndef BLE_NFC_SEC_PARAM_MAX_KEY_SIZE
 #define BLE_NFC_SEC_PARAM_MAX_KEY_SIZE 16
 #endif
-
-// </h>
-//==========================================================
-
+//}}}
 #endif //NFC_BLE_PAIR_LIB_ENABLED
-// </e>
-
-// NFC_HAL_ENABLED - nfc_t4t_hal - Hardware Abstraction Layer for NFC library.
-//==========================================================
-// nfc_t4t_hal removed to define NFC_HAL_ENABLED in nfc_t2t_hal instead.
-
-// <e> NFC_HAL_ENABLED - nfc_t2t_hal - Hardware Abstraction Layer for NFC library.
-//==========================================================
+//}}}
+//{{{
 #ifndef NFC_HAL_ENABLED
 #define NFC_HAL_ENABLED 1
 #endif
@@ -6525,11 +6341,8 @@
 // </e>
 
 #endif //NFC_T4T_TLV_BLOCK_PARSER_ENABLED
-// </e>
-
-// </h>
-//==========================================================
-
+//}}}
+//{{{
 // <h> nRF_Segger_RTT
 
 //==========================================================
@@ -6573,13 +6386,5 @@
 #ifndef SEGGER_RTT_CONFIG_DEFAULT_MODE
 #define SEGGER_RTT_CONFIG_DEFAULT_MODE 0
 #endif
-
-// </h>
-//==========================================================
-
-// </h>
-//==========================================================
-
-// <<< end of configuration section >>>
+//}}}
 #endif //SDK_CONFIG_H
-
