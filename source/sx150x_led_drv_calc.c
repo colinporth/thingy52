@@ -108,7 +108,7 @@ static uint32_t diff_above_limit (uint32_t desired_val, uint32_t actual_val) {
 // Calculates the on and off register values to be set based on the desired real values requested by the user.
 // @param[in,out] real_val      Will be populated with the acutal values used.
 // @param[out]    reg_val       The register values to be written to the IO extender.
-static uint32_t optimal_time_settings_onoff_calculate (drv_ext_light_sequence_t * const real_val,
+static uint32_t optimal_time_settings_onoff_calculate (drv_ext_light_sequence_t* const real_val,
                                                        sx150x_led_drv_regs_vals_t * const reg_val) {
 
   uint32_t inaccurate_results_num = 0;
@@ -312,7 +312,7 @@ ret_code_t sx150x_led_drv_calc_convert (uint16_t port_mask,
   // Rounding division
   reg_vals->off_intensity = (real_vals->off_intensity + (4 / 2)) / 4;
 
-  if ( reg_vals->off_intensity > REG_OFF_INTENSITY_MAXVAL )
+  if (reg_vals->off_intensity > REG_OFF_INTENSITY_MAXVAL )
     reg_vals->off_intensity = REG_OFF_INTENSITY_MAXVAL ;
   real_vals->off_intensity = reg_vals->off_intensity * 4;
 

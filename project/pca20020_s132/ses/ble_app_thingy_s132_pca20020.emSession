@@ -14,6 +14,7 @@
   <ProjectSessionItem path="ble_app_thingy_s132_pca20020"/>
   <ProjectSessionItem path="ble_app_thingy_s132_pca20020;ble_app_thingy_s132_pca20020"/>
   <ProjectSessionItem path="ble_app_thingy_s132_pca20020;ble_app_thingy_s132_pca20020;sys"/>
+  <ProjectSessionItem path="ble_app_thingy_s132_pca20020;ble_app_thingy_s132_pca20020;thingy"/>
  </Project>
  <Register1/>
  <Register2/>
@@ -38,7 +39,9 @@
   <Watches active="0" update="Never"/>
  </Watch4>
  <Files>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="0" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../sdk_components/toolchain/gcc/gcc_startup_nrf52.S" selected="1" top="0" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="0" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../sdk_components/toolchain/gcc/gcc_startup_nrf52.S" selected="0" top="0" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="194" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../source/main.c" selected="0" top="174" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="481" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../source/modules/m_ui.c" selected="1" top="461" codecName="Default"/>
  </Files>
  <ARMCrossStudioWindow activeProject="ble_app_thingy_s132_pca20020" fileDialogDefaultFilter="*.c" autoConnectTarget="J-Link" buildConfiguration="release_v1_0_0" debugSearchFileMap="" fileDialogInitialDirectory="" debugSearchPath="" autoConnectCapabilities="3199"/>
 </session>

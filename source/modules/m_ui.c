@@ -56,42 +56,34 @@
 #include "macros_common.h"
 //}}}
 
-static ble_uis_led_t     * mp_config_ui;
-static ble_uis_t           m_uis;
+static ble_uis_led_t* mp_config_ui;
+static ble_uis_t m_uis;
 static const ble_uis_led_t m_default_config_connected    = UI_CONFIG_DEFAULT_CONNECTED;
 static const ble_uis_led_t m_default_config_disconnected = UI_CONFIG_DEFAULT_DISCONNECTED;
 static const ble_uis_led_t m_default_config_error        = UI_CONFIG_DEFAULT_ERROR;
 
 //{{{
 /**@brief Treats r, g, b integer values as boolean and returns corresponing color mix.
- *
  * @param[in] color_r                   red intensity   (0 to 255)
  * @param[in] color_g                   green intensity (0 to 255)
  * @param[in] color_b                   blue intensity  (0 to 255)
- *
  * @return    drv_ext_light_color_mix   corresponding binary primary color mix
  */
-static drv_ext_light_color_mix_t rgb_to_color_mix(uint8_t color_r, uint8_t color_g, uint8_t color_b)
-{
-    uint8_t color_mix = 0;
+static drv_ext_light_color_mix_t rgb_to_color_mix (uint8_t color_r, uint8_t color_g, uint8_t color_b) {
 
-    if (color_r)
-    {
-        color_mix |= (1 << 0);
-    }
+  int8_t color_mix = 0;
 
-    if (color_g)
-    {
-        color_mix |= (1 << 1);
-    }
+  if (color_r)
+    color_mix |= (1 << 0);
 
-    if (color_b)
-    {
-        color_mix |= (1 << 2);
-    }
+  if (color_g)
+    color_mix |= (1 << 1);
 
-    return (drv_ext_light_color_mix_t)color_mix;
-}
+  if (color_b)
+    color_mix |= (1 << 2);
+
+  return (drv_ext_light_color_mix_t)color_mix;
+  }
 //}}}
 
 //{{{
@@ -108,8 +100,8 @@ static drv_ext_light_color_mix_t rgb_to_color_mix(uint8_t color_r, uint8_t color
  * @return M_IU_STATUS_CODE_INVALID_PARAM
  * @return Other codes from the underlying drivers
  */
-static ret_code_t led_set(ble_uis_led_t const * const p_config_ui,
-          drv_ext_light_rgb_intensity_t const * const p_color_only)
+static ret_code_t led_set (ble_uis_led_t const* const p_config_ui,
+                           drv_ext_light_rgb_intensity_t const* const p_color_only)
 {
     ret_code_t     err_code;
     ble_uis_led_t  conf_ui;
@@ -211,19 +203,15 @@ static ret_code_t led_set(ble_uis_led_t const * const p_config_ui,
 
 //{{{
 /**@brief Function for passing the BLE event to the UI service.
- *
  * @details This callback function will be called from the BLE handling module.
- *
  * @param[in] p_ble_evt    Pointer to the BLE event.
  */
-static void thingy_ui_on_ble_evt(ble_evt_t * p_ble_evt)
+static void thingy_ui_on_ble_evt (ble_evt_t* p_ble_evt)
 {
     ret_code_t err_code;
 
     if (p_ble_evt == NULL)
-    {
         return;
-    }
 
     ble_uis_on_ble_evt(&m_uis, p_ble_evt);
 
@@ -231,15 +219,15 @@ static void thingy_ui_on_ble_evt(ble_evt_t * p_ble_evt)
     {
         case BLE_GAP_EVT_CONNECTED: // Upon reconnect, read last stored configuraion.
             NRF_LOG_INFO("BLE connected\r\n");
-            err_code = led_set(mp_config_ui, NULL);
-            APP_ERROR_CHECK(err_code);
+            err_code = led_set (mp_config_ui, NULL);
+            APP_ERROR_CHECK (err_code);
 
             break;
 
         case BLE_GAP_EVT_DISCONNECTED: // When disconnecting, revert to the default LED config.
             NRF_LOG_INFO("BLE disonnected\r\n");
-            err_code = m_ui_led_set_event(M_UI_BLE_DISCONNECTED);
-            APP_ERROR_CHECK(err_code);
+            err_code = m_ui_led_set_event (M_UI_BLE_DISCONNECTED);
+            APP_ERROR_CHECK (err_code);
             break;
 
         default:
@@ -254,17 +242,15 @@ static void thingy_ui_on_ble_evt(ble_evt_t * p_ble_evt)
  * @param[in] p_wss     UI Service structure.
  * @param[in] new_state Value of the RGB LED.
  */
-static void ble_uis_led_write_handler(ble_uis_t * p_uis, ble_uis_led_t * input)
+static void ble_uis_led_write_handler (ble_uis_t* p_uis, ble_uis_led_t* input)
 {
     ret_code_t         err_code;
 
     /* If anything has changed, store the new values to flash. */
     if (mp_config_ui != input)
-    {
         (void)m_ui_flash_config_store(input);
-    }
 
-    err_code = led_set(NULL, NULL);
+    err_code = led_set (NULL, NULL);
 
     if (err_code != NRF_ERROR_NOT_SUPPORTED && err_code != NRF_SUCCESS)
     {
@@ -278,7 +264,7 @@ static void ble_uis_led_write_handler(ble_uis_t * p_uis, ble_uis_led_t * input)
  * @param[in] p_wss     UI Service structure.
  * @param[in] pin       Value of the pins.
  */
-static void ble_uis_pin_write_handler(ble_uis_t * p_uis, ble_uis_pin_t * pin)
+static void ble_uis_pin_write_handler (ble_uis_t* p_uis, ble_uis_pin_t* pin)
 {
 
     NRF_LOG_INFO("ble_uis_pin_write_handler: MOS_1 %d, MOS_2 %d, MOS_3 %d, MOS_4 %d\r\n",
@@ -332,7 +318,7 @@ static void ble_uis_pin_write_handler(ble_uis_t * p_uis, ble_uis_pin_t * pin)
  *
  * @retval NRF_SUCCESS If initialization was successful.
  */
-static ret_code_t thingy_ui_service_init(bool major_minor_fw_ver_changed)
+static ret_code_t thingy_ui_service_init (bool major_minor_fw_ver_changed)
 {
     uint32_t        err_code;
     ble_uis_init_t  uis_init;
@@ -360,7 +346,7 @@ static ret_code_t thingy_ui_service_init(bool major_minor_fw_ver_changed)
 //}}}
 
 //{{{
-static void button_evt_handler(uint8_t pin_no, uint8_t button_action)
+static void button_evt_handler (uint8_t pin_no, uint8_t button_action)
 {
     uint32_t err_code;
 
@@ -381,7 +367,7 @@ static void button_evt_handler(uint8_t pin_no, uint8_t button_action)
 //}}}
 
 //{{{
-ret_code_t m_ui_led_set(uint8_t r, uint8_t g, uint8_t b)
+ret_code_t m_ui_led_set (uint8_t r, uint8_t g, uint8_t b)
 {
 
     drv_ext_light_rgb_intensity_t rgb;
@@ -389,28 +375,25 @@ ret_code_t m_ui_led_set(uint8_t r, uint8_t g, uint8_t b)
     rgb.g = g;
     rgb.b = b;
 
-    return led_set(NULL, &rgb);
+    return led_set (NULL, &rgb);
 }
 
 //}}}
 //{{{
-ret_code_t m_ui_led_set_event(ui_led_events event_code)
+ret_code_t m_ui_led_set_event (ui_led_events event_code)
 {
     ret_code_t err_code;
 
-    if (event_code == M_UI_BLE_CONNECTED)
-    {
-        err_code = led_set(&m_default_config_connected, NULL);
+    if (event_code == M_UI_BLE_CONNECTED) {
+        err_code = led_set (&m_default_config_connected, NULL);
         RETURN_IF_ERROR(err_code);
     }
-    else if (event_code == M_UI_BLE_DISCONNECTED)
-    {
-        err_code = led_set(&m_default_config_disconnected, NULL);
+    else if (event_code == M_UI_BLE_DISCONNECTED) {
+        err_code = led_set (&m_default_config_disconnected, NULL);
         RETURN_IF_ERROR(err_code);
     }
-    else
-    {
-        err_code = led_set(&m_default_config_error, NULL);
+    else {
+        err_code = led_set (&m_default_config_error, NULL);
         RETURN_IF_ERROR(err_code);
     }
     return NRF_SUCCESS;
@@ -418,82 +401,78 @@ ret_code_t m_ui_led_set_event(ui_led_events event_code)
 //}}}
 
 //{{{
-static ret_code_t button_init(void)
-{
-    ret_code_t err_code;
+static ret_code_t button_init() {
 
-    /* Configure gpiote for the sensors data ready interrupt. */
-    if (!nrf_drv_gpiote_is_init())
-    {
-        err_code = nrf_drv_gpiote_init();
-        RETURN_IF_ERROR(err_code);
+  ret_code_t err_code;
+
+  /* Configure gpiote for the sensors data ready interrupt. */
+  if (!nrf_drv_gpiote_is_init()) {
+    err_code = nrf_drv_gpiote_init();
+    RETURN_IF_ERROR (err_code);
     }
 
-    static const app_button_cfg_t button_cfg =
-    {
-        .pin_no         = BUTTON,
-        .active_state   = APP_BUTTON_ACTIVE_LOW,
-        .pull_cfg       = NRF_GPIO_PIN_PULLUP,
-        .button_handler = button_evt_handler
+  static const app_button_cfg_t button_cfg = {
+    .pin_no         = BUTTON,
+    .active_state   = APP_BUTTON_ACTIVE_LOW,
+    .pull_cfg       = NRF_GPIO_PIN_PULLUP,
+    .button_handler = button_evt_handler
     };
 
-    err_code = app_button_init(&button_cfg, 1, APP_TIMER_TICKS(50));
-    RETURN_IF_ERROR(err_code);
+  err_code = app_button_init (&button_cfg, 1, APP_TIMER_TICKS(50));
+  RETURN_IF_ERROR (err_code);
 
-    return app_button_enable();
-}
+  return app_button_enable();
+  }
 //}}}
 
 //{{{
-uint32_t m_ui_init(m_ble_service_handle_t * p_handle, m_ui_init_t * p_params)
-{
-    uint32_t                        err_code;
-    static drv_sx1509_cfg_t         sx1509_cfg;
-    drv_ext_light_init_t            led_init;
-    //lint --e{651} Potentially confusing initializer
-    static const drv_ext_light_conf_t led_conf[DRV_EXT_LIGHT_NUM] = DRV_EXT_LIGHT_CFG;
+uint32_t m_ui_init (m_ble_service_handle_t* p_handle, m_ui_init_t* p_params) {
 
-    static const nrf_drv_twi_config_t twi_config =
-    {
-        .scl                = TWI_SCL,
-        .sda                = TWI_SDA,
-        .frequency          = NRF_TWI_FREQ_100K,
-        .interrupt_priority = APP_IRQ_PRIORITY_LOW
+  //lint --e{651} Potentially confusing initializer
+  static const drv_ext_light_conf_t led_conf[DRV_EXT_LIGHT_NUM] = DRV_EXT_LIGHT_CFG;
+
+  static const nrf_drv_twi_config_t twi_config = {
+    .scl                = TWI_SCL,
+    .sda                = TWI_SDA,
+    .frequency          = NRF_TWI_FREQ_100K,
+    .interrupt_priority = APP_IRQ_PRIORITY_LOW
     };
 
-    sx1509_cfg.twi_addr       = SX1509_ADDR;
-    sx1509_cfg.p_twi_instance = p_params->p_twi_instance;
-    sx1509_cfg.p_twi_cfg      = &twi_config;
+  static drv_sx1509_cfg_t sx1509_cfg;
+  sx1509_cfg.twi_addr       = SX1509_ADDR;
+  sx1509_cfg.p_twi_instance = p_params->p_twi_instance;
+  sx1509_cfg.p_twi_cfg      = &twi_config;
 
-    NULL_PARAM_CHECK(p_handle);
+  NULL_PARAM_CHECK(p_handle);
 
-    p_handle->ble_evt_cb = thingy_ui_on_ble_evt;
-    p_handle->init_cb    = thingy_ui_service_init;
+  p_handle->ble_evt_cb = thingy_ui_on_ble_evt;
+  p_handle->init_cb    = thingy_ui_service_init;
 
-    err_code = button_init();
-    APP_ERROR_CHECK(err_code);
+  uint32_t err_code = button_init();
+  APP_ERROR_CHECK(err_code);
 
-    led_init.p_light_conf        = led_conf;
-    led_init.num_lights          = DRV_EXT_LIGHT_NUM;
-    led_init.clkx_div            = DRV_EXT_LIGHT_CLKX_DIV_8;
-    led_init.p_twi_conf          = &sx1509_cfg;
-    led_init.resync_pin          = SX_RESET;
+  drv_ext_light_init_t led_init;
+  led_init.p_light_conf = led_conf;
+  led_init.num_lights   = DRV_EXT_LIGHT_NUM;
+  led_init.clkx_div     = DRV_EXT_LIGHT_CLKX_DIV_8;
+  led_init.p_twi_conf   = &sx1509_cfg;
+  led_init.resync_pin   = SX_RESET;
 
-    err_code = drv_ext_light_init(&led_init, false);
-    APP_ERROR_CHECK(err_code);
+  err_code = drv_ext_light_init (&led_init, false);
+  APP_ERROR_CHECK(err_code);
 
-    (void)drv_ext_light_off(DRV_EXT_RGB_LED_SENSE);
-    (void)drv_ext_light_off(DRV_EXT_RGB_LED_LIGHTWELL);
+  (void)drv_ext_light_off (DRV_EXT_RGB_LED_SENSE);
+  (void)drv_ext_light_off (DRV_EXT_RGB_LED_LIGHTWELL);
 
-    nrf_gpio_cfg_output(MOS_1);
-    nrf_gpio_cfg_output(MOS_2);
-    nrf_gpio_cfg_output(MOS_3);
-    nrf_gpio_cfg_output(MOS_4);
-    nrf_gpio_pin_clear(MOS_1);
-    nrf_gpio_pin_clear(MOS_2);
-    nrf_gpio_pin_clear(MOS_3);
-    nrf_gpio_pin_clear(MOS_4);
+  nrf_gpio_cfg_output (MOS_1);
+  nrf_gpio_cfg_output (MOS_2);
+  nrf_gpio_cfg_output (MOS_3);
+  nrf_gpio_cfg_output (MOS_4);
+  nrf_gpio_pin_clear (MOS_1);
+  nrf_gpio_pin_clear (MOS_2);
+  nrf_gpio_pin_clear (MOS_3);
+  nrf_gpio_pin_clear (MOS_4);
 
-    return NRF_SUCCESS;
-}
+  return NRF_SUCCESS;
+  }
 //}}}

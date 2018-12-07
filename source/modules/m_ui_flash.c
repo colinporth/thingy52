@@ -40,6 +40,7 @@
 //{{{  includes
 #include <stdint.h>
 #include <string.h>
+
 #include "m_ui_flash.h"
 #include "fstorage.h"
 #include "fds.h"
@@ -47,9 +48,9 @@
 #include "app_error.h"
 #include "app_scheduler.h"
 
-
 #define  NRF_LOG_MODULE_NAME "m_ui_flash    "
 #include "nrf_log.h"
+
 #include "macros_common.h"
 //}}}
 //{{{  defines
@@ -67,19 +68,19 @@ typedef struct {
 //{{{  union m_ui_flash_config_t
 typedef union {
   m_ui_flash_config_data_t data;
-  uint32_t                 padding[CEIL_DIV(sizeof(m_ui_flash_config_data_t), 4)];
+  uint32_t padding[CEIL_DIV(sizeof(m_ui_flash_config_data_t), 4)];
   } m_ui_flash_config_t;
 //}}}
 
-static fds_record_desc_t    m_record_desc;
-static m_ui_flash_config_t  m_config;
-static bool                 m_fds_write_success = false;
-static bool                 m_fds_initialized = false;
+static fds_record_desc_t m_record_desc;
+static m_ui_flash_config_t m_config;
+static bool m_fds_write_success = false;
+static bool m_fds_initialized = false;
 
 //{{{
 /**@brief Function for handling flash data storage events.
  */
-static void ui_fds_evt_handler( fds_evt_t const * const p_fds_evt )
+static void ui_fds_evt_handler (fds_evt_t const* const p_fds_evt)
 {
     switch (p_fds_evt->id)
     {
@@ -122,17 +123,85 @@ static void ui_fds_evt_handler( fds_evt_t const * const p_fds_evt )
 //}}}
 
 //{{{
-uint32_t m_ui_flash_config_store(const ble_uis_led_t * p_config)
-{
-    uint32_t            err_code;
+uint32_t m_ui_flash_config_store (const ble_uis_led_t* p_config) {
+
+  uint32_t            err_code;
+  fds_record_t        record;
+  fds_record_chunk_t  record_chunk;
+
+  NRF_LOG_INFO("Storing configuration\r\n");
+  NULL_PARAM_CHECK(p_config);
+
+  memcpy(&m_config.data.config, p_config, sizeof(ble_uis_led_t));
+  m_config.data.valid = WS_FLASH_CONFIG_VALID;
+
+  // Set up data.
+  record_chunk.p_data         = &m_config;
+  record_chunk.length_words   = sizeof(m_ui_flash_config_t)/4;
+  // Set up record.
+  record.file_id              = UI_FILE_ID;
+  record.key                  = UI_REC_KEY;
+  record.data.p_chunks        = &record_chunk;
+  record.data.num_chunks      = 1;
+
+  err_code = fds_record_update (&m_record_desc, &record);
+  RETURN_IF_ERROR(err_code);
+
+  return NRF_SUCCESS;
+  }
+//}}}
+//{{{
+uint32_t m_ui_flash_config_load( ble_uis_led_t** p_config) {
+
+  uint32_t            err_code;
+  fds_flash_record_t  flash_record;
+  fds_find_token_t    ftok;
+
+  memset(&ftok, 0x00, sizeof(fds_find_token_t));
+
+  NRF_LOG_INFO("Loading configuration\r\n");
+
+  err_code = fds_record_find(UI_FILE_ID, UI_REC_KEY, &m_record_desc, &ftok);
+  RETURN_IF_ERROR(err_code);
+
+  err_code = fds_record_open(&m_record_desc, &flash_record);
+  RETURN_IF_ERROR(err_code);
+
+  memcpy(&m_config, flash_record.p_data, sizeof(m_ui_flash_config_t));
+
+  err_code = fds_record_close(&m_record_desc);
+  RETURN_IF_ERROR(err_code);
+
+  *p_config = &m_config.data.config;
+
+  return NRF_SUCCESS;
+  }
+//}}}
+
+//{{{
+uint32_t m_ui_flash_init (const ble_uis_led_t* p_default_config, ble_uis_led_t** p_config) {
+
+  NRF_LOG_INFO ("Initialization\r\n");
+  NULL_PARAM_CHECK (p_default_config);
+
+  uint32_t err_code = fds_register(ui_fds_evt_handler);
+  RETURN_IF_ERROR(err_code);
+
+  err_code = fds_init();
+  RETURN_IF_ERROR(err_code);
+
+  while (m_fds_initialized == false)
+    app_sched_execute();
+
+  err_code = m_ui_flash_config_load(p_config);
+
+  if (err_code == FDS_ERR_NOT_FOUND) {
     fds_record_t        record;
     fds_record_chunk_t  record_chunk;
 
-    NRF_LOG_INFO("Storing configuration\r\n");
+    NRF_LOG_INFO("Writing default config\r\n");
 
-    NULL_PARAM_CHECK(p_config);
-
-    memcpy(&m_config.data.config, p_config, sizeof(ble_uis_led_t));
+    memcpy(&m_config.data.config, p_default_config, sizeof(ble_uis_led_t));
     m_config.data.valid = WS_FLASH_CONFIG_VALID;
 
     // Set up data.
@@ -144,98 +213,18 @@ uint32_t m_ui_flash_config_store(const ble_uis_led_t * p_config)
     record.data.p_chunks        = &record_chunk;
     record.data.num_chunks      = 1;
 
-    err_code = fds_record_update(&m_record_desc, &record);
-    RETURN_IF_ERROR(err_code);
-
-    return NRF_SUCCESS;
-}
-//}}}
-//{{{
-uint32_t m_ui_flash_config_load(ble_uis_led_t ** p_config)
-{
-    uint32_t            err_code;
-    fds_flash_record_t  flash_record;
-    fds_find_token_t    ftok;
-
-    memset(&ftok, 0x00, sizeof(fds_find_token_t));
-
-    NRF_LOG_INFO("Loading configuration\r\n");
-
-    err_code = fds_record_find(UI_FILE_ID, UI_REC_KEY, &m_record_desc, &ftok);
-    RETURN_IF_ERROR(err_code);
-
-    err_code = fds_record_open(&m_record_desc, &flash_record);
-    RETURN_IF_ERROR(err_code);
-
-    memcpy(&m_config, flash_record.p_data, sizeof(m_ui_flash_config_t));
-
-    err_code = fds_record_close(&m_record_desc);
+    m_fds_write_success = false;
+    err_code = fds_record_write(&m_record_desc, &record);
     RETURN_IF_ERROR(err_code);
 
     *p_config = &m_config.data.config;
 
-    return NRF_SUCCESS;
-}
-//}}}
-
-//{{{
-uint32_t m_ui_flash_init(const ble_uis_led_t * p_default_config,
-                         ble_uis_led_t      ** p_config)
-{
-    uint32_t                err_code;
-
-    NRF_LOG_INFO("Initialization\r\n");
-
-    NULL_PARAM_CHECK(p_default_config);
-
-    err_code = fds_register(ui_fds_evt_handler);
-    RETURN_IF_ERROR(err_code);
-
-    err_code = fds_init();
-    RETURN_IF_ERROR(err_code);
-
-    while (m_fds_initialized == false)
-    {
-        app_sched_execute();
+    while(m_fds_write_success != true)
+      app_sched_execute();
     }
+  else
+      RETURN_IF_ERROR(err_code);
 
-    err_code = m_ui_flash_config_load(p_config);
-
-    if (err_code == FDS_ERR_NOT_FOUND)
-    {
-        fds_record_t        record;
-        fds_record_chunk_t  record_chunk;
-
-        NRF_LOG_INFO("Writing default config\r\n");
-
-        memcpy(&m_config.data.config, p_default_config, sizeof(ble_uis_led_t));
-        m_config.data.valid = WS_FLASH_CONFIG_VALID;
-
-        // Set up data.
-        record_chunk.p_data         = &m_config;
-        record_chunk.length_words   = sizeof(m_ui_flash_config_t)/4;
-        // Set up record.
-        record.file_id              = UI_FILE_ID;
-        record.key                  = UI_REC_KEY;
-        record.data.p_chunks        = &record_chunk;
-        record.data.num_chunks      = 1;
-
-        m_fds_write_success = false;
-        err_code = fds_record_write(&m_record_desc, &record);
-        RETURN_IF_ERROR(err_code);
-
-        *p_config = &m_config.data.config;
-
-        while(m_fds_write_success != true)
-        {
-            app_sched_execute();
-        }
-    }
-    else
-    {
-        RETURN_IF_ERROR(err_code);
-    }
-
-    return NRF_SUCCESS;
-}
+  return NRF_SUCCESS;
+  }
 //}}}

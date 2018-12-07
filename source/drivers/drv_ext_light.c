@@ -80,7 +80,7 @@ if ( (ID > (m_num_lights - 1))  || ID > DRV_EXT_LIGHT_NUM_LIGHTS_MAX) {         
   }
 //}}}
 
-//{{{
+//{{{  enum m_led_drv_status_t
 /**@brief Indicates if the LED driver which is built into the IO extender is used.
  */
 typedef enum
@@ -92,7 +92,7 @@ typedef enum
     LED_DRV_ENABLED_BLINK_OR_BREATHE,   ///< LED driver used for blinking or breathing.
 }m_led_drv_status_t;
 //}}}
-//{{{
+//{{{  struct m_intensity_mix_t
 /**@brief When using the IO extender LED driver in breathe mode, the initensity of individual active colors have to be equal,
  * and the overall intensity controlled by on_intensity.
  * Free intensity mode is used when individual colors have no influence on each others sequence.
