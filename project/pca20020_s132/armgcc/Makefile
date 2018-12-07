@@ -340,9 +340,17 @@ ocd: thingy
 	..\..\..\openOCD\bin\openocd.exe -f openocd.cfg -c "program $(OUTPUT_BINARY_DIRECTORY)/$<.hex verify reset exit"
 
 soft:
-	..\..\..\openOCD\bin\openocd.exe -f openocd.cfg -c "program ../../../sdk_components/softdevice/s132/hex/s132_nrf52_4.0.2_softdevice.hex verify exit"
 	@echo ocd Flashing: $(OUTPUT_BINARY_DIRECTORY)/$<.hex
+	..\..\..\openOCD\bin\openocd.exe -f openocd.cfg -c "program ../../../sdk_components/softdevice/s132/hex/s132_nrf52_4.0.2_softdevice.hex verify exit"
 
 test:
 	@echo ocd test
 	..\..\..\openOCD\bin\openocd.exe -f openocd.cfg
+
+ses:
+	@echo Flashing ses
+	..\..\..\openOCD\bin\openocd.exe -f openocd.cfg -c "program C:/Users/colin/Desktop/nRF5_SDK_15.2.0_9412b96/examples/ble_peripheral/ble_app_beacon/pca10040/s132/ses/Output/Release/Exe/ble_app_beacon_pca10040_s132.hex verify reset exit"
+
+sessoft:
+	@echo Flashing sessoft
+	..\..\..\openOCD\bin\openocd.exe -f openocd.cfg -c "program C:/Users/colin/Desktop/nRF5_SDK_15.2.0_9412b96/components/softdevice/s132/hex/s132_nrf52_6.1.0_softdevice.hex verify exit"

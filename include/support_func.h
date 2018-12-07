@@ -1,3 +1,4 @@
+//{{{  copyright
 /*
   Copyright (c) 2010 - 2017, Nordic Semiconductor ASA
   All rights reserved.
@@ -35,16 +36,7 @@
   LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
   OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
-  /** @file Support functions
- *
- * @defgroup support_func Support functions
- * @{
- * @ingroup util
- * @brief Support functions.
- *
- */
-
+//}}}
 #ifndef __SUPPORT_FUNC_H__
 #define __SUPPORT_FUNC_H__
 
@@ -54,6 +46,7 @@
 
 #define SUPPORT_FUNC_MAC_ADDR_STR_LEN ( (BLE_GAP_ADDR_LEN * 2) + 5 + 1) /**< 6 bytes + 5 colon separators + NUL termination */
 
+//{{{
 /**@brief Function for printing the MAC addess of the device.
  *
  * @note The SoftDevice must be enabled before this call is made.
@@ -65,7 +58,8 @@
  * @return Other codes from the underlying drivers.
  */
 ret_code_t support_func_ble_mac_address_get(char * p_mac_addr);
-
+//}}}
+//{{{
 /**@brief Function for checking if the device is in debug mode.
  *
  * @note Checks if the C_DEBUGEN flag is set in the DHCSR register (Debug Halting Control and Status Register).
@@ -74,7 +68,9 @@ ret_code_t support_func_ble_mac_address_get(char * p_mac_addr);
  * @return False    System is not in debug mode.
  */
 bool support_func_sys_halt_debug_enabled(void);
+//}}}
 
+//{{{
 /**@brief Function for configuring nRF IO and the GPIO extender for startup.
  *
  * @param[in] p_ext_gpio_init    Pointer to IO extender configuration.
@@ -83,7 +79,8 @@ bool support_func_sys_halt_debug_enabled(void);
  * @return Other codes from the underlying drivers.
  */
 ret_code_t support_func_configure_io_startup(drv_ext_gpio_init_t const * const p_ext_gpio_init);
-
+//}}}
+//{{{
 /**@brief Function for configuring nRF IO and the GPIO extender for shutdown.
  *
  * @note For Thingy HW v1.0.0, this function will only return NRF_SUCCESS as errors are ignored.
@@ -92,7 +89,6 @@ ret_code_t support_func_configure_io_startup(drv_ext_gpio_init_t const * const p
  * @return Other codes from the underlying drivers.
  */
 ret_code_t support_func_configure_io_shutdown(void);
+//}}}
 
 #endif
-
-/** @} */

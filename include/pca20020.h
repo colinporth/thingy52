@@ -247,42 +247,54 @@ typedef enum { VDD_ON  = true, VDD_OFF = false } vdd_state_t;
 
 //{{{  nRF pin configuration for system off
 #define NRF_NUM_GPIO_PINS         32
+
 #define OSC_XL1                   0
 #define PIN00_SYSTEM_DEFAULT_CFG  NRF_PIN_OUTPUT_CLEAR
 #define OSC_XL2                   1
 #define PIN01_SYSTEM_DEFAULT_CFG  NRF_PIN_OUTPUT_CLEAR
+
 #define ANA_DIG0                  2
 #define PIN02_SYSTEM_DEFAULT_CFG  NRF_PIN_DISCON_PULLDOWN
 #define ANA_DIG1                  3
 #define PIN03_SYSTEM_DEFAULT_CFG  NRF_PIN_DISCON_PULLDOWN
 #define ANA_DIG2                  4
 #define PIN04_SYSTEM_DEFAULT_CFG  NRF_PIN_DISCON_PULLDOWN
+
 #define IOEXT_OSCIO               5
 #define PIN05_SYSTEM_DEFAULT_CFG  NRF_PIN_DISCON_PULLDOWN
 #define MPU_INT                   6
 #define PIN06_SYSTEM_DEFAULT_CFG  NRF_PIN_DISCON_PULLDOWN
+
 #define TWI_SDA                   7
 #define PIN07_SYSTEM_DEFAULT_CFG  NRF_PIN_DISCON_NOPULL
 #define TWI_SCL                   8
+
 #define PIN08_SYSTEM_DEFAULT_CFG  NRF_PIN_DISCON_NOPULL
 #define NFC1                      9
 #define PIN09_SYSTEM_DEFAULT_CFG  NRF_PIN_DISCON_NOPULL
 #define NFC2                      10
+
 #define PIN10_SYSTEM_DEFAULT_CFG  NRF_PIN_DISCON_NOPULL
 #define BUTTON                    11
+
 #define PIN11_SYSTEM_DEFAULT_CFG  NRF_PIN_DISCON_PULLUP
+
 #define LIS_INT1                  12
 #define PIN12_SYSTEM_DEFAULT_CFG  NRF_PIN_DISCON_NOPULL
+
 #define USB_DETECT                13
 #define PIN13_SYSTEM_DEFAULT_CFG  NRF_PIN_DISCON_NOPULL
+
 #define TWI_SDA_EXT               14
 #define PIN14_SYSTEM_DEFAULT_CFG  NRF_PIN_DISCON_NOPULL
 #define TWI_SCL_EXT               15
 #define PIN15_SYSTEM_DEFAULT_CFG  NRF_PIN_DISCON_NOPULL
+
 #define SX_RESET                  16
 #define PIN16_SYSTEM_DEFAULT_CFG  NRF_PIN_DISCON_NOPULL
 #define BAT_CHG_STAT              17
 #define PIN17_SYSTEM_DEFAULT_CFG  NRF_PIN_DISCON_NOPULL
+
 #define MOS_1                     18
 #define PIN18_SYSTEM_DEFAULT_CFG  NRF_PIN_OUTPUT_CLEAR
 #define MOS_2                     19
@@ -291,28 +303,33 @@ typedef enum { VDD_ON  = true, VDD_OFF = false } vdd_state_t;
 #define PIN20_SYSTEM_DEFAULT_CFG  NRF_PIN_OUTPUT_CLEAR
 #define MOS_4                     21
 #define PIN21_SYSTEM_DEFAULT_CFG  NRF_PIN_OUTPUT_CLEAR
+
 #define CCS_INT                   22
 #define PIN22_SYSTEM_DEFAULT_CFG  NRF_PIN_DISCON_PULLDOWN
 #define LPS_INT                   23
 #define PIN23_SYSTEM_DEFAULT_CFG  NRF_PIN_DISCON_PULLDOWN
 #define HTS_INT                   24
 #define PIN24_SYSTEM_DEFAULT_CFG  NRF_PIN_DISCON_PULLDOWN
+
 #define MIC_DOUT                  25
 #define PIN25_SYSTEM_DEFAULT_CFG  NRF_PIN_DISCON_PULLDOWN
 #define MIC_CLK                   26
 #define PIN26_SYSTEM_DEFAULT_CFG  NRF_PIN_DISCON_PULLDOWN
 #define SPEAKER                   27
 #define PIN27_SYSTEM_DEFAULT_CFG  NRF_PIN_OUTPUT_CLEAR
+
 #define BATTERY                   28                    // If altered, BATTERY_AIN must be changed as well
 #define BATTERY_AIN               NRF_SAADC_INPUT_AIN4  // Pin->AIN mapping func removed in SDK. Hard-coded AIN definition
 #define PIN28_SYSTEM_DEFAULT_CFG  NRF_PIN_DISCON_NOPULL
 #define SPK_PWR_CTRL              29
 #define PIN29_SYSTEM_DEFAULT_CFG  NRF_PIN_OUTPUT_CLEAR
+
 // Thingy VDD power. Is kept on in earlier versions to have power to the low power accelerometer.
 // In newer versions, the low power accelerometer is connected to a different power domain, and will
 // remain on to wake the system even if VDD is turned off
 #define VDD_PWR_CTRL              30
 #define PIN30_SYSTEM_DEFAULT_CFG  NRF_PIN_OUTPUT_CLEAR    /** VDD OFF. */
+
 #define BH_INT                    31
 #define PIN31_SYSTEM_DEFAULT_CFG  NRF_PIN_DISCON_PULLDOWN
 //}}}
