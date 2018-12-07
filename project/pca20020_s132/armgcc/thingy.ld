@@ -33,14 +33,6 @@ MEMORY {
   RAM (rwx) :  ORIGIN = 0x20004170, LENGTH = 0x0000BE90
   }
 
-SECTIONS {
-  .fs_data : {
-    PROVIDE(__start_fs_data = .);
-    KEEP(*(.fs_data))
-    PROVIDE(__stop_fs_data = .);
-    } > RAM
-  } INSERT AFTER .data;
-
 OUTPUT_FORMAT ("elf32-littlearm", "elf32-bigarm", "elf32-littlearm")
 
 ENTRY(Reset_Handler)
@@ -140,15 +132,13 @@ SECTIONS {
     __HeapLimit = .;
     } > RAM
 
-  /* .stack_dummy section doesn't contains any symbols. It is only
-   * used for linker to calculate size of stack sections, and assign
-   * values to stack symbols later */
+  /* .stack_dummy section doesn't contains any symbols
+     only used for linker to calc size of stack sections, and assign values to stack symbols later */
   .stack_dummy (COPY): {
     KEEP(*(.stack*))
     } > RAM
 
-  /* Set stack top to end of RAM, and stack limit move down by
-   * size of stack_dummy section */
+  /* Set stack top to end of RAM, and stack limit move down by size of stack_dummy section */
   __StackTop = ORIGIN(RAM) + LENGTH(RAM);
   __StackLimit = __StackTop - SIZEOF(.stack_dummy);
   PROVIDE(__stack = __StackTop);
