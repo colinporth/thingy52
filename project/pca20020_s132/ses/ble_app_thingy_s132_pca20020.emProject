@@ -149,7 +149,40 @@
       <file file_name="../../../sdk_components/libraries/util/sdk_mapped_flags.c" />
       <file file_name="../../../sdk_components/libraries/crc32/crc32.c" />
       <file file_name="../../../sdk_components/ble/ble_services/ble_dfu/ble_dfu.c" />
-      <folder Name="inc" />
+      <folder Name="inc">
+        <file file_name="../../../sdk_components/libraries/fds/fds.h" />
+        <file file_name="../../../sdk_components/libraries/fds/fds_internal_defs.h" />
+        <file file_name="../../../sdk_components/libraries/fstorage/fstorage.h" />
+        <file file_name="../../../sdk_components/libraries/fstorage/fstorage_internal_defs.h" />
+        <file file_name="../../../sdk_components/libraries/bootloader/nrf_bootloader.h" />
+        <file file_name="../../../sdk_components/libraries/bootloader/nrf_bootloader_app_start.h" />
+        <file file_name="../../../sdk_components/libraries/bootloader/nrf_bootloader_info.h" />
+        <file file_name="../../../sdk_components/libraries/button/app_button.h" />
+        <file file_name="../../../sdk_components/libraries/experimental_section_vars/nrf_section.h" />
+        <file file_name="../../../sdk_components/libraries/experimental_section_vars/nrf_section_iter.h" />
+        <file file_name="../../../sdk_components/libraries/crc32/crc32.h" />
+        <file file_name="../../../sdk_components/libraries/led_softblink/led_softblink.h" />
+        <file file_name="../../../sdk_components/libraries/low_power_pwm/low_power_pwm.h" />
+        <file file_name="../../../sdk_components/libraries/queue/nrf_queue.h" />
+        <file file_name="../../../sdk_components/libraries/scheduler/app_scheduler.h" />
+        <file file_name="../../../sdk_components/libraries/strerror/nrf_strerror.h" />
+        <file file_name="../../../sdk_components/libraries/timer/app_timer.h" />
+        <file file_name="../../../sdk_components/libraries/uart/app_uart.h" />
+        <file file_name="../../../sdk_components/libraries/util/app_error.h" />
+        <file file_name="../../../sdk_components/libraries/util/app_error_weak.h" />
+        <file file_name="../../../sdk_components/libraries/util/app_util.h" />
+        <file file_name="../../../sdk_components/libraries/util/app_util_bds.h" />
+        <file file_name="../../../sdk_components/libraries/util/app_util_platform.h" />
+        <file file_name="../../../sdk_components/libraries/util/nordic_common.h" />
+        <file file_name="../../../sdk_components/libraries/util/nrf_assert.h" />
+        <file file_name="../../../sdk_components/libraries/util/nrf_bitmask.h" />
+        <file file_name="../../../sdk_components/libraries/util/sdk_common.h" />
+        <file file_name="../../../sdk_components/libraries/util/sdk_errors.h" />
+        <file file_name="../../../sdk_components/libraries/util/sdk_macros.h" />
+        <file file_name="../../../sdk_components/libraries/util/sdk_mapped_flags.h" />
+        <file file_name="../../../sdk_components/libraries/util/sdk_os.h" />
+        <file file_name="../../../sdk_components/libraries/util/sdk_resources.h" />
+      </folder>
     </folder>
     <folder Name="nRF_Log">
       <file file_name="../../../sdk_components/libraries/strerror/nrf_strerror.c" />
@@ -172,7 +205,6 @@
       <file file_name="../../../libs/bv32fp-1.2/autocor.c" />
       <file file_name="../../../libs/bv32fp-1.2/bitpack.c" />
       <file file_name="../../../libs/bv32fp-1.2/bvplc.c" />
-      <file file_name="../../../libs/bv32fp-1.2/cmtables.c" />
       <file file_name="../../../libs/bv32fp-1.2/coarptch.c" />
       <file file_name="../../../libs/bv32fp-1.2/decoder.c" />
       <file file_name="../../../libs/bv32fp-1.2/encoder.c" />
@@ -192,9 +224,22 @@
       <file file_name="../../../libs/bv32fp-1.2/stblzlsp.c" />
       <file file_name="../../../libs/bv32fp-1.2/tables.c" />
       <file file_name="../../../libs/bv32fp-1.2/utility.c" />
+      <folder Name="inc">
+        <file file_name="../../../libs/bv32fp-1.2/bv32externs.h" />
+        <file file_name="../../../libs/bv32fp-1.2/bv32cnst.h" />
+        <file file_name="../../../libs/bv32fp-1.2/bv32_prof.h" />
+        <file file_name="../../../libs/bv32fp-1.2/bv32.h" />
+        <file file_name="../../../libs/bv32fp-1.2/bitpack.h" />
+        <file file_name="../../../libs/bv32fp-1.2/utility.h" />
+        <file file_name="../../../libs/bv32fp-1.2/typedef.h" />
+        <file file_name="../../../libs/bv32fp-1.2/bvcommon.h" />
+        <file file_name="../../../libs/bv32fp-1.2/bv32strct.h" />
+      </folder>
+      <file file_name="../../../libs/bv32fp-1.2/cmtables.c" />
     </folder>
     <folder Name="ADPCM">
       <file file_name="../../../libs/dvi_adpcm/dvi_adpcm.c" />
+      <file file_name="../../../libs/dvi_adpcm/dvi_adpcm.h" />
     </folder>
     <folder Name="SR3_Audio">
       <file file_name="../../../libs/sr3_audio/drv_audio_coder_adpcm.c" />
@@ -202,7 +247,12 @@
       <file file_name="../../../libs/sr3_audio/drv_audio_dsp.c" />
       <file file_name="../../../libs/sr3_audio/drv_audio_pdm.c" />
       <file file_name="../config/drv_audio_config.h" />
-      <folder Name="inc" />
+      <folder Name="inc">
+        <file file_name="../../../libs/sr3_audio/drv_audio.h" />
+        <file file_name="../../../libs/sr3_audio/drv_audio_anr.h" />
+        <file file_name="../../../libs/sr3_audio/drv_audio_coder.h" />
+        <file file_name="../../../libs/sr3_audio/drv_audio_dsp.h" />
+      </folder>
     </folder>
     <folder Name="nRF_NFC">
       <file file_name="../../../sdk_components/nfc/t2t_lib/hal_t2t/hal_nfc_t2t.c" />
@@ -225,8 +275,8 @@
       c_user_include_directories="" />
     <folder Name="link libs">
       <file file_name="../../../sdk_components/toolchain/cmsis/dsp/GCC/libarm_cortexM4lf_math.a" />
-      <file file_name="../../../libs/liblibmplmpu_m4_hardfp/liblibmplmpu.a" />
       <file file_name="../../../sdk_components/nfc/t2t_lib/nfc_t2t_lib_gcc.a" />
+      <file file_name="../../../libs/liblibmplmpu.a" />
     </folder>
     <folder Name="sys">
       <file file_name="../../../sdk_components/toolchain/gcc/gcc_startup_nrf52.S" />

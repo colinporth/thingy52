@@ -75,10 +75,11 @@
 #include "nrf_log_ctrl.h"
 //}}}
 
-#define SCHED_QUEUE_SIZE  60  // Maximum number of events in the scheduler queue
-#define SCHED_MAX_EVENT_DATA_SIZE  MAX(APP_TIMER_SCHED_EVENT_DATA_SIZE, BLE_STACK_HANDLER_SCHED_EVT_SIZE) // Maximum size of scheduler events
+// Maximum number of events in the scheduler queue
+#define SCHED_QUEUE_SIZE  60  
 
-#define FPU_EXCEPTION_MASK  0x0000009F
+// Maximum size of scheduler events
+#define SCHED_MAX_EVENT_DATA_SIZE  MAX(APP_TIMER_SCHED_EVENT_DATA_SIZE, BLE_STACK_HANDLER_SCHED_EVT_SIZE) 
 
 static const nrf_drv_twi_t m_twi_sensors = NRF_DRV_TWI_INSTANCE(TWI_SENSOR_INSTANCE);
 //{{{
@@ -310,7 +311,7 @@ int main() {
     app_sched_execute();
     if (!NRF_LOG_PROCESS()) {
       // place application in low power state while waiting for events.
-      __set_FPSCR (__get_FPSCR() & ~(FPU_EXCEPTION_MASK));
+      __set_FPSCR (__get_FPSCR() & ~(0x0000009F));
       (void)__get_FPSCR();
       NVIC_ClearPendingIRQ (FPU_IRQn);
 

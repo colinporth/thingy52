@@ -39,16 +39,16 @@
  *
  */
 //}}}
-#ifndef SDK_CONFIG_H
-#define SDK_CONFIG_H
+#pragma once
 
 // <<< Use Configuration Wizard in Context Menu >>>\n
 #ifdef USE_APP_CONFIG
-#include "app_config.h"
+  #include "app_config.h"
 #endif
 
 #define NRF_BLE_GATT_MAX_MTU_SIZE BLE_GATT_ATT_MTU_DEFAULT*12
 
+//{{{  ANT
 //{{{
 //==========================================================
 // <e> ANTFS_ENABLED - ant_fs - ANT File Share module.
@@ -1329,7 +1329,7 @@
 
 #endif //ANT_SDM_ENABLED
 //}}}
-
+//{{{
 #ifndef ANT_SEARCH_CONFIG_ENABLED
 #define ANT_SEARCH_CONFIG_ENABLED 0
 #endif
@@ -1349,10 +1349,8 @@
 #endif
 
 #endif //ANT_SEARCH_CONFIG_ENABLED
-// </e>
-
-// <e> ANT_STACK_CONFIG_ENABLED - ant_stack_config - Common ANT stack configuration
-//==========================================================
+//}}}
+//{{{
 #ifndef ANT_STACK_CONFIG_ENABLED
 #define ANT_STACK_CONFIG_ENABLED 0
 #endif
@@ -1378,231 +1376,158 @@
 #endif
 
 #endif //ANT_STACK_CONFIG_ENABLED
-// </e>
-
-// <q> ANT_STATE_INDICATOR_ENABLED  - ant_state_indicator - ANT state indicator using BSP
-
+//}}}
 
 #ifndef ANT_STATE_INDICATOR_ENABLED
 #define ANT_STATE_INDICATOR_ENABLED 0
 #endif
-
-// </h>
-//==========================================================
-
-// <h> nRF_BLE
-
-//==========================================================
-// <q> BLE_ADVERTISING_ENABLED  - ble_advertising - Advertising module
-
-
+//}}}
+//{{{  BLE
 #ifndef BLE_ADVERTISING_ENABLED
 #define BLE_ADVERTISING_ENABLED 1
 #endif
 
 // <q> BLE_DTM_ENABLED  - ble_dtm - Module for testing RF/PHY using DTM commands
-
-
 #ifndef BLE_DTM_ENABLED
 #define BLE_DTM_ENABLED 0
 #endif
 
 // <q> BLE_RACP_ENABLED  - ble_racp - Record Access Control Point library
-
-
 #ifndef BLE_RACP_ENABLED
 #define BLE_RACP_ENABLED 0
 #endif
 
 // <q> NRF_BLE_QWR_ENABLED  - nrf_ble_qwr - Queued writes support module (prepare/execute write)
-
-
 #ifndef NRF_BLE_QWR_ENABLED
 #define NRF_BLE_QWR_ENABLED 0
 #endif
 
 // <q> PEER_MANAGER_ENABLED  - peer_manager - Peer Manager
-
-
 #ifndef PEER_MANAGER_ENABLED
 #define PEER_MANAGER_ENABLED 0
 #endif
 
-// </h>
-//==========================================================
-
-// <h> nRF_BLE_Services
-
-//==========================================================
 // <q> BLE_ANCS_C_ENABLED  - ble_ancs_c - Apple Notification Service Client
-
-
 #ifndef BLE_ANCS_C_ENABLED
 #define BLE_ANCS_C_ENABLED 0
 #endif
 
 // <q> BLE_ANS_C_ENABLED  - ble_ans_c - Alert Notification Service Client
-
-
 #ifndef BLE_ANS_C_ENABLED
 #define BLE_ANS_C_ENABLED 0
 #endif
 
 // <q> BLE_BAS_C_ENABLED  - ble_bas_c - Battery Service Client
-
-
 #ifndef BLE_BAS_C_ENABLED
 #define BLE_BAS_C_ENABLED 0
 #endif
 
 // <q> BLE_BAS_ENABLED  - ble_bas - Battery Service
-
-
 #ifndef BLE_BAS_ENABLED
 #define BLE_BAS_ENABLED 1
 #endif
 
 // <q> BLE_CSCS_ENABLED  - ble_cscs - Cycling Speed and Cadence Service
-
-
 #ifndef BLE_CSCS_ENABLED
 #define BLE_CSCS_ENABLED 0
 #endif
 
 // <q> BLE_CTS_C_ENABLED  - ble_cts_c - Current Time Service Client
-
-
 #ifndef BLE_CTS_C_ENABLED
 #define BLE_CTS_C_ENABLED 0
 #endif
 
 // <q> BLE_DIS_ENABLED  - ble_dis - Device Information Service
-
-
 #ifndef BLE_DIS_ENABLED
 #define BLE_DIS_ENABLED 1
 #endif
 
 // <q> BLE_GLS_ENABLED  - ble_gls - Glucose Service
-
-
 #ifndef BLE_GLS_ENABLED
 #define BLE_GLS_ENABLED 0
 #endif
 
 // <q> BLE_HIDS_ENABLED  - ble_hids - Human Interface Device Service
-
-
 #ifndef BLE_HIDS_ENABLED
 #define BLE_HIDS_ENABLED 0
 #endif
 
-// <e> BLE_HRS_C_ENABLED - ble_hrs_c - Heart Rate Service Client
-//==========================================================
+//{{{
 #ifndef BLE_HRS_C_ENABLED
 #define BLE_HRS_C_ENABLED 0
 #endif
 #if  BLE_HRS_C_ENABLED
+
 // <o> BLE_HRS_C_RR_INTERVALS_MAX_CNT - Maximum number of RR_INTERVALS per notification to be decoded
 #ifndef BLE_HRS_C_RR_INTERVALS_MAX_CNT
 #define BLE_HRS_C_RR_INTERVALS_MAX_CNT 30
 #endif
 
 #endif //BLE_HRS_C_ENABLED
-// </e>
+//}}}
 
 // <q> BLE_HRS_ENABLED  - ble_hrs - Heart Rate Service
-
-
 #ifndef BLE_HRS_ENABLED
 #define BLE_HRS_ENABLED 0
 #endif
 
 // <q> BLE_HTS_ENABLED  - ble_hts - Health Thermometer Service
-
-
 #ifndef BLE_HTS_ENABLED
 #define BLE_HTS_ENABLED 0
 #endif
 
 // <q> BLE_IAS_C_ENABLED  - ble_ias_c - Immediate Alert Service Client
-
-
 #ifndef BLE_IAS_C_ENABLED
 #define BLE_IAS_C_ENABLED 0
 #endif
 
 // <q> BLE_IAS_ENABLED  - ble_ias - Immediate Alert Service
-
-
 #ifndef BLE_IAS_ENABLED
 #define BLE_IAS_ENABLED 0
 #endif
 
 // <q> BLE_LBS_C_ENABLED  - ble_lbs_c - Nordic LED Button Service Client
-
-
 #ifndef BLE_LBS_C_ENABLED
 #define BLE_LBS_C_ENABLED 0
 #endif
 
 // <q> BLE_LBS_ENABLED  - ble_lbs - LED Button Service
-
-
 #ifndef BLE_LBS_ENABLED
 #define BLE_LBS_ENABLED 0
 #endif
 
 // <q> BLE_LLS_ENABLED  - ble_lls - Link Loss Service
-
-
 #ifndef BLE_LLS_ENABLED
 #define BLE_LLS_ENABLED 0
 #endif
 
 // <q> BLE_NUS_C_ENABLED  - ble_nus_c - Nordic UART Central Service
-
-
 #ifndef BLE_NUS_C_ENABLED
 #define BLE_NUS_C_ENABLED 0
 #endif
 
 // <q> BLE_NUS_ENABLED  - ble_nus - Nordic UART Service
-
-
 #ifndef BLE_NUS_ENABLED
 #define BLE_NUS_ENABLED 0
 #endif
 
 // <q> BLE_RSCS_C_ENABLED  - ble_rscs_c - Running Speed and Cadence Client
-
-
 #ifndef BLE_RSCS_C_ENABLED
 #define BLE_RSCS_C_ENABLED 0
 #endif
 
 // <q> BLE_RSCS_ENABLED  - ble_rscs - Running Speed and Cadence Service
-
-
 #ifndef BLE_RSCS_ENABLED
 #define BLE_RSCS_ENABLED 0
 #endif
 
 // <q> BLE_TPS_ENABLED  - ble_tps - TX Power Service
-
-
 #ifndef BLE_TPS_ENABLED
 #define BLE_TPS_ENABLED 0
 #endif
+//}}}
 
-// </h>
-//==========================================================
-
-// <h> nRF_Crypto
-
-//==========================================================
-// <e> NRF_CRYPTO_ENABLED - nrf_crypto - Cryptography library
-//==========================================================
+//{{{
 #ifndef NRF_CRYPTO_ENABLED
 #define NRF_CRYPTO_ENABLED 0
 #endif
@@ -1646,16 +1571,8 @@
 // </e>
 
 #endif //NRF_CRYPTO_ENABLED
-// </e>
-
-// </h>
-//==========================================================
-
-// <h> nRF_Drivers
-
-//==========================================================
-// <e> APP_USBD_ENABLED - app_usbd - USB Device library
-//==========================================================
+//}}}
+//{{{
 #ifndef APP_USBD_ENABLED
 #define APP_USBD_ENABLED 0
 #endif
@@ -1697,10 +1614,8 @@
 #endif
 
 #endif //APP_USBD_ENABLED
-// </e>
-
-// <e> CLOCK_ENABLED - nrf_drv_clock - CLOCK peripheral driver
-//==========================================================
+//}}}
+//{{{
 #ifndef CLOCK_ENABLED
 #define CLOCK_ENABLED 1
 #endif
@@ -1794,10 +1709,8 @@
 // </e>
 
 #endif //CLOCK_ENABLED
-// </e>
-
-// <e> COMP_ENABLED - nrf_drv_comp - COMP peripheral driver
-//==========================================================
+//}}}
+//{{{
 #ifndef COMP_ENABLED
 #define COMP_ENABLED 0
 #endif
@@ -1939,10 +1852,8 @@
 // </e>
 
 #endif //COMP_ENABLED
-// </e>
-
-// <e> EGU_ENABLED - nrf_drv_swi - SWI(EGU) peripheral driver
-//==========================================================
+//}}}
+//{{{
 #ifndef EGU_ENABLED
 #define EGU_ENABLED 0
 #endif
@@ -2001,10 +1912,8 @@
 // </e>
 
 #endif //EGU_ENABLED
-// </e>
-
-// <e> GPIOTE_ENABLED - nrf_drv_gpiote - GPIOTE peripheral driver
-//==========================================================
+//}}}
+//{{{
 #ifndef GPIOTE_ENABLED
 #define GPIOTE_ENABLED 1
 #endif
@@ -2085,10 +1994,8 @@
 // </e>
 
 #endif //GPIOTE_ENABLED
-// </e>
-
-// <e> I2S_ENABLED - nrf_drv_i2s - I2S peripheral driver
-//==========================================================
+//}}}
+//{{{
 #ifndef I2S_ENABLED
 #define I2S_ENABLED 0
 #endif
@@ -2286,10 +2193,8 @@
 // </e>
 
 #endif //I2S_ENABLED
-// </e>
-
-// <e> LPCOMP_ENABLED - nrf_drv_lpcomp - LPCOMP peripheral driver
-//==========================================================
+//}}}
+//{{{
 #ifndef LPCOMP_ENABLED
 #define LPCOMP_ENABLED 0
 #endif
@@ -2421,10 +2326,8 @@
 // </e>
 
 #endif //LPCOMP_ENABLED
-// </e>
-
-// <e> PDM_ENABLED - nrf_drv_pdm - PDM peripheral driver
-//==========================================================
+//}}}
+//{{{
 #ifndef PDM_ENABLED
 #define PDM_ENABLED 1
 #endif
@@ -2528,10 +2431,8 @@
 // </e>
 
 #endif //PDM_ENABLED
-// </e>
-
-// <e> PERIPHERAL_RESOURCE_SHARING_ENABLED - nrf_drv_common - Peripheral drivers common module
-//==========================================================
+//}}}
+//{{{
 #ifndef PERIPHERAL_RESOURCE_SHARING_ENABLED
 #define PERIPHERAL_RESOURCE_SHARING_ENABLED 0
 #endif
@@ -2590,10 +2491,8 @@
 // </e>
 
 #endif //PERIPHERAL_RESOURCE_SHARING_ENABLED
-// </e>
-
-// <e> POWER_ENABLED - nrf_drv_power - POWER peripheral driver
-//==========================================================
+//}}}
+//{{{
 #ifndef POWER_ENABLED
 #define POWER_ENABLED 0
 #endif
@@ -2634,10 +2533,8 @@
 #endif
 
 #endif //POWER_ENABLED
-// </e>
-
-// <e> PPI_ENABLED - nrf_drv_ppi - PPI peripheral driver
-//==========================================================
+//}}}
+//{{{
 #ifndef PPI_ENABLED
 #define PPI_ENABLED 0
 #endif
@@ -2696,10 +2593,8 @@
 // </e>
 
 #endif //PPI_ENABLED
-// </e>
-
-// <e> PWM_ENABLED - nrf_drv_pwm - PWM peripheral driver
-//==========================================================
+//}}}
+//{{{
 #ifndef PWM_ENABLED
 #define PWM_ENABLED 1
 #endif
@@ -2903,10 +2798,8 @@
 // </e>
 
 #endif //PWM_ENABLED
-// </e>
-
-// <e> QDEC_ENABLED - nrf_drv_qdec - QDEC peripheral driver
-//==========================================================
+//}}}
+//{{{
 #ifndef QDEC_ENABLED
 #define QDEC_ENABLED 0
 #endif
@@ -3061,10 +2954,8 @@
 // </e>
 
 #endif //QDEC_ENABLED
-// </e>
-
-// <e> RNG_ENABLED - nrf_drv_rng - RNG peripheral driver
-//==========================================================
+//}}}
+//{{{
 #ifndef RNG_ENABLED
 #define RNG_ENABLED 1
 #endif
@@ -3159,10 +3050,8 @@
 // </e>
 
 #endif //RNG_ENABLED
-// </e>
-
-// <e> RTC_ENABLED - nrf_drv_rtc - RTC peripheral driver
-//==========================================================
+//}}}
+//{{{
 #ifndef RTC_ENABLED
 #define RTC_ENABLED 0
 #endif
@@ -3278,8 +3167,7 @@
 // </e>
 
 #endif //RTC_ENABLED
-// </e>
-
+//}}}
 //{{{
 #ifndef SAADC_ENABLED
 #define SAADC_ENABLED 1
@@ -4431,7 +4319,7 @@
 
 #endif //WDT_ENABLED
 //}}}
-
+//{{{  APP
 #ifndef APP_GPIOTE_ENABLED
 #define APP_GPIOTE_ENABLED 0
 #endif
@@ -4605,6 +4493,7 @@
 #ifndef APP_USBD_HID_MOUSE_ENABLED
 #define APP_USBD_HID_MOUSE_ENABLED 0
 #endif
+//}}}
 
 #ifndef BUTTON_ENABLED
 #define BUTTON_ENABLED 1
@@ -6387,4 +6276,3 @@
 #define SEGGER_RTT_CONFIG_DEFAULT_MODE 0
 #endif
 //}}}
-#endif //SDK_CONFIG_H

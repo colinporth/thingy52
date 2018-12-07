@@ -166,7 +166,6 @@ $(abspath ../../../sdk_components/softdevice_handler_appsh.c) \
 
 ASM_SOURCE_FILES  = $(abspath ../../../sdk_components/toolchain/gcc/gcc_startup_nrf52.S)
 
-INC_PATHS += -I$(abspath ../config)
 INC_PATHS += -I$(abspath ../../../include)
 INC_PATHS += -I$(abspath ../../../include/drivers)
 INC_PATHS += -I$(abspath ../../../include/modules)
@@ -340,10 +339,10 @@ ocd: thingy
 	@echo ocd Flashing: $(OUTPUT_BINARY_DIRECTORY)/$<.hex
 	..\..\..\openOCD\bin\openocd.exe -f openocd.cfg -c "program $(OUTPUT_BINARY_DIRECTORY)/$<.hex verify reset exit"
 
-ocdsoft:
-	@echo ocd Flashing: $(OUTPUT_BINARY_DIRECTORY)/$<.hex
+soft:
 	..\..\..\openOCD\bin\openocd.exe -f openocd.cfg -c "program ../../../sdk_components/softdevice/s132/hex/s132_nrf52_4.0.2_softdevice.hex verify exit"
+	@echo ocd Flashing: $(OUTPUT_BINARY_DIRECTORY)/$<.hex
 
-ocdtest:
+test:
 	@echo ocd test
 	..\..\..\openOCD\bin\openocd.exe -f openocd.cfg
