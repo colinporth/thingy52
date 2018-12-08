@@ -349,8 +349,7 @@ test:
 
 ses:
 	@echo Flashing ses
-	..\..\..\openOCD\bin\openocd.exe -f openocd.cfg -c "program C:/Users/colin/Desktop/nRF5_SDK_15.2.0_9412b96/examples/ble_peripheral/ble_app_beacon/pca10040/s132/ses/Output/Release/Exe/ble_app_beacon_pca10040_s132.hex verify reset exit"
-
+	..\..\..\openOCD\bin\openocd.exe -f openocd.cfg -c "program C:/Users/colin/Desktop/nRF5_SDK_15.2.0/examples/peripheral/blinky/pca10040/s132/ses/Output/Release/Exe/blinky_pca10040_s132.hex verify reset exit"
 sessoft:
 	@echo Flashing sessoft
-	..\..\..\openOCD\bin\openocd.exe -f openocd.cfg -c "program C:/Users/colin/Desktop/nRF5_SDK_15.2.0_9412b96/components/softdevice/s132/hex/s132_nrf52_6.1.0_softdevice.hex verify exit"
+	..\..\..\openOCD\bin\openocd.exe -f openocd.cfg -c "program C:/Users/colin/Desktop/nRF5_SDK_15.2.0/components/softdevice/s132/hex/s132_nrf52_6.1.0_softdevice.hex verify exit"
