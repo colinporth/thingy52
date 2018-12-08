@@ -1,3 +1,4 @@
+//{{{
 /*
   Copyright (c) 2010 - 2017, Nordic Semiconductor ASA
   All rights reserved.
@@ -35,137 +36,62 @@
   LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
   OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
- /** @file UI module
- *
- * @defgroup m_ui User interface
- * @{
- * @ingroup modules
- * @brief User interface module API.
- *
- */
-
-#ifndef __M_UI_H__
-#define __M_UI_H__
+//}}}
+#pragma once
 
 #include "app_error.h"
 #include "m_ble.h"
 #include "nrf_drv_twi.h"
 
-#define DEFAULT_LED_INTENSITY_PERCENT     20    ///< Default LED intensity [percent].
-#define DEFAULT_LED_ON_TIME_MS            35    ///< LED on duration [ms].
-#define DEFAULT_LED_OFF_TIME_MS         3500    ///< Time LED is off between cycles [ms].
-#define DEFAULT_LED_FADE_IN_TIME        2000    ///< LED fade in time [ms].
-#define DEFAULT_LED_FADE_OUT_TIME        500    ///< LED fade out time [ms].
+//{{{
+enum {
+  M_IU_STATUS_CODE_SUCCESS = NRF_SUCCESS, ///< Successful.
+  M_IU_STATUS_CODE_INVALID_PARAM,         ///< Invalid parameters supplied.
+  };
+//}}}
 
-/** @brief User interface module status return codes.
- */
-enum
-{
-    M_IU_STATUS_CODE_SUCCESS = NRF_SUCCESS,                 ///< Successful.
-    M_IU_STATUS_CODE_INVALID_PARAM,                         ///< Invalid parameters supplied.
-};
+//{{{
+// Default LED sequence values.
+#define SEQUENCE_DEFAULT_VALUES {                                 \
+  .sequence_vals.on_time_ms       = DEFAULT_LED_ON_TIME_MS,       \
+  .sequence_vals.on_intensity     = 0xFF,                         \
+  .sequence_vals.off_intensity    = 0,                            \
+  .sequence_vals.fade_in_time_ms  = DEFAULT_LED_FADE_IN_TIME,     \
+  .sequence_vals.fade_out_time_ms = DEFAULT_LED_FADE_OUT_TIME,    \
+  }
+//}}}
 
-/** @brief Default LED configuration upon BLE connection.
- */
-#define UI_CONFIG_DEFAULT_CONNECTED                             \
-{                                                               \
-    .mode = BLE_UIS_LED_MODE_BREATHE,                           \
-    .data =                                                     \
-    {                                                           \
-        .mode_breathe =                                         \
-        {                                                       \
-            .color_mix  = (uint8_t)DRV_EXT_LIGHT_COLOR_GREEN,   \
-            .intensity  = DEFAULT_LED_INTENSITY_PERCENT,        \
-            .delay      = DEFAULT_LED_OFF_TIME_MS               \
-        }                                                       \
-    }                                                           \
-}
+// Predefined events linked to corresponding LED configurations.
+typedef enum { M_UI_BLE_CONNECTED, M_UI_BLE_DISCONNECTED, M_UI_ERROR } ui_led_events;
 
-/** @brief Default LED configuration upon BLE disconnect.
- */
-#define UI_CONFIG_DEFAULT_DISCONNECTED                          \
-{                                                               \
-    .mode = BLE_UIS_LED_MODE_BREATHE,                           \
-    .data =                                                     \
-    {                                                           \
-        .mode_breathe =                                         \
-        {                                                       \
-            .color_mix  = (uint8_t)DRV_EXT_LIGHT_COLOR_BLUE,    \
-            .intensity  = DEFAULT_LED_INTENSITY_PERCENT,        \
-            .delay      = DEFAULT_LED_OFF_TIME_MS               \
-        }                                                       \
-    }                                                           \
-}
-
-/** @brief Default LED configuration when an error occurs.
- */
-#define UI_CONFIG_DEFAULT_ERROR                                 \
-{                                                               \
-    .mode = BLE_UIS_LED_MODE_BREATHE,                           \
-    .data =                                                     \
-    {                                                           \
-        .mode_breathe =                                         \
-        {                                                       \
-            .color_mix  = (uint8_t)DRV_EXT_LIGHT_COLOR_RED,     \
-            .intensity  = DEFAULT_LED_INTENSITY_PERCENT,        \
-            .delay      = DEFAULT_LED_OFF_TIME_MS / 4           \
-        }                                                       \
-    }                                                           \
-}
-
-/** @brief Default LED sequence values.
- */
-#define SEQUENCE_DEFAULT_VALUES                                     \
-{                                                                   \
-    .sequence_vals.on_time_ms       = DEFAULT_LED_ON_TIME_MS,       \
-    .sequence_vals.on_intensity     = 0xFF,                         \
-    .sequence_vals.off_intensity    = 0,                            \
-    .sequence_vals.fade_in_time_ms  = DEFAULT_LED_FADE_IN_TIME,     \
-    .sequence_vals.fade_out_time_ms = DEFAULT_LED_FADE_OUT_TIME,    \
-}
-
-/** @brief Predefined events linked to corresponding LED configurations.
- */
-typedef enum
-{
-    M_UI_BLE_CONNECTED,
-    M_UI_BLE_DISCONNECTED,
-    M_UI_ERROR
-}ui_led_events;
-
-/** @brief TWI configuraion.
- */
-typedef struct
-{
-    nrf_drv_twi_t         const * p_twi_instance;
-}m_ui_init_t;
-
+//{{{  struct m_ui_init_t
+typedef struct {
+  nrf_drv_twi_t const* p_twi_instance;
+  } m_ui_init_t;
+//}}}
+//{{{
 /**@brief Function for initializing all UI components (Buttons and LEDs).
- *
  * @param[in] p_handle  Pointer to BLE service handle structure.
  * @param[in] p_params  Initialization parameters.
- *
  * @retval NRF_SUCCESS      Operation was successful.
  * @retval NRF_ERROR_NULL   NULL pointer supplied.
  * @retval Other codes from the underlying drivers.
  */
-ret_code_t m_ui_init(m_ble_service_handle_t * p_handle, m_ui_init_t * p_params);
-
+ret_code_t m_ui_init (m_ble_service_handle_t * p_handle, m_ui_init_t * p_params);
+//}}}
+//{{{
 /**@brief Function for setting the RGB value of an LED.
- *
  * @param[in]   r   Red intensity (0 to 255).
  * @param[in]   g   Green intensity (0 to 255).
  * @param[in]   b   Blue intensity (0 to 255).
- *
  * @note In Breathe or One-shot mode, the intensity will be set via a separate intensity variable.
  * The values entered in these two modes will be treated as binary (Boolean) for each color.
- *
  * @retval NRF_SUCCESS      Operation was successful.
  * @retval Other codes from the underlying drivers.
  */
-ret_code_t m_ui_led_set(uint8_t r, uint8_t g, uint8_t b);
-
+ret_code_t m_ui_led_set (uint8_t r, uint8_t g, uint8_t b);
+//}}}
+//{{{
 /**
  * @brief Function for setting LED color according to predefined events.
  *
@@ -174,7 +100,5 @@ ret_code_t m_ui_led_set(uint8_t r, uint8_t g, uint8_t b);
  * @retval NRF_SUCCESS      If initialization was successful.
  * @retval Other codes from the underlying drivers.
  */
-ret_code_t m_ui_led_set_event(ui_led_events event_code);
-#endif /*__THINGY_UI_H__*/
-
-/** @} */
+ret_code_t m_ui_led_set_event (ui_led_events event_code);
+//}}}

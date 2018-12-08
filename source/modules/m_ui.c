@@ -56,11 +56,51 @@
 #include "macros_common.h"
 //}}}
 
+#define DEFAULT_LED_INTENSITY_PERCENT     20    ///< Default LED intensity [percent].
+#define DEFAULT_LED_ON_TIME_MS            35    ///< LED on duration [ms].
+#define DEFAULT_LED_OFF_TIME_MS         3500    ///< Time LED is off between cycles [ms].
+#define DEFAULT_LED_FADE_IN_TIME        2000    ///< LED fade in time [ms].
+#define DEFAULT_LED_FADE_OUT_TIME        500    ///< LED fade out time [ms].
+
+//{{{
+static const ble_uis_led_t m_default_config_connected = {
+  .mode = BLE_UIS_LED_MODE_BREATHE,
+  .data = {
+    .mode_breathe = {
+      .color_mix  = (uint8_t)DRV_EXT_LIGHT_COLOR_GREEN,
+      .intensity  = DEFAULT_LED_INTENSITY_PERCENT,
+      .delay      = DEFAULT_LED_OFF_TIME_MS
+      }
+    }
+  };
+//}}}
+//{{{
+static const ble_uis_led_t m_default_config_disconnected = {
+  .mode = BLE_UIS_LED_MODE_BREATHE,
+  .data = {
+    .mode_breathe = {
+      .color_mix  = (uint8_t)DRV_EXT_LIGHT_COLOR_BLUE,
+      .intensity  = DEFAULT_LED_INTENSITY_PERCENT,
+      .delay      = DEFAULT_LED_OFF_TIME_MS
+      }
+    }
+  };
+//}}}
+//{{{
+static const ble_uis_led_t m_default_config_error = {
+  .mode = BLE_UIS_LED_MODE_BREATHE,
+  .data = {
+    .mode_breathe = {
+       .color_mix  = (uint8_t)DRV_EXT_LIGHT_COLOR_RED,
+       .intensity  = DEFAULT_LED_INTENSITY_PERCENT,
+       .delay      = DEFAULT_LED_OFF_TIME_MS / 4
+       }
+     }
+  };
+//}}}
+
 static ble_uis_led_t* mp_config_ui;
 static ble_uis_t m_uis;
-static const ble_uis_led_t m_default_config_connected    = UI_CONFIG_DEFAULT_CONNECTED;
-static const ble_uis_led_t m_default_config_disconnected = UI_CONFIG_DEFAULT_DISCONNECTED;
-static const ble_uis_led_t m_default_config_error        = UI_CONFIG_DEFAULT_ERROR;
 
 //{{{
 /**@brief Treats r, g, b integer values as boolean and returns corresponing color mix.
@@ -72,13 +112,10 @@ static const ble_uis_led_t m_default_config_error        = UI_CONFIG_DEFAULT_ERR
 static drv_ext_light_color_mix_t rgb_to_color_mix (uint8_t color_r, uint8_t color_g, uint8_t color_b) {
 
   int8_t color_mix = 0;
-
   if (color_r)
     color_mix |= (1 << 0);
-
   if (color_g)
     color_mix |= (1 << 1);
-
   if (color_b)
     color_mix |= (1 << 2);
 
@@ -88,316 +125,263 @@ static drv_ext_light_color_mix_t rgb_to_color_mix (uint8_t color_r, uint8_t colo
 
 //{{{
 /**@brief Sends commands to drv_ext_light for changing led configurations.
- *
  * @param[in] p_config_ui       Contains all settings for the LED according to the BLE characteristics.
  * @param[in] p_color_only      Contains data from program calls (not BLE) if only color is to be changed.
- *
  * @Note If both p_config_ui and p_color_only == NULL, the static config will be loaded. This may be written to over BLE.
  * if only p_color_only == NULL, p_config_ui will be used, if only p_config_ui == NULL, p_color_only will be used.
  * Supplied intensities will be converted according to the current mode.
- *
  * @return NRF_SUCCESS
  * @return M_IU_STATUS_CODE_INVALID_PARAM
  * @return Other codes from the underlying drivers
  */
 static ret_code_t led_set (ble_uis_led_t const* const p_config_ui,
-                           drv_ext_light_rgb_intensity_t const* const p_color_only)
-{
-    ret_code_t     err_code;
-    ble_uis_led_t  conf_ui;
+                           drv_ext_light_rgb_intensity_t const* const p_color_only) {
 
-    // Either load config from supplied conf_ui parameter or get from static variable.
-    if ((p_config_ui == NULL) && (p_color_only == NULL)) // No config supplied, use static config.
-    {
-        conf_ui = *mp_config_ui;
-    }
-    else if(p_color_only == NULL) // Config supplied, use it.
-    {
-        conf_ui = *p_config_ui;
-    }
-    else if(p_config_ui == NULL) // p_color_only supplied. Use the supplied colors according to the mode in mp_config_ui.
-    {
-        conf_ui = *mp_config_ui;
-        switch(conf_ui.mode)
-        {
-            case BLE_UIS_LED_MODE_OFF:
-                // No need to copy data as status = OFF.
-                break;
+  ret_code_t err_code;
+  ble_uis_led_t  conf_ui;
 
-            case BLE_UIS_LED_MODE_CONST:
-                conf_ui.data.mode_const.r = p_color_only->r;
-                conf_ui.data.mode_const.g = p_color_only->g;
-                conf_ui.data.mode_const.b = p_color_only->b;
-                break;
+  // Either load config from supplied conf_ui parameter or get from static variable.
+  if ((p_config_ui == NULL) && (p_color_only == NULL)) // No config supplied, use static config.
+      conf_ui = *mp_config_ui;
+  else if (p_color_only == NULL) // Config supplied, use it.
+      conf_ui = *p_config_ui;
+  else if (p_config_ui == NULL) {
+    // p_color_only supplied. Use the supplied colors according to the mode in mp_config_ui.
+    conf_ui = *mp_config_ui;
+    switch (conf_ui.mode) {
+      case BLE_UIS_LED_MODE_OFF:
+        // No need to copy data as status = OFF.
+        break;
 
-            case BLE_UIS_LED_MODE_BREATHE: // Breathe or blink mode, rgb colors must be converted to binary combinations.
-                conf_ui.data.mode_breathe.color_mix          = rgb_to_color_mix(p_color_only->r, p_color_only->g, p_color_only->b);
-                break;
+      case BLE_UIS_LED_MODE_CONST:
+        conf_ui.data.mode_const.r = p_color_only->r;
+        conf_ui.data.mode_const.g = p_color_only->g;
+        conf_ui.data.mode_const.b = p_color_only->b;
+        break;
 
-            case BLE_UIS_LED_MODE_BREATHE_ONE_SHOT:
-                conf_ui.data.mode_breathe_one_shot.color_mix = rgb_to_color_mix(p_color_only->r, p_color_only->g, p_color_only->b);
-                break;
+      case BLE_UIS_LED_MODE_BREATHE: // Breathe or blink mode, rgb colors must be converted to binary combinations.
+        conf_ui.data.mode_breathe.color_mix          = rgb_to_color_mix(p_color_only->r, p_color_only->g, p_color_only->b);
+        break;
 
-            default: // Should never be reached.
-                return M_IU_STATUS_CODE_INVALID_PARAM;
-        }
-    }
-    else
-    {
+      case BLE_UIS_LED_MODE_BREATHE_ONE_SHOT:
+        conf_ui.data.mode_breathe_one_shot.color_mix = rgb_to_color_mix(p_color_only->r, p_color_only->g, p_color_only->b);
+        break;
+
+      default: // Should never be reached.
         return M_IU_STATUS_CODE_INVALID_PARAM;
+      }
     }
+  else
+    return M_IU_STATUS_CODE_INVALID_PARAM;
 
-    err_code = drv_ext_light_off(DRV_EXT_RGB_LED_LIGHTWELL);
-    RETURN_IF_ERROR(err_code);
+  err_code = drv_ext_light_off(DRV_EXT_RGB_LED_LIGHTWELL);
+  RETURN_IF_ERROR(err_code);
 
-    if (mp_config_ui->mode == BLE_UIS_LED_MODE_OFF)
-    {
-        conf_ui.mode = BLE_UIS_LED_MODE_OFF;         // If LED configured as off in the static config, let the LED remain off when BLE is disconnected as well.
-        NRF_LOG_INFO("Mode: BLE_UIS_LED_MODE_OFF \r\n");
-        return NRF_SUCCESS;
+  if (mp_config_ui->mode == BLE_UIS_LED_MODE_OFF) {
+      conf_ui.mode = BLE_UIS_LED_MODE_OFF;         // If LED configured as off in the static config, let the LED remain off when BLE is disconnected as well.
+      NRF_LOG_INFO("Mode: BLE_UIS_LED_MODE_OFF \r\n");
+      return NRF_SUCCESS;
+  }
+  else if (conf_ui.mode == BLE_UIS_LED_MODE_CONST) {
+    if ( (conf_ui.data.mode_const.r == 0) && (conf_ui.data.mode_const.g == 0) && (conf_ui.data.mode_const.b == 0) )
+        return NRF_SUCCESS;   // LED should be off.
+
+    drv_ext_light_rgb_intensity_t color;
+
+    color.r = conf_ui.data.mode_const.r;
+    color.g = conf_ui.data.mode_const.g;
+    color.b = conf_ui.data.mode_const.b;
+    NRF_LOG_INFO ("Mode: BLE_UIS_LED_MODE_CONST. Color hex: %x, %x, %x, \r\n",
+                  conf_ui.data.mode_const.r, conf_ui.data.mode_const.g, conf_ui.data.mode_const.b);
+
+    return drv_ext_light_rgb_intensity_set(DRV_EXT_RGB_LED_LIGHTWELL, &color);
     }
-    else if (conf_ui.mode == BLE_UIS_LED_MODE_CONST)
-    {
-        if ( (conf_ui.data.mode_const.r == 0) && (conf_ui.data.mode_const.g == 0) && (conf_ui.data.mode_const.b == 0) )
-        {
-            return NRF_SUCCESS;   // LED should be off.
-        }
+  else if (conf_ui.mode == BLE_UIS_LED_MODE_BREATHE) {
+    drv_ext_light_rgb_sequence_t led_sequence = SEQUENCE_DEFAULT_VALUES;
 
-        drv_ext_light_rgb_intensity_t color;
+    led_sequence.sequence_vals.on_intensity = (uint8_t)(conf_ui.data.mode_breathe.intensity * 2.55f);
+    led_sequence.sequence_vals.off_time_ms = conf_ui.data.mode_breathe.delay;
+    led_sequence.color = (drv_ext_light_color_mix_t)conf_ui.data.mode_breathe.color_mix;
 
-        color.r = conf_ui.data.mode_const.r;
-        color.g = conf_ui.data.mode_const.g;
-        color.b = conf_ui.data.mode_const.b;
-        NRF_LOG_INFO("Mode: BLE_UIS_LED_MODE_CONST. Color hex: %x, %x, %x, \r\n", conf_ui.data.mode_const.r, conf_ui.data.mode_const.g, conf_ui.data.mode_const.b);
-
-        return drv_ext_light_rgb_intensity_set(DRV_EXT_RGB_LED_LIGHTWELL, &color);
+    NRF_LOG_INFO("Mode: BLE_UIS_LED_MODE_BREATHE \r\n");
+    return drv_ext_light_rgb_sequence(DRV_EXT_RGB_LED_LIGHTWELL, &led_sequence);
     }
-    else if (conf_ui.mode == BLE_UIS_LED_MODE_BREATHE)
-    {
-        drv_ext_light_rgb_sequence_t led_sequence = SEQUENCE_DEFAULT_VALUES;
+  else if (conf_ui.mode == BLE_UIS_LED_MODE_BREATHE_ONE_SHOT) {
+    drv_ext_light_rgb_sequence_t led_sequence = SEQUENCE_DEFAULT_VALUES;
 
-        led_sequence.sequence_vals.on_intensity = (uint8_t)(conf_ui.data.mode_breathe.intensity * 2.55f);
-        led_sequence.sequence_vals.off_time_ms = conf_ui.data.mode_breathe.delay;
-        led_sequence.color = (drv_ext_light_color_mix_t)conf_ui.data.mode_breathe.color_mix;
+    led_sequence.sequence_vals.on_intensity = (uint8_t)(conf_ui.data.mode_breathe_one_shot.intensity * 2.55f);
+    led_sequence.sequence_vals.off_time_ms = 0; // Set to zero so it is detected as one-shot
+    led_sequence.color = (drv_ext_light_color_mix_t)conf_ui.data.mode_breathe_one_shot.color_mix;
 
-        NRF_LOG_INFO("Mode: BLE_UIS_LED_MODE_BREATHE \r\n");
-        return drv_ext_light_rgb_sequence(DRV_EXT_RGB_LED_LIGHTWELL, &led_sequence);
+    NRF_LOG_INFO("Mode: BLE_UIS_LED_MODE_BREATHE_ONE_SHOT \r\n");
+    return drv_ext_light_rgb_sequence(DRV_EXT_RGB_LED_LIGHTWELL, &led_sequence);
     }
-    else if (conf_ui.mode == BLE_UIS_LED_MODE_BREATHE_ONE_SHOT)
-    {
-        drv_ext_light_rgb_sequence_t led_sequence = SEQUENCE_DEFAULT_VALUES;
-
-        led_sequence.sequence_vals.on_intensity = (uint8_t)(conf_ui.data.mode_breathe_one_shot.intensity * 2.55f);
-        led_sequence.sequence_vals.off_time_ms = 0; // Set to zero so it is detected as one-shot
-        led_sequence.color = (drv_ext_light_color_mix_t)conf_ui.data.mode_breathe_one_shot.color_mix;
-
-        NRF_LOG_INFO("Mode: BLE_UIS_LED_MODE_BREATHE_ONE_SHOT \r\n");
-        return drv_ext_light_rgb_sequence(DRV_EXT_RGB_LED_LIGHTWELL, &led_sequence);
-    }
-    else
-    {
-        return M_IU_STATUS_CODE_INVALID_PARAM;
-    }
-}
+  else
+    return M_IU_STATUS_CODE_INVALID_PARAM;
+  }
 //}}}
 
 //{{{
 /**@brief Function for passing the BLE event to the UI service.
  * @details This callback function will be called from the BLE handling module.
- * @param[in] p_ble_evt    Pointer to the BLE event.
+ * @param[in] p_ble_evt Pointer to the BLE event.
  */
-static void thingy_ui_on_ble_evt (ble_evt_t* p_ble_evt)
-{
-    ret_code_t err_code;
+static void thingy_ui_on_ble_evt (ble_evt_t* p_ble_evt) {
 
-    if (p_ble_evt == NULL)
-        return;
+  ret_code_t err_code;
 
-    ble_uis_on_ble_evt(&m_uis, p_ble_evt);
+  if (p_ble_evt == NULL)
+    return;
 
-    switch(p_ble_evt->header.evt_id)
-    {
-        case BLE_GAP_EVT_CONNECTED: // Upon reconnect, read last stored configuraion.
-            NRF_LOG_INFO("BLE connected\r\n");
-            err_code = led_set (mp_config_ui, NULL);
-            APP_ERROR_CHECK (err_code);
+  ble_uis_on_ble_evt (&m_uis, p_ble_evt);
 
-            break;
+  switch (p_ble_evt->header.evt_id) {
+    case BLE_GAP_EVT_CONNECTED: // Upon reconnect, read last stored configuraion.
+      NRF_LOG_INFO("BLE connected\r\n");
+      err_code = led_set (mp_config_ui, NULL);
+      APP_ERROR_CHECK (err_code);
+      break;
 
-        case BLE_GAP_EVT_DISCONNECTED: // When disconnecting, revert to the default LED config.
-            NRF_LOG_INFO("BLE disonnected\r\n");
-            err_code = m_ui_led_set_event (M_UI_BLE_DISCONNECTED);
-            APP_ERROR_CHECK (err_code);
-            break;
+    case BLE_GAP_EVT_DISCONNECTED: // When disconnecting, revert to the default LED config.
+      NRF_LOG_INFO("BLE disonnected\r\n");
+      err_code = m_ui_led_set_event (M_UI_BLE_DISCONNECTED);
+      APP_ERROR_CHECK (err_code);
+      break;
 
-        default:
-            break;
+    default:
+      break;
     }
-}
+  }
 //}}}
 
 //{{{
 /**@brief Function for handling LED write events UI Service.
- *
  * @param[in] p_wss     UI Service structure.
  * @param[in] new_state Value of the RGB LED.
  */
-static void ble_uis_led_write_handler (ble_uis_t* p_uis, ble_uis_led_t* input)
-{
-    ret_code_t         err_code;
+static void ble_uis_led_write_handler (ble_uis_t* p_uis, ble_uis_led_t* input) {
 
-    /* If anything has changed, store the new values to flash. */
-    if (mp_config_ui != input)
-        (void)m_ui_flash_config_store(input);
+  ret_code_t err_code;
 
-    err_code = led_set (NULL, NULL);
+  /* If anything has changed, store the new values to flash. */
+  if (mp_config_ui != input)
+    (void)m_ui_flash_config_store(input);
 
-    if (err_code != NRF_ERROR_NOT_SUPPORTED && err_code != NRF_SUCCESS)
-    {
-        APP_ERROR_CHECK(err_code);
-    }
-}
+  err_code = led_set (NULL, NULL);
+
+  if (err_code != NRF_ERROR_NOT_SUPPORTED && err_code != NRF_SUCCESS)
+    APP_ERROR_CHECK(err_code);
+  }
 //}}}
 //{{{
 /**@brief Function for handling PIN write events UI Service.
- *
  * @param[in] p_wss     UI Service structure.
  * @param[in] pin       Value of the pins.
  */
-static void ble_uis_pin_write_handler (ble_uis_t* p_uis, ble_uis_pin_t* pin)
-{
+static void ble_uis_pin_write_handler (ble_uis_t* p_uis, ble_uis_pin_t* pin) {
 
-    NRF_LOG_INFO("ble_uis_pin_write_handler: MOS_1 %d, MOS_2 %d, MOS_3 %d, MOS_4 %d\r\n",
-                                                                              pin->mos_1,
-                                                                              pin->mos_2,
-                                                                              pin->mos_3,
-                                                                              pin->mos_4);
+  NRF_LOG_INFO ("ble_uis_pin_write_handler: MOS_1 %d, MOS_2 %d, MOS_3 %d, MOS_4 %d\r\n",
+                pin->mos_1, pin->mos_2, pin->mos_3, pin->mos_4);
 
-   if (pin->mos_1)
-   {
-       nrf_gpio_pin_set(MOS_1);
-   }
-   else
-   {
-       nrf_gpio_pin_clear(MOS_1);
-   }
+  if (pin->mos_1)
+    nrf_gpio_pin_set (MOS_1);
+  else
+    nrf_gpio_pin_clear (MOS_1);
 
-   if (pin->mos_2)
-   {
-       nrf_gpio_pin_set(MOS_2);
-   }
-   else
-   {
-       nrf_gpio_pin_clear(MOS_2);
-   }
+  if (pin->mos_2)
+    nrf_gpio_pin_set (MOS_2);
+  else
+    nrf_gpio_pin_clear (MOS_2);
 
-   if (pin->mos_3)
-   {
-       nrf_gpio_pin_set(MOS_3);
-   }
-   else
-   {
-       nrf_gpio_pin_clear(MOS_3);
-   }
+  if (pin->mos_3)
+    nrf_gpio_pin_set (MOS_3);
+  else
+    nrf_gpio_pin_clear (MOS_3);
 
-   if (pin->mos_4)
-   {
-       nrf_gpio_pin_set(MOS_4);
-   }
-   else
-   {
-       nrf_gpio_pin_clear(MOS_4);
-   }
-}
+  if (pin->mos_4)
+    nrf_gpio_pin_set (MOS_4);
+  else
+    nrf_gpio_pin_clear (MOS_4);
+ }
 //}}}
 
 //{{{
 /**@brief Function for initializing the UI Service.
- *
  * @details This callback function will be called from the ble handling module to initialize the UI service.
- *
  * @retval NRF_SUCCESS If initialization was successful.
  */
-static ret_code_t thingy_ui_service_init (bool major_minor_fw_ver_changed)
-{
-    uint32_t        err_code;
-    ble_uis_init_t  uis_init;
+static ret_code_t thingy_ui_service_init (bool major_minor_fw_ver_changed) {
 
-    /**@brief Load configuration from flash. */
-    err_code = m_ui_flash_init(&m_default_config_connected, &mp_config_ui);
-    RETURN_IF_ERROR(err_code);
+  uint32_t        err_code;
+  ble_uis_init_t  uis_init;
 
-    if (major_minor_fw_ver_changed)
-    {
-        err_code = m_ui_flash_config_store(&m_default_config_connected);
-        APP_ERROR_CHECK(err_code);
+  /**@brief Load configuration from flash. */
+  err_code = m_ui_flash_init (&m_default_config_connected, &mp_config_ui);
+  RETURN_IF_ERROR(err_code);
+
+  if (major_minor_fw_ver_changed) {
+    err_code = m_ui_flash_config_store(&m_default_config_connected);
+    APP_ERROR_CHECK(err_code);
     }
 
-    uis_init.p_init_led        = mp_config_ui;
-    uis_init.init_pin.mos_1    = 0;
-    uis_init.init_pin.mos_2    = 0;
-    uis_init.init_pin.mos_3    = 0;
-    uis_init.init_pin.mos_4    = 0;
-    uis_init.led_write_handler = ble_uis_led_write_handler;
-    uis_init.pin_write_handler = ble_uis_pin_write_handler;
+  uis_init.p_init_led = mp_config_ui;
+  uis_init.init_pin.mos_1 = 0;
+  uis_init.init_pin.mos_2 = 0;
+  uis_init.init_pin.mos_3 = 0;
+  uis_init.init_pin.mos_4 = 0;
+  uis_init.led_write_handler = ble_uis_led_write_handler;
+  uis_init.pin_write_handler = ble_uis_pin_write_handler;
 
-    return ble_uis_init(&m_uis, &uis_init);
-}
+  return ble_uis_init(&m_uis, &uis_init);
+  }
 //}}}
 
 //{{{
 static void button_evt_handler (uint8_t pin_no, uint8_t button_action)
 {
-    uint32_t err_code;
+  uint32_t err_code;
 
-    if (pin_no == BUTTON)
-    {
-        //If Thingy is connected to a Central.
-        if (m_uis.conn_handle != BLE_CONN_HANDLE_INVALID)
-        {
-            err_code = ble_uis_on_button_change(&m_uis, button_action);
-            if (err_code != NRF_ERROR_INVALID_STATE
-                && err_code != NRF_SUCCESS)
-            {
-                APP_ERROR_CHECK(err_code);
-            }
-        }
+  if (pin_no == BUTTON) {
+    //If Thingy is connected to a Central.
+    if (m_uis.conn_handle != BLE_CONN_HANDLE_INVALID) {
+      err_code = ble_uis_on_button_change(&m_uis, button_action);
+      if (err_code != NRF_ERROR_INVALID_STATE && err_code != NRF_SUCCESS)
+        APP_ERROR_CHECK(err_code);
+      }
     }
-}
+  }
 //}}}
 
 //{{{
-ret_code_t m_ui_led_set (uint8_t r, uint8_t g, uint8_t b)
-{
+ret_code_t m_ui_led_set (uint8_t r, uint8_t g, uint8_t b) {
 
-    drv_ext_light_rgb_intensity_t rgb;
-    rgb.r = r;
-    rgb.g = g;
-    rgb.b = b;
+  drv_ext_light_rgb_intensity_t rgb;
+  rgb.r = r;
+  rgb.g = g;
+  rgb.b = b;
 
-    return led_set (NULL, &rgb);
-}
-
+  return led_set (NULL, &rgb);
+  }
 //}}}
 //{{{
-ret_code_t m_ui_led_set_event (ui_led_events event_code)
-{
-    ret_code_t err_code;
+ret_code_t m_ui_led_set_event (ui_led_events event_code) {
 
-    if (event_code == M_UI_BLE_CONNECTED) {
-        err_code = led_set (&m_default_config_connected, NULL);
-        RETURN_IF_ERROR(err_code);
+  ret_code_t err_code;
+  if (event_code == M_UI_BLE_CONNECTED) {
+    err_code = led_set (&m_default_config_connected, NULL);
+    RETURN_IF_ERROR(err_code);
     }
-    else if (event_code == M_UI_BLE_DISCONNECTED) {
-        err_code = led_set (&m_default_config_disconnected, NULL);
-        RETURN_IF_ERROR(err_code);
+  else if (event_code == M_UI_BLE_DISCONNECTED) {
+    err_code = led_set (&m_default_config_disconnected, NULL);
+    RETURN_IF_ERROR(err_code);
     }
-    else {
-        err_code = led_set (&m_default_config_error, NULL);
-        RETURN_IF_ERROR(err_code);
+  else {
+    err_code = led_set (&m_default_config_error, NULL);
+    RETURN_IF_ERROR(err_code);
     }
-    return NRF_SUCCESS;
-}
+
+  return NRF_SUCCESS;
+  }
 //}}}
 
 //{{{
@@ -428,7 +412,6 @@ static ret_code_t button_init() {
 //{{{
 uint32_t m_ui_init (m_ble_service_handle_t* p_handle, m_ui_init_t* p_params) {
 
-  //lint --e{651} Potentially confusing initializer
   static const drv_ext_light_conf_t led_conf[DRV_EXT_LIGHT_NUM] = DRV_EXT_LIGHT_CFG;
 
   static const nrf_drv_twi_config_t twi_config = {
@@ -468,6 +451,7 @@ uint32_t m_ui_init (m_ble_service_handle_t* p_handle, m_ui_init_t* p_params) {
   nrf_gpio_cfg_output (MOS_2);
   nrf_gpio_cfg_output (MOS_3);
   nrf_gpio_cfg_output (MOS_4);
+
   nrf_gpio_pin_clear (MOS_1);
   nrf_gpio_pin_clear (MOS_2);
   nrf_gpio_pin_clear (MOS_3);

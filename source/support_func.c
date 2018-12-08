@@ -230,34 +230,19 @@ ret_code_t support_func_configure_io_startup (drv_ext_gpio_init_t const* const p
 ret_code_t support_func_configure_io_shutdown() {
 
   ret_code_t err_code = configure_default_ioext_gpio_state(false);
-
-  #if defined(THINGY_HW_v0_7_0) ||  defined(THINGY_HW_v0_8_0) || defined(THINGY_HW_v0_9_0)
-    RETURN_IF_ERROR(err_code);
-  #else
-    if (err_code) // Ignore errors and continue shutdown procedure.
-      {
-      NRF_LOG_ERROR("configure_default_ioext_gpio_state returned with code %d \r\n", err_code);
-      }
-  #endif
+  if (err_code) { 
+    // Ignore errors and continue shutdown procedure.
+    NRF_LOG_ERROR("configure_default_ioext_gpio_state returned with code %d \r\n", err_code);
+    }
 
   err_code = configure_default_nrf_gpio_state_reversed();
-
-  #if defined(THINGY_HW_v0_7_0) ||  defined(THINGY_HW_v0_8_0) || defined(THINGY_HW_v0_9_0)
-    RETURN_IF_ERROR(err_code);
-  #else
-    if (err_code) // Ignore errors and continue shutdown procedure.
-      {
-      NRF_LOG_ERROR("configure_default_nrf_gpio_state_reversed returned with code %d \r\n", err_code);
-      }
-  #endif
+  if (err_code) { 
+    // Ignore errors and continue shutdown procedure.
+    NRF_LOG_ERROR("configure_default_nrf_gpio_state_reversed returned with code %d \r\n", err_code);
+    }
 
   nrf_gpio_cfg_output(VDD_PWR_CTRL);
-
-  #if defined(THINGY_HW_v0_7_0) ||  defined(THINGY_HW_v0_8_0) || defined(THINGY_HW_v0_9_0)
-    nrf_gpio_pin_set (VDD_PWR_CTRL);     // For earlier HW versions, keep VDD on to the low power accelerometer.
-  #else
-    nrf_gpio_pin_clear (VDD_PWR_CTRL);
-  #endif
+  nrf_gpio_pin_clear (VDD_PWR_CTRL);
 
   return NRF_SUCCESS;
   }

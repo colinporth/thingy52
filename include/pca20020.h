@@ -48,7 +48,6 @@
 //}}}
 
 #define LIS2DH12_ADDR  0x19 ///< On Thingy HW > v1.0.0 this is situated on a different TWI bus.
-
 #define BH1745_ADDR    0x38
 #define SX1509_ADDR    0x3E
 #define LPS22HB_ADDR   0x5C
@@ -63,7 +62,7 @@ typedef enum { PIN_CLEAR, PIN_SET, PIN_NO_OUTPUT } pin_output_state_t;
 // Pin configurations used when powering down
 //{{{
 // Standard output cleared
-#define NRF_PIN_OUTPUT_CLEAR    {NRF_GPIO_PIN_DIR_OUTPUT,       \
+#define NRF_PIN_OUTPUT_CLEAR   {NRF_GPIO_PIN_DIR_OUTPUT,       \
                                 NRF_GPIO_PIN_INPUT_DISCONNECT, \
                                 NRF_GPIO_PIN_NOPULL,           \
                                 NRF_GPIO_PIN_S0S1,             \
@@ -72,7 +71,7 @@ typedef enum { PIN_CLEAR, PIN_SET, PIN_NO_OUTPUT } pin_output_state_t;
 //}}}
 //{{{
 // Standard output set
-#define NRF_PIN_OUTPUT_SET      {NRF_GPIO_PIN_DIR_OUTPUT,       \
+#define NRF_PIN_OUTPUT_SET     {NRF_GPIO_PIN_DIR_OUTPUT,       \
                                 NRF_GPIO_PIN_INPUT_DISCONNECT, \
                                 NRF_GPIO_PIN_NOPULL,           \
                                 NRF_GPIO_PIN_S0S1,             \
@@ -81,7 +80,7 @@ typedef enum { PIN_CLEAR, PIN_SET, PIN_NO_OUTPUT } pin_output_state_t;
 //}}}
 //{{{
 // Standard input pullup
-#define NRF_PIN_DISCON_PULLUP   {NRF_GPIO_PIN_DIR_INPUT,        \
+#define NRF_PIN_DISCON_PULLUP  {NRF_GPIO_PIN_DIR_INPUT,        \
                                 NRF_GPIO_PIN_INPUT_DISCONNECT, \
                                 NRF_GPIO_PIN_PULLUP,           \
                                 NRF_GPIO_PIN_S0S1,             \
@@ -90,65 +89,23 @@ typedef enum { PIN_CLEAR, PIN_SET, PIN_NO_OUTPUT } pin_output_state_t;
 //}}}
 //{{{
 // Standard input nopull
-#define NRF_PIN_DISCON_NOPULL   {NRF_GPIO_PIN_DIR_INPUT,        \
-                                NRF_GPIO_PIN_INPUT_DISCONNECT, \
-                                NRF_GPIO_PIN_NOPULL,           \
-                                NRF_GPIO_PIN_S0S1,             \
-                                NRF_GPIO_PIN_NOSENSE,          \
-                                PIN_NO_OUTPUT}
+#define NRF_PIN_DISCON_NOPULL   {NRF_GPIO_PIN_DIR_INPUT,       \
+                                 NRF_GPIO_PIN_INPUT_DISCONNECT, \
+                                 NRF_GPIO_PIN_NOPULL,           \
+                                 NRF_GPIO_PIN_S0S1,             \
+                                 NRF_GPIO_PIN_NOSENSE,          \
+                                 PIN_NO_OUTPUT}
 //}}}
 //{{{
 // Standard input pulldown
-#define NRF_PIN_DISCON_PULLDOWN {NRF_GPIO_PIN_DIR_INPUT,        \
-                                NRF_GPIO_PIN_INPUT_DISCONNECT, \
-                                NRF_GPIO_PIN_PULLDOWN,         \
-                                NRF_GPIO_PIN_S0S1,             \
-                                NRF_GPIO_PIN_NOSENSE,          \
-                                PIN_NO_OUTPUT}
+#define NRF_PIN_DISCON_PULLDOWN {NRF_GPIO_PIN_DIR_INPUT,       \
+                                 NRF_GPIO_PIN_INPUT_DISCONNECT, \
+                                 NRF_GPIO_PIN_PULLDOWN,         \
+                                 NRF_GPIO_PIN_S0S1,             \
+                                 NRF_GPIO_PIN_NOSENSE,          \
+                                 PIN_NO_OUTPUT}
 //}}}
-
-/* IO extender configuration. The input buf must be enabled on all pins. */
-//{{{
-#define SX_PIN_OUTPUT_CLEAR   {DRV_EXT_GPIO_PIN_DIR_OUTPUT,                   \
-                                DRV_EXT_GPIO_PIN_INPUT_BUF_ENABLED,            \
-                                DRV_EXT_GPIO_PIN_NOPULL,                       \
-                                DRV_EXT_GPIO_PIN_DRIVE_PUSHPULL,               \
-                                DRV_EXT_GPIO_PIN_INCREASED_SLEWRATE_DISABLED,  \
-                                PIN_CLEAR}
-//}}}
-//{{{
-#define SX_PIN_OUTPUT_SET     {DRV_EXT_GPIO_PIN_DIR_OUTPUT,                   \
-                                DRV_EXT_GPIO_PIN_INPUT_BUF_ENABLED,            \
-                                DRV_EXT_GPIO_PIN_NOPULL,                       \
-                                DRV_EXT_GPIO_PIN_DRIVE_PUSHPULL,               \
-                                DRV_EXT_GPIO_PIN_INCREASED_SLEWRATE_DISABLED,  \
-                                PIN_SET}
-//}}}
-//{{{
-#define SX_PIN_INPUT_NOPULL   {DRV_EXT_GPIO_PIN_DIR_INPUT,                    \
-                                DRV_EXT_GPIO_PIN_INPUT_BUF_ENABLED,            \
-                                DRV_EXT_GPIO_PIN_NOPULL,                       \
-                                DRV_EXT_GPIO_PIN_DRIVE_PUSHPULL,               \
-                                DRV_EXT_GPIO_PIN_INCREASED_SLEWRATE_DISABLED,  \
-                                PIN_NO_OUTPUT}
-//}}}
-//{{{
-#define SX_PIN_INPUT_PULLDOWN {DRV_EXT_GPIO_PIN_DIR_INPUT,                    \
-                                DRV_EXT_GPIO_PIN_INPUT_BUF_ENABLED,            \
-                                DRV_EXT_GPIO_PIN_PULLDOWN,                     \
-                                DRV_EXT_GPIO_PIN_DRIVE_PUSHPULL,               \
-                                DRV_EXT_GPIO_PIN_INCREASED_SLEWRATE_DISABLED,  \
-                                PIN_NO_OUTPUT}
-//}}}
-//{{{
-#define SX_PIN_INPUT_PULLUP   {DRV_EXT_GPIO_PIN_DIR_INPUT,                    \
-                                DRV_EXT_GPIO_PIN_INPUT_BUF_ENABLED,            \
-                                DRV_EXT_GPIO_PIN_PULLUP,                       \
-                                DRV_EXT_GPIO_PIN_DRIVE_PUSHPULL,               \
-                                DRV_EXT_GPIO_PIN_INCREASED_SLEWRATE_DISABLED,  \
-                                PIN_NO_OUTPUT}
-//}}}
-
+typedef enum { VDD_ON  = true, VDD_OFF = false } vdd_state_t;
 //{{{  struct nrf_gpio_cfg_t
 typedef struct {
   nrf_gpio_pin_dir_t   dir;
@@ -159,92 +116,6 @@ typedef struct {
   pin_output_state_t   state;
   } nrf_gpio_cfg_t;
 //}}}
-//{{{  struct sx_gpio_cfg_t
-typedef struct {
-  drv_ext_gpio_pin_dir_t        dir;
-  drv_ext_gpio_pin_input_buf_t  input_buf;
-  drv_ext_gpio_pin_pull_t       pull_config;
-  drv_ext_gpio_pin_drive_type_t drive_type;
-  drv_ext_gpio_pin_slew_rate_t  slew_rate;
-  pin_output_state_t            state;
-  } sx_gpio_cfg_t;
-//}}}
-
-typedef enum { VDD_ON  = true, VDD_OFF = false } vdd_state_t;
-
-//{{{  IO extender pin configuration for system off
-#define SX_IOEXT_NUM_PINS               16
-
-#define SX_IOEXT_0                      0
-#define IOEXT_PIN00_SYSTEM_DEFAULT_CFG  SX_PIN_OUTPUT_CLEAR
-
-#define SX_IOEXT_1                      1
-#define IOEXT_PIN01_SYSTEM_DEFAULT_CFG  SX_PIN_OUTPUT_CLEAR
-
-#define SX_IOEXT_2                      2
-#define IOEXT_PIN02_SYSTEM_DEFAULT_CFG  SX_PIN_OUTPUT_CLEAR
-
-#define SX_IOEXT_3                      3
-#define IOEXT_PIN03_SYSTEM_DEFAULT_CFG  SX_PIN_OUTPUT_CLEAR
-
-#define SX_BAT_MON_EN                   4
-#define IOEXT_PIN04_SYSTEM_DEFAULT_CFG  SX_PIN_INPUT_NOPULL
-
-#define SX_LIGHTWELL_G                  5
-#define IOEXT_PIN05_SYSTEM_DEFAULT_CFG  SX_PIN_OUTPUT_SET
-
-#define SX_LIGHTWELL_B                  6
-#define IOEXT_PIN06_SYSTEM_DEFAULT_CFG  SX_PIN_OUTPUT_SET
-
-#define SX_LIGHTWELL_R                  7
-#define IOEXT_PIN07_SYSTEM_DEFAULT_CFG  SX_PIN_OUTPUT_SET
-
-#define SX_MPU_PWR_CTRL                 8
-#define IOEXT_PIN08_SYSTEM_DEFAULT_CFG  SX_PIN_OUTPUT_CLEAR
-
-#define SX_MIC_PWR_CTRL                 9
-#define IOEXT_PIN09_SYSTEM_DEFAULT_CFG  SX_PIN_OUTPUT_CLEAR
-
-#define SX_CCS_PWR_CTRL                 10
-#define IOEXT_PIN10_SYSTEM_DEFAULT_CFG  SX_PIN_OUTPUT_CLEAR
-
-#define SX_CCS_RESET                    11
-#define IOEXT_PIN11_SYSTEM_DEFAULT_CFG  SX_PIN_INPUT_PULLDOWN
-
-#define SX_CCS_WAKE                     12
-#define IOEXT_PIN12_SYSTEM_DEFAULT_CFG  SX_PIN_INPUT_PULLDOWN
-
-#define SX_SENSE_LED_R                  13
-#define IOEXT_PIN13_SYSTEM_DEFAULT_CFG  SX_PIN_OUTPUT_SET
-
-#define SX_SENSE_LED_G                  14
-#define IOEXT_PIN14_SYSTEM_DEFAULT_CFG  SX_PIN_OUTPUT_SET
-
-#define SX_SENSE_LED_B                  15
-#define IOEXT_PIN15_SYSTEM_DEFAULT_CFG  SX_PIN_OUTPUT_SET
-//}}}
-//{{{
-#define IOEXT_SYSTEM_DEFAULT_PIN_CFG \
-{                                    \
-  IOEXT_PIN00_SYSTEM_DEFAULT_CFG,  \
-  IOEXT_PIN01_SYSTEM_DEFAULT_CFG,  \
-  IOEXT_PIN02_SYSTEM_DEFAULT_CFG,  \
-  IOEXT_PIN03_SYSTEM_DEFAULT_CFG,  \
-  IOEXT_PIN04_SYSTEM_DEFAULT_CFG,  \
-  IOEXT_PIN05_SYSTEM_DEFAULT_CFG,  \
-  IOEXT_PIN06_SYSTEM_DEFAULT_CFG,  \
-  IOEXT_PIN07_SYSTEM_DEFAULT_CFG,  \
-  IOEXT_PIN08_SYSTEM_DEFAULT_CFG,  \
-  IOEXT_PIN09_SYSTEM_DEFAULT_CFG,  \
-  IOEXT_PIN10_SYSTEM_DEFAULT_CFG,  \
-  IOEXT_PIN11_SYSTEM_DEFAULT_CFG,  \
-  IOEXT_PIN12_SYSTEM_DEFAULT_CFG,  \
-  IOEXT_PIN13_SYSTEM_DEFAULT_CFG,  \
-  IOEXT_PIN14_SYSTEM_DEFAULT_CFG,  \
-  IOEXT_PIN15_SYSTEM_DEFAULT_CFG   \
-  };
-//}}}
-
 //{{{  nRF pin configuration for system off
 #define NRF_NUM_GPIO_PINS         32
 
@@ -254,7 +125,7 @@ typedef enum { VDD_ON  = true, VDD_OFF = false } vdd_state_t;
 #define PIN01_SYSTEM_DEFAULT_CFG  NRF_PIN_OUTPUT_CLEAR
 
 #define ANA_DIG0                  2
-#define PIN02_SYSTEM_DEFAULT_CFG  NRF_PIN_DISCON_PULLDOWN
+#define PIN02_SYSTEM_DEFAULT_CFG  NRF_PIN_DISCON_NOPULL
 #define ANA_DIG1                  3
 #define PIN03_SYSTEM_DEFAULT_CFG  NRF_PIN_DISCON_PULLDOWN
 #define ANA_DIG2                  4
@@ -335,38 +206,162 @@ typedef enum { VDD_ON  = true, VDD_OFF = false } vdd_state_t;
 //}}}
 //{{{
 #define NRF_SYSTEM_DEFAULT_PIN_CFG  { \
-  PIN00_SYSTEM_DEFAULT_CFG,           \
-  PIN01_SYSTEM_DEFAULT_CFG,           \
-  PIN02_SYSTEM_DEFAULT_CFG,           \
-  PIN03_SYSTEM_DEFAULT_CFG,           \
-  PIN04_SYSTEM_DEFAULT_CFG,           \
-  PIN05_SYSTEM_DEFAULT_CFG,           \
-  PIN06_SYSTEM_DEFAULT_CFG,           \
-  PIN07_SYSTEM_DEFAULT_CFG,           \
-  PIN08_SYSTEM_DEFAULT_CFG,           \
-  PIN09_SYSTEM_DEFAULT_CFG,           \
-  PIN10_SYSTEM_DEFAULT_CFG,           \
-  PIN11_SYSTEM_DEFAULT_CFG,           \
-  PIN12_SYSTEM_DEFAULT_CFG,           \
-  PIN13_SYSTEM_DEFAULT_CFG,           \
-  PIN14_SYSTEM_DEFAULT_CFG,           \
-  PIN15_SYSTEM_DEFAULT_CFG,           \
-  PIN16_SYSTEM_DEFAULT_CFG,           \
-  PIN17_SYSTEM_DEFAULT_CFG,           \
-  PIN18_SYSTEM_DEFAULT_CFG,           \
-  PIN19_SYSTEM_DEFAULT_CFG,           \
-  PIN20_SYSTEM_DEFAULT_CFG,           \
-  PIN21_SYSTEM_DEFAULT_CFG,           \
-  PIN22_SYSTEM_DEFAULT_CFG,           \
-  PIN23_SYSTEM_DEFAULT_CFG,           \
-  PIN24_SYSTEM_DEFAULT_CFG,           \
-  PIN25_SYSTEM_DEFAULT_CFG,           \
-  PIN26_SYSTEM_DEFAULT_CFG,           \
-  PIN27_SYSTEM_DEFAULT_CFG,           \
-  PIN28_SYSTEM_DEFAULT_CFG,           \
-  PIN29_SYSTEM_DEFAULT_CFG,           \
-  PIN30_SYSTEM_DEFAULT_CFG,           \
-  PIN31_SYSTEM_DEFAULT_CFG            \
+  PIN00_SYSTEM_DEFAULT_CFG, \
+  PIN01_SYSTEM_DEFAULT_CFG, \
+  PIN02_SYSTEM_DEFAULT_CFG, \
+  PIN03_SYSTEM_DEFAULT_CFG, \
+  PIN04_SYSTEM_DEFAULT_CFG, \
+  PIN05_SYSTEM_DEFAULT_CFG, \
+  PIN06_SYSTEM_DEFAULT_CFG, \
+  PIN07_SYSTEM_DEFAULT_CFG, \
+  PIN08_SYSTEM_DEFAULT_CFG, \
+  PIN09_SYSTEM_DEFAULT_CFG, \
+  PIN10_SYSTEM_DEFAULT_CFG, \
+  PIN11_SYSTEM_DEFAULT_CFG, \
+  PIN12_SYSTEM_DEFAULT_CFG, \
+  PIN13_SYSTEM_DEFAULT_CFG, \
+  PIN14_SYSTEM_DEFAULT_CFG, \
+  PIN15_SYSTEM_DEFAULT_CFG, \
+  PIN16_SYSTEM_DEFAULT_CFG, \
+  PIN17_SYSTEM_DEFAULT_CFG, \
+  PIN18_SYSTEM_DEFAULT_CFG, \
+  PIN19_SYSTEM_DEFAULT_CFG, \
+  PIN20_SYSTEM_DEFAULT_CFG, \
+  PIN21_SYSTEM_DEFAULT_CFG, \
+  PIN22_SYSTEM_DEFAULT_CFG, \
+  PIN23_SYSTEM_DEFAULT_CFG, \
+  PIN24_SYSTEM_DEFAULT_CFG, \
+  PIN25_SYSTEM_DEFAULT_CFG, \
+  PIN26_SYSTEM_DEFAULT_CFG, \
+  PIN27_SYSTEM_DEFAULT_CFG, \
+  PIN28_SYSTEM_DEFAULT_CFG, \
+  PIN29_SYSTEM_DEFAULT_CFG, \
+  PIN30_SYSTEM_DEFAULT_CFG, \
+  PIN31_SYSTEM_DEFAULT_CFG  \
+  };
+//}}}
+
+/* IO extender configuration. The input buf must be enabled on all pins. */
+//{{{
+#define SX_PIN_OUTPUT_CLEAR   {DRV_EXT_GPIO_PIN_DIR_OUTPUT,                   \
+                                DRV_EXT_GPIO_PIN_INPUT_BUF_ENABLED,            \
+                                DRV_EXT_GPIO_PIN_NOPULL,                       \
+                                DRV_EXT_GPIO_PIN_DRIVE_PUSHPULL,               \
+                                DRV_EXT_GPIO_PIN_INCREASED_SLEWRATE_DISABLED,  \
+                                PIN_CLEAR}
+//}}}
+//{{{
+#define SX_PIN_OUTPUT_SET     {DRV_EXT_GPIO_PIN_DIR_OUTPUT,                   \
+                                DRV_EXT_GPIO_PIN_INPUT_BUF_ENABLED,            \
+                                DRV_EXT_GPIO_PIN_NOPULL,                       \
+                                DRV_EXT_GPIO_PIN_DRIVE_PUSHPULL,               \
+                                DRV_EXT_GPIO_PIN_INCREASED_SLEWRATE_DISABLED,  \
+                                PIN_SET}
+//}}}
+//{{{
+#define SX_PIN_INPUT_NOPULL   {DRV_EXT_GPIO_PIN_DIR_INPUT,                    \
+                                DRV_EXT_GPIO_PIN_INPUT_BUF_ENABLED,            \
+                                DRV_EXT_GPIO_PIN_NOPULL,                       \
+                                DRV_EXT_GPIO_PIN_DRIVE_PUSHPULL,               \
+                                DRV_EXT_GPIO_PIN_INCREASED_SLEWRATE_DISABLED,  \
+                                PIN_NO_OUTPUT}
+//}}}
+//{{{
+#define SX_PIN_INPUT_PULLDOWN {DRV_EXT_GPIO_PIN_DIR_INPUT,                    \
+                                DRV_EXT_GPIO_PIN_INPUT_BUF_ENABLED,            \
+                                DRV_EXT_GPIO_PIN_PULLDOWN,                     \
+                                DRV_EXT_GPIO_PIN_DRIVE_PUSHPULL,               \
+                                DRV_EXT_GPIO_PIN_INCREASED_SLEWRATE_DISABLED,  \
+                                PIN_NO_OUTPUT}
+//}}}
+//{{{
+#define SX_PIN_INPUT_PULLUP   {DRV_EXT_GPIO_PIN_DIR_INPUT,                    \
+                                DRV_EXT_GPIO_PIN_INPUT_BUF_ENABLED,            \
+                                DRV_EXT_GPIO_PIN_PULLUP,                       \
+                                DRV_EXT_GPIO_PIN_DRIVE_PUSHPULL,               \
+                                DRV_EXT_GPIO_PIN_INCREASED_SLEWRATE_DISABLED,  \
+                                PIN_NO_OUTPUT}
+//}}}
+//{{{  struct sx_gpio_cfg_t
+typedef struct {
+  drv_ext_gpio_pin_dir_t        dir;
+  drv_ext_gpio_pin_input_buf_t  input_buf;
+  drv_ext_gpio_pin_pull_t       pull_config;
+  drv_ext_gpio_pin_drive_type_t drive_type;
+  drv_ext_gpio_pin_slew_rate_t  slew_rate;
+  pin_output_state_t            state;
+  } sx_gpio_cfg_t;
+//}}}
+//{{{  IO extender pin configuration for system off
+#define SX_IOEXT_NUM_PINS              16
+
+#define SX_IOEXT_0                      0
+#define IOEXT_PIN00_SYSTEM_DEFAULT_CFG  SX_PIN_OUTPUT_CLEAR
+
+#define SX_IOEXT_1                      1
+#define IOEXT_PIN01_SYSTEM_DEFAULT_CFG  SX_PIN_OUTPUT_CLEAR
+
+#define SX_IOEXT_2                      2
+#define IOEXT_PIN02_SYSTEM_DEFAULT_CFG  SX_PIN_OUTPUT_CLEAR
+
+#define SX_IOEXT_3                      3
+#define IOEXT_PIN03_SYSTEM_DEFAULT_CFG  SX_PIN_OUTPUT_CLEAR
+
+#define SX_BAT_MON_EN                   4
+#define IOEXT_PIN04_SYSTEM_DEFAULT_CFG  SX_PIN_INPUT_NOPULL
+
+#define SX_LIGHTWELL_G                  5
+#define IOEXT_PIN05_SYSTEM_DEFAULT_CFG  SX_PIN_OUTPUT_SET
+
+#define SX_LIGHTWELL_B                  6
+#define IOEXT_PIN06_SYSTEM_DEFAULT_CFG  SX_PIN_OUTPUT_SET
+
+#define SX_LIGHTWELL_R                  7
+#define IOEXT_PIN07_SYSTEM_DEFAULT_CFG  SX_PIN_OUTPUT_SET
+
+#define SX_MPU_PWR_CTRL                 8
+#define IOEXT_PIN08_SYSTEM_DEFAULT_CFG  SX_PIN_OUTPUT_CLEAR
+
+#define SX_MIC_PWR_CTRL                 9
+#define IOEXT_PIN09_SYSTEM_DEFAULT_CFG  SX_PIN_OUTPUT_CLEAR
+
+#define SX_CCS_PWR_CTRL                 10
+#define IOEXT_PIN10_SYSTEM_DEFAULT_CFG  SX_PIN_OUTPUT_CLEAR
+
+#define SX_CCS_RESET                    11
+#define IOEXT_PIN11_SYSTEM_DEFAULT_CFG  SX_PIN_INPUT_PULLDOWN
+
+#define SX_CCS_WAKE                     12
+#define IOEXT_PIN12_SYSTEM_DEFAULT_CFG  SX_PIN_INPUT_PULLDOWN
+
+#define SX_SENSE_LED_R                  13
+#define IOEXT_PIN13_SYSTEM_DEFAULT_CFG  SX_PIN_OUTPUT_SET
+
+#define SX_SENSE_LED_G                  14
+#define IOEXT_PIN14_SYSTEM_DEFAULT_CFG  SX_PIN_OUTPUT_SET
+
+#define SX_SENSE_LED_B                  15
+#define IOEXT_PIN15_SYSTEM_DEFAULT_CFG  SX_PIN_OUTPUT_SET
+//}}}
+//{{{
+#define IOEXT_SYSTEM_DEFAULT_PIN_CFG \
+{                                    \
+  IOEXT_PIN00_SYSTEM_DEFAULT_CFG,  \
+  IOEXT_PIN01_SYSTEM_DEFAULT_CFG,  \
+  IOEXT_PIN02_SYSTEM_DEFAULT_CFG,  \
+  IOEXT_PIN03_SYSTEM_DEFAULT_CFG,  \
+  IOEXT_PIN04_SYSTEM_DEFAULT_CFG,  \
+  IOEXT_PIN05_SYSTEM_DEFAULT_CFG,  \
+  IOEXT_PIN06_SYSTEM_DEFAULT_CFG,  \
+  IOEXT_PIN07_SYSTEM_DEFAULT_CFG,  \
+  IOEXT_PIN08_SYSTEM_DEFAULT_CFG,  \
+  IOEXT_PIN09_SYSTEM_DEFAULT_CFG,  \
+  IOEXT_PIN10_SYSTEM_DEFAULT_CFG,  \
+  IOEXT_PIN11_SYSTEM_DEFAULT_CFG,  \
+  IOEXT_PIN12_SYSTEM_DEFAULT_CFG,  \
+  IOEXT_PIN13_SYSTEM_DEFAULT_CFG,  \
+  IOEXT_PIN14_SYSTEM_DEFAULT_CFG,  \
+  IOEXT_PIN15_SYSTEM_DEFAULT_CFG   \
   };
 //}}}
 

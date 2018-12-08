@@ -1,3 +1,4 @@
+//{{{
 /*
   Copyright (c) 2010 - 2017, Nordic Semiconductor ASA
   All rights reserved.
@@ -35,18 +36,8 @@
   LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
   OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
- /** @file UI module flash configuration
- *
- * @defgroup m_ui_flash_config User interface flash configuration
- * @{
- * @ingroup m_ui
- * @brief User interface module flash configuration.
- *
- */
-
-#ifndef __M_UI_FLASH_H__
-#define __M_UI_FLASH_H__
+//}}}
+#pragma once
 
 #include "ble_uis.h"
 
@@ -79,7 +70,3 @@ uint32_t m_ui_flash_config_load(ble_uis_led_t ** p_config);
  * @retval Other codes from the underlying drivers.
  */
 uint32_t m_ui_flash_init(const ble_uis_led_t * p_default_config, ble_uis_led_t ** p_config);
-
-#endif
-
-/** @} */

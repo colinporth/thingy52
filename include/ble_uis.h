@@ -37,35 +37,11 @@
   OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 //}}}
-
-/** @file
- *
- * @defgroup ble_sdk_srv_uis Thingy User Interface Service
- * @{
- * @ingroup ble_sdk_srv
- *
- * @brief Thingy User Interface Service module.
- *
- * @details This module implements a custom LED Button Service with an LED and Button Characteristics.
- *          During initialization, the module adds the LED Button Service and Characteristics
- *          to the BLE stack database.
- *
- *          The application must supply an event handler for receiving LED Button Service
- *          events. Using this handler, the service notifies the application when the
- *          LED value changes.
- *
- *          The service also provides a function for letting the application notify
- *          the state of the Button Characteristic to connected peers.
- *
- * @note The application must propagate BLE stack events to the LED Button Service
- *       module by calling ble_uis_on_ble_evt() from the softdevice_handler callback.
-*/
-
-#ifndef BLE_UIS_H__
-#define BLE_UIS_H__
+#pragma once
 
 #include <stdint.h>
 #include <stdbool.h>
+
 #include "ble.h"
 #include "ble_srv_common.h"
 #include "app_util_platform.h"
@@ -78,40 +54,37 @@
 #define BLE_UIS_UUID_PIN_CHAR    0x0303     /**< UUID for pin characteristic. */
 
 #ifdef __GNUC__
-    #ifdef PACKED
-        #undef PACKED
-    #endif
+  #ifdef PACKED
+    #undef PACKED
+  #endif
 
-    #define PACKED(TYPE) TYPE __attribute__ ((packed))
+  #define PACKED(TYPE) TYPE __attribute__ ((packed))
 #endif
-
-/**@brief The available LED operation modes.
- */
-typedef enum
-{
-    BLE_UIS_LED_MODE_OFF,               /**< LED off. */
-    BLE_UIS_LED_MODE_CONST,             /**< LED on with a given R, G and B color mix. */
-    BLE_UIS_LED_MODE_BREATHE,           /**< LED breathe cycle (fade in, on, fade out, off). */
-    BLE_UIS_LED_MODE_BREATHE_ONE_SHOT   /**< Similar to BREATHE, but only a single cycle is performed. */
-}ble_uis_led_mode_t;
+//{{{  enum ble_uis_led_mode_t
+typedef enum {
+  BLE_UIS_LED_MODE_OFF,               /**< LED off. */
+  BLE_UIS_LED_MODE_CONST,             /**< LED on with a given R, G and B color mix. */
+  BLE_UIS_LED_MODE_BREATHE,           /**< LED breathe cycle (fade in, on, fade out, off). */
+  BLE_UIS_LED_MODE_BREATHE_ONE_SHOT   /**< Similar to BREATHE, but only a single cycle is performed. */
+  } ble_uis_led_mode_t;
+//}}}
 
 #define BLE_UIS_LED_MODE_MIN BLE_UIS_LED_MODE_OFF               /**< Minimum value for mode. */
 #define BLE_UIS_LED_MODE_MAX BLE_UIS_LED_MODE_BREATHE_ONE_SHOT  /**< Maximum value for mode. */
 
-#define BLE_UIS_LED_MODE_OFF_LENGTH                     1       /**< Off mode command length [bytes]. */
-#define BLE_UIS_LED_MODE_CONST_LENGTH                   4       /**< Const mode command length [bytes]. */
-#define BLE_UIS_LED_MODE_BREATHE_LENGTH                 5       /**< Breahte mode command length [bytes]. */
-#define BLE_UIS_LED_MODE_BREATHE_ONE_SHOT_LENGTH        3       /**< One shot mode command length [bytes]. */
+#define BLE_UIS_LED_MODE_OFF_LENGTH              1       /**< Off mode command length [bytes]. */
+#define BLE_UIS_LED_MODE_CONST_LENGTH            4       /**< Const mode command length [bytes]. */
+#define BLE_UIS_LED_MODE_BREATHE_LENGTH          5       /**< Breahte mode command length [bytes]. */
+#define BLE_UIS_LED_MODE_BREATHE_ONE_SHOT_LENGTH 3       /**< One shot mode command length [bytes]. */
 
-#define BLE_UIS_LED_COLOR_MIX_MIN                       1       /**< Minimum value for color mix. */
-#define BLE_UIS_LED_COLOR_MIX_MAX                       7       /**< Maximum value for color mix. */
-#define BLE_UIS_LED_INTENSITY_MIN                       1       /**< Minimum LED intensity. */
-#define BLE_UIS_LED_INTENSITY_MAX                       100     /**< Maximum LED intensity. */
-#define BLE_UIS_LED_DELAY_MIN                           50      /**< Minimum delay for breathe sequence [ms].*/
-#define BLE_UIS_LED_DELAY_MAX                           10000   /**< Maximum delay for breathe sequence [ms].*/
+#define BLE_UIS_LED_COLOR_MIX_MIN                1       /**< Minimum value for color mix. */
+#define BLE_UIS_LED_COLOR_MIX_MAX                7       /**< Maximum value for color mix. */
+#define BLE_UIS_LED_INTENSITY_MIN                1       /**< Minimum LED intensity. */
+#define BLE_UIS_LED_INTENSITY_MAX                100     /**< Maximum LED intensity. */
+#define BLE_UIS_LED_DELAY_MIN                    50      /**< Minimum delay for breathe sequence [ms].*/
+#define BLE_UIS_LED_DELAY_MAX                    10000   /**< Maximum delay for breathe sequence [ms].*/
 
-/**@brief union representing LED BLE characteristics.
- */
+//{{{  PACKED struct ble_uis_led_data_t
 typedef PACKED( union
 {
     PACKED( struct
@@ -132,63 +105,53 @@ typedef PACKED( union
         uint8_t intensity;  /**< LED intensity. */
     })mode_breathe_one_shot;
 }) ble_uis_led_data_t;
+//}}}
+//{{{  PACKED struct ble_uis_led_t
+// The LED mode and data, editable over BLE.
+typedef PACKED( struct {
+  ble_uis_led_mode_t mode;
+  ble_uis_led_data_t data;
+  }) ble_uis_led_t;
+//}}}
+//{{{  PACKED struct ble_uis_pin_t
+// Data structure for the PIN characteristic. Controls the Metal Oxide Semiconductors (transistors).
+typedef PACKED (struct {
+  uint8_t mos_1;  /**< Transisior 1 */
+  uint8_t mos_2;  /**< Transisior 2 */
+  uint8_t mos_3;  /**< Transisior 3 */
+  uint8_t mos_4;  /**< Transisior 4 */
+  }) ble_uis_pin_t;
+//}}}
 
-/**@brief The LED mode and data, editable over BLE.
- */
-typedef PACKED( struct
-{
-    ble_uis_led_mode_t mode;
-    ble_uis_led_data_t data;
-}) ble_uis_led_t;
-
-/**@brief Data structure for the PIN characteristic. Controls the Metal Oxide Semiconductors (transistors).
- */
-typedef PACKED( struct
-{
-    uint8_t mos_1;  /**< Transisior 1 */
-    uint8_t mos_2;  /**< Transisior 2 */
-    uint8_t mos_3;  /**< Transisior 3 */
-    uint8_t mos_4;  /**< Transisior 4 */
-}) ble_uis_pin_t;
-
-/**@brief  Forward declaration of the ble_uis_t type.
- */
 typedef struct ble_uis_s ble_uis_t;
+typedef void (*ble_uis_led_write_handler_t) (ble_uis_t* p_uis, ble_uis_led_t* rgb);
+typedef void (*ble_uis_pin_write_handler_t) (ble_uis_t* p_uis, ble_uis_pin_t* pin);
 
-/**@brief  Declaring the LED write handler.
- */
-typedef void (*ble_uis_led_write_handler_t) (ble_uis_t * p_uis, ble_uis_led_t * rgb);
+//{{{  struct ble_uis_init_t
+// LED Button Service init structure. This structure contains all options and data needed for initialization of the service.
+typedef struct {
+  ble_uis_pin_t init_pin;
+  ble_uis_led_t* p_init_led;
+  ble_uis_led_write_handler_t led_write_handler; /**< Event handler to be called when the LED Characteristic is written. */
+  ble_uis_pin_write_handler_t pin_write_handler; /**< Event handler to be called when the PIN Characteristic is written. */
+  } ble_uis_init_t;
+//}}}
+//{{{
+// LED Button Service structure. This structure contains various status information for the service.
+struct ble_uis_s {
+  uint16_t                    service_handle;            /**< Handle of LED Button Service (as provided by the BLE stack). */
+  ble_gatts_char_handles_t    led_char_handles;          /**< Handles related to the LED Characteristic. */
+  ble_gatts_char_handles_t    pin_char_handles;          /**< Handles related to the PIN Characteristic. */
+  ble_gatts_char_handles_t    button_char_handles;       /**< Handles related to the Button Characteristic. */
+  uint8_t                     uuid_type;                 /**< UUID type for the LED Button Service. */
+  uint16_t                    conn_handle;               /**< Handle of the current connection (as provided by the BLE stack). BLE_CONN_HANDLE_INVALID if not in a connection. */
+  bool                        is_button_notif_enabled;
+  ble_uis_led_write_handler_t led_write_handler;         /**< Event handler to be called when the LED Characteristic is written. */
+  ble_uis_pin_write_handler_t pin_write_handler;         /**< Event handler to be called when the PIN Characteristic is written. */
+  };
+//}}}
 
-/**@brief  Declaring the pin write handler.
- */
-typedef void (*ble_uis_pin_write_handler_t) (ble_uis_t * p_uis, ble_uis_pin_t * pin);
-
-/** @brief LED Button Service init structure. This structure contains all options and data needed for
- *         initialization of the service.
- */
-typedef struct
-{
-    ble_uis_pin_t               init_pin;
-    ble_uis_led_t             * p_init_led;
-    ble_uis_led_write_handler_t led_write_handler; /**< Event handler to be called when the LED Characteristic is written. */
-    ble_uis_pin_write_handler_t pin_write_handler; /**< Event handler to be called when the PIN Characteristic is written. */
-} ble_uis_init_t;
-
-/**@brief LED Button Service structure. This structure contains various status information for the service.
- */
-struct ble_uis_s
-{
-    uint16_t                    service_handle;            /**< Handle of LED Button Service (as provided by the BLE stack). */
-    ble_gatts_char_handles_t    led_char_handles;          /**< Handles related to the LED Characteristic. */
-    ble_gatts_char_handles_t    pin_char_handles;          /**< Handles related to the PIN Characteristic. */
-    ble_gatts_char_handles_t    button_char_handles;       /**< Handles related to the Button Characteristic. */
-    uint8_t                     uuid_type;                 /**< UUID type for the LED Button Service. */
-    uint16_t                    conn_handle;               /**< Handle of the current connection (as provided by the BLE stack). BLE_CONN_HANDLE_INVALID if not in a connection. */
-    bool                        is_button_notif_enabled;
-    ble_uis_led_write_handler_t led_write_handler;         /**< Event handler to be called when the LED Characteristic is written. */
-    ble_uis_pin_write_handler_t pin_write_handler;         /**< Event handler to be called when the PIN Characteristic is written. */
-};
-
+//{{{
 /**@brief Function for initializing the LED Button Service.
  *
  * @param[out] p_uis      LED Button Service structure. This structure must be supplied by
@@ -198,8 +161,9 @@ struct ble_uis_s
  *
  * @retval NRF_SUCCESS If the service was initialized successfully. Otherwise, an error code is returned.
  */
-uint32_t ble_uis_init(ble_uis_t * p_uis, const ble_uis_init_t * p_uis_init);
-
+uint32_t ble_uis_init (ble_uis_t* p_uis, const ble_uis_init_t* p_uis_init);
+//}}}
+//{{{
 /**@brief Function for handling the application's BLE stack events.
  *
  * @details This function handles all events from the BLE stack that are of interest to the LED Button Service.
@@ -207,8 +171,9 @@ uint32_t ble_uis_init(ble_uis_t * p_uis, const ble_uis_init_t * p_uis_init);
  * @param[in] p_uis      LED Button Service structure.
  * @param[in] p_ble_evt  Event received from the BLE stack.
  */
-void ble_uis_on_ble_evt(ble_uis_t * p_uis, ble_evt_t * p_ble_evt);
-
+void ble_uis_on_ble_evt (ble_uis_t* p_uis, ble_evt_t* p_ble_evt);
+//}}}
+//{{{
 /**@brief Function for sending a button state notification.
  *
  * @param[in] p_uis         LED Button Service structure.
@@ -216,8 +181,5 @@ void ble_uis_on_ble_evt(ble_uis_t * p_uis, ble_evt_t * p_ble_evt);
  *
  * @retval NRF_SUCCESS If the notification was sent successfully. Otherwise, an error code is returned.
  */
-uint32_t ble_uis_on_button_change(ble_uis_t * p_uis, uint8_t buttons_state);
-
-#endif // BLE_UIS_H__
-
-/** @} */
+uint32_t ble_uis_on_button_change (ble_uis_t* p_uis, uint8_t buttons_state);
+//}}}
