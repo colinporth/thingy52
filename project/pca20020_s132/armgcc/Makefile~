@@ -355,10 +355,9 @@ beacon:
 	@echo Flashing beacon
 	..\..\..\openOCD\bin\openocd.exe -f openocd.cfg -c "program C:/Users/colin/Desktop/nRF5_SDK_15.2.0/examples/ble_peripheral/ble_app_beacon/pca10040/s132/ses/Output/Release/Exe/ble_app_beacon_pca10040_s132.hex verify reset exit"
 mouse:
-	@echo Flashing mouse
-	..\..\..\openOCD\bin\openocd.exe -f openocd.cfg -c "program C:/Users/colin/Desktop/nRF5_SDK_15.2.0/examples/ble_peripheral/ble_app_hids_mouse/pca10040/s132/ses/Output/Release/Exe/ble_app_hids_mouse_pca10040_s132.hex verify reset exit"
+	@echo Flashing beacon
 key:
-	@echo Flashing key
+	@echo Flashing beacon
 	..\..\..\openOCD\bin\openocd.exe -f openocd.cfg -c "program C:/Users/colin/Desktop/nRF5_SDK_15.2.0/examples/ble_peripheral/ble_app_hids_keyboard/pca10040/s132/ses/Output/Release/Exe/ble_app_hids_keyboard_pca10040_s132.hex verify reset exit"
 13215:
 	@echo Flashing sessoft
