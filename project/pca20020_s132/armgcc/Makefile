@@ -1,6 +1,6 @@
 MAKEFILE_NAME := $(MAKEFILE_LIST)
 MAKEFILE_DIR := $(dir $(MAKEFILE_NAME) )
-TEMPLATE_PATH = ../../../sdk_components/toolchain/gcc
+TEMPLATE_PATH = ../../../components/toolchain/gcc
 GNU_INSTALL_ROOT := C:/Program Files (x86)/GNU Tools ARM Embedded/4.9 2015q3
 
 NO_ECHO := @
@@ -115,56 +115,56 @@ $(abspath ../../../libs/sr3_audio/drv_audio_coder_adpcm.c) \
 $(abspath ../../../libs/sr3_audio/drv_audio_coder_bv32fp.c) \
 $(abspath ../../../libs/sr3_audio/drv_audio_dsp.c) \
 $(abspath ../../../libs/sr3_audio/drv_audio_pdm.c) \
-$(abspath ../../../sdk_components/ble/ble_advertising/ble_advertising.c) \
-$(abspath ../../../sdk_components/ble/common/ble_advdata.c) \
-$(abspath ../../../sdk_components/ble/common/ble_conn_params.c) \
-$(abspath ../../../sdk_components/ble/common/ble_srv_common.c) \
-$(abspath ../../../sdk_components/ble/common/ble_conn_state.c) \
-$(abspath ../../../sdk_components/ble/ble_services/ble_dfu/ble_dfu.c) \
-$(abspath ../../../sdk_components/ble/ble_services/ble_bas/ble_bas.c) \
-$(abspath ../../../sdk_components/drivers_nrf/clock/nrf_drv_clock.c) \
-$(abspath ../../../sdk_components/drivers_nrf/common/nrf_drv_common.c) \
-$(abspath ../../../sdk_components/drivers_nrf/gpiote/nrf_drv_gpiote.c) \
-$(abspath ../../../sdk_components/drivers_nrf/hal/nrf_saadc.c) \
-$(abspath ../../../sdk_components/drivers_nrf/pdm/nrf_drv_pdm.c) \
-$(abspath ../../../sdk_components/drivers_nrf/pwm/nrf_drv_pwm.c) \
-$(abspath ../../../sdk_components/drivers_nrf/rng/nrf_drv_rng.c) \
-$(abspath ../../../sdk_components/drivers_nrf/saadc/nrf_drv_saadc.c) \
-$(abspath ../../../sdk_components/drivers_nrf/twi_master/nrf_drv_twi.c) \
-$(abspath ../../../sdk_components/nfc/ndef/launchapp/nfc_launchapp_msg.c) \
-$(abspath ../../../sdk_components/nfc/ndef/launchapp/nfc_launchapp_rec.c) \
-$(abspath ../../../sdk_components/nfc/ndef/uri/nfc_uri_msg.c) \
-$(abspath ../../../sdk_components/nfc/ndef/uri/nfc_uri_rec.c) \
-$(abspath ../../../sdk_components/nfc/ndef/generic/message/nfc_ndef_msg.c) \
-$(abspath ../../../sdk_components/nfc/ndef/generic/record/nfc_ndef_record.c) \
-$(abspath ../../../sdk_components/nfc/ndef/text/nfc_text_rec.c) \
-$(abspath ../../../sdk_components/nfc/t2t_lib/hal_t2t/hal_nfc_t2t.c) \
-$(abspath ../../../sdk_components/libraries/bootloader/dfu/nrf_dfu_settings.c) \
-$(abspath ../../../sdk_components/libraries/button/app_button.c) \
-$(abspath ../../../sdk_components/libraries/crc32/crc32.c) \
-$(abspath ../../../sdk_components/libraries/fds/fds.c) \
-$(abspath ../../../sdk_components/libraries/fstorage/fstorage.c) \
-$(abspath ../../../sdk_components/libraries/led_softblink/led_softblink.c) \
-$(abspath ../../../sdk_components/libraries/log/nrf_log_frontend.c) \
-$(abspath ../../../sdk_components/libraries/log/nrf_log_backend_serial.c) \
-$(abspath ../../../sdk_components/libraries/low_power_pwm/low_power_pwm.c) \
-$(abspath ../../../sdk_components/libraries/queue/nrf_queue.c) \
-$(abspath ../../../sdk_components/libraries/uart/retarget.c) \
-$(abspath ../../../sdk_components/libraries/util/app_error.c) \
-$(abspath ../../../sdk_components/libraries/util/app_util_platform.c) \
-$(abspath ../../../sdk_components/libraries/util/nrf_assert.c) \
-$(abspath ../../../sdk_components/libraries/util/sdk_mapped_flags.c) \
-$(abspath ../../../sdk_components/libraries/scheduler/app_scheduler.c) \
-$(abspath ../../../sdk_components/libraries/strerror/nrf_strerror.c) \
-$(abspath ../../../sdk_components/libraries/timer/app_timer.c) \
-$(abspath ../../../sdk_components/softdevice/common/softdevice_handler/softdevice_handler.c) \
-$(abspath ../../../sdk_components/toolchain/system_nrf52.c) \
-$(abspath ../../../sdk_components/RTT_Syscalls_GCC.c) \
-$(abspath ../../../sdk_components/SEGGER_RTT.c) \
-$(abspath ../../../sdk_components/SEGGER_RTT_printf.c) \
-$(abspath ../../../sdk_components/softdevice_handler_appsh.c) \
+$(abspath ../../../components/ble/ble_advertising/ble_advertising.c) \
+$(abspath ../../../components/ble/common/ble_advdata.c) \
+$(abspath ../../../components/ble/common/ble_conn_params.c) \
+$(abspath ../../../components/ble/common/ble_srv_common.c) \
+$(abspath ../../../components/ble/common/ble_conn_state.c) \
+$(abspath ../../../components/ble/ble_services/ble_dfu/ble_dfu.c) \
+$(abspath ../../../components/ble/ble_services/ble_bas/ble_bas.c) \
+$(abspath ../../../components/drivers_nrf/clock/nrf_drv_clock.c) \
+$(abspath ../../../components/drivers_nrf/common/nrf_drv_common.c) \
+$(abspath ../../../components/drivers_nrf/gpiote/nrf_drv_gpiote.c) \
+$(abspath ../../../components/drivers_nrf/hal/nrf_saadc.c) \
+$(abspath ../../../components/drivers_nrf/pdm/nrf_drv_pdm.c) \
+$(abspath ../../../components/drivers_nrf/pwm/nrf_drv_pwm.c) \
+$(abspath ../../../components/drivers_nrf/rng/nrf_drv_rng.c) \
+$(abspath ../../../components/drivers_nrf/saadc/nrf_drv_saadc.c) \
+$(abspath ../../../components/drivers_nrf/twi_master/nrf_drv_twi.c) \
+$(abspath ../../../components/nfc/ndef/launchapp/nfc_launchapp_msg.c) \
+$(abspath ../../../components/nfc/ndef/launchapp/nfc_launchapp_rec.c) \
+$(abspath ../../../components/nfc/ndef/uri/nfc_uri_msg.c) \
+$(abspath ../../../components/nfc/ndef/uri/nfc_uri_rec.c) \
+$(abspath ../../../components/nfc/ndef/generic/message/nfc_ndef_msg.c) \
+$(abspath ../../../components/nfc/ndef/generic/record/nfc_ndef_record.c) \
+$(abspath ../../../components/nfc/ndef/text/nfc_text_rec.c) \
+$(abspath ../../../components/nfc/t2t_lib/hal_t2t/hal_nfc_t2t.c) \
+$(abspath ../../../components/libraries/bootloader/dfu/nrf_dfu_settings.c) \
+$(abspath ../../../components/libraries/button/app_button.c) \
+$(abspath ../../../components/libraries/crc32/crc32.c) \
+$(abspath ../../../components/libraries/fds/fds.c) \
+$(abspath ../../../components/libraries/fstorage/fstorage.c) \
+$(abspath ../../../components/libraries/led_softblink/led_softblink.c) \
+$(abspath ../../../components/libraries/log/nrf_log_frontend.c) \
+$(abspath ../../../components/libraries/log/nrf_log_backend_serial.c) \
+$(abspath ../../../components/libraries/low_power_pwm/low_power_pwm.c) \
+$(abspath ../../../components/libraries/queue/nrf_queue.c) \
+$(abspath ../../../components/libraries/uart/retarget.c) \
+$(abspath ../../../components/libraries/util/app_error.c) \
+$(abspath ../../../components/libraries/util/app_util_platform.c) \
+$(abspath ../../../components/libraries/util/nrf_assert.c) \
+$(abspath ../../../components/libraries/util/sdk_mapped_flags.c) \
+$(abspath ../../../components/libraries/scheduler/app_scheduler.c) \
+$(abspath ../../../components/libraries/strerror/nrf_strerror.c) \
+$(abspath ../../../components/libraries/timer/app_timer.c) \
+$(abspath ../../../components/softdevice/common/softdevice_handler/softdevice_handler.c) \
+$(abspath ../../../components/toolchain/system_nrf52.c) \
+$(abspath ../../../components/RTT_Syscalls_GCC.c) \
+$(abspath ../../../components/SEGGER_RTT.c) \
+$(abspath ../../../components/SEGGER_RTT_printf.c) \
+$(abspath ../../../components/softdevice_handler_appsh.c) \
 
-ASM_SOURCE_FILES  = $(abspath ../../../sdk_components/toolchain/gcc/gcc_startup_nrf52.S)
+ASM_SOURCE_FILES  = $(abspath ../../../components/toolchain/gcc/gcc_startup_nrf52.S)
 
 INC_PATHS += -I$(abspath ../../../include)
 INC_PATHS += -I$(abspath ../../../include/drivers)
@@ -178,51 +178,51 @@ INC_PATHS += -I$(abspath ../../../libs/eMD6/core/eMPL-hal)
 INC_PATHS += -I$(abspath ../../../libs/eMD6/core/mllite)
 INC_PATHS += -I$(abspath ../../../libs/eMD6/core/mpl)
 INC_PATHS += -I$(abspath ../../../libs/sr3_audio)
-INC_PATHS += -I$(abspath ../../../sdk_components)
-INC_PATHS += -I$(abspath ../../../sdk_components/ble/ble_advertising)
-INC_PATHS += -I$(abspath ../../../sdk_components/ble/ble_services/ble_bas)
-INC_PATHS += -I$(abspath ../../../sdk_components/ble/ble_services/ble_dfu)
-INC_PATHS += -I$(abspath ../../../sdk_components/ble/common)
-INC_PATHS += -I$(abspath ../../../sdk_components/device)
-INC_PATHS += -I$(abspath ../../../sdk_components/drivers_nrf/clock)
-INC_PATHS += -I$(abspath ../../../sdk_components/drivers_nrf/common)
-INC_PATHS += -I$(abspath ../../../sdk_components/drivers_nrf/delay)
-INC_PATHS += -I$(abspath ../../../sdk_components/drivers_nrf/gpiote)
-INC_PATHS += -I$(abspath ../../../sdk_components/drivers_nrf/hal)
-INC_PATHS += -I$(abspath ../../../sdk_components/drivers_nrf/pdm)
-INC_PATHS += -I$(abspath ../../../sdk_components/drivers_nrf/pwm)
-INC_PATHS += -I$(abspath ../../../sdk_components/drivers_nrf/rng)
-INC_PATHS += -I$(abspath ../../../sdk_components/drivers_nrf/saadc)
-INC_PATHS += -I$(abspath ../../../sdk_components/drivers_nrf/twi_master)
-INC_PATHS += -I$(abspath ../../../sdk_components/drivers_nrf/uart)
-INC_PATHS += -I$(abspath ../../../sdk_components/libraries/bootloader/dfu)
-INC_PATHS += -I$(abspath ../../../sdk_components/libraries/button)
-INC_PATHS += -I$(abspath ../../../sdk_components/libraries/crc32)
-INC_PATHS += -I$(abspath ../../../sdk_components/libraries/experimental_section_vars)
-INC_PATHS += -I$(abspath ../../../sdk_components/libraries/fds)
-INC_PATHS += -I$(abspath ../../../sdk_components/libraries/fstorage)
-INC_PATHS += -I$(abspath ../../../sdk_components/libraries/led_softblink)
-INC_PATHS += -I$(abspath ../../../sdk_components/libraries/log)
-INC_PATHS += -I$(abspath ../../../sdk_components/libraries/low_power_pwm)
-INC_PATHS += -I$(abspath ../../../sdk_components/libraries/queue)
-INC_PATHS += -I$(abspath ../../../sdk_components/libraries/scheduler)
-INC_PATHS += -I$(abspath ../../../sdk_components/libraries/strerror)
-INC_PATHS += -I$(abspath ../../../sdk_components/libraries/timer)
-INC_PATHS += -I$(abspath ../../../sdk_components/libraries/uart)
-INC_PATHS += -I$(abspath ../../../sdk_components/libraries/util)
-INC_PATHS += -I$(abspath ../../../sdk_components/nfc/ndef/generic/record)
-INC_PATHS += -I$(abspath ../../../sdk_components/nfc/ndef/generic/message)
-INC_PATHS += -I$(abspath ../../../sdk_components/nfc/ndef/launchapp)
-INC_PATHS += -I$(abspath ../../../sdk_components/nfc/ndef/uri)
-INC_PATHS += -I$(abspath ../../../sdk_components/nfc/ndef/text)
-INC_PATHS += -I$(abspath ../../../sdk_components/nfc/t2t_lib)
-INC_PATHS += -I$(abspath ../../../sdk_components/nfc/ndef/text)
-INC_PATHS += -I$(abspath ../../../sdk_components/softdevice/common/softdevice_handler)
-INC_PATHS += -I$(abspath ../../../sdk_components/softdevice/s132/headers)
-INC_PATHS += -I$(abspath ../../../sdk_components/softdevice/s132/headers/nrf52)
-INC_PATHS += -I$(abspath ../../../sdk_components/toolchain)
-INC_PATHS += -I$(abspath ../../../sdk_components/toolchain/cmsis/include)
-INC_PATHS += -I$(abspath ../../../sdk_components/toolchain/gcc)
+INC_PATHS += -I$(abspath ../../../components)
+INC_PATHS += -I$(abspath ../../../components/ble/ble_advertising)
+INC_PATHS += -I$(abspath ../../../components/ble/ble_services/ble_bas)
+INC_PATHS += -I$(abspath ../../../components/ble/ble_services/ble_dfu)
+INC_PATHS += -I$(abspath ../../../components/ble/common)
+INC_PATHS += -I$(abspath ../../../components/device)
+INC_PATHS += -I$(abspath ../../../components/drivers_nrf/clock)
+INC_PATHS += -I$(abspath ../../../components/drivers_nrf/common)
+INC_PATHS += -I$(abspath ../../../components/drivers_nrf/delay)
+INC_PATHS += -I$(abspath ../../../components/drivers_nrf/gpiote)
+INC_PATHS += -I$(abspath ../../../components/drivers_nrf/hal)
+INC_PATHS += -I$(abspath ../../../components/drivers_nrf/pdm)
+INC_PATHS += -I$(abspath ../../../components/drivers_nrf/pwm)
+INC_PATHS += -I$(abspath ../../../components/drivers_nrf/rng)
+INC_PATHS += -I$(abspath ../../../components/drivers_nrf/saadc)
+INC_PATHS += -I$(abspath ../../../components/drivers_nrf/twi_master)
+INC_PATHS += -I$(abspath ../../../components/drivers_nrf/uart)
+INC_PATHS += -I$(abspath ../../../components/libraries/bootloader/dfu)
+INC_PATHS += -I$(abspath ../../../components/libraries/button)
+INC_PATHS += -I$(abspath ../../../components/libraries/crc32)
+INC_PATHS += -I$(abspath ../../../components/libraries/experimental_section_vars)
+INC_PATHS += -I$(abspath ../../../components/libraries/fds)
+INC_PATHS += -I$(abspath ../../../components/libraries/fstorage)
+INC_PATHS += -I$(abspath ../../../components/libraries/led_softblink)
+INC_PATHS += -I$(abspath ../../../components/libraries/log)
+INC_PATHS += -I$(abspath ../../../components/libraries/low_power_pwm)
+INC_PATHS += -I$(abspath ../../../components/libraries/queue)
+INC_PATHS += -I$(abspath ../../../components/libraries/scheduler)
+INC_PATHS += -I$(abspath ../../../components/libraries/strerror)
+INC_PATHS += -I$(abspath ../../../components/libraries/timer)
+INC_PATHS += -I$(abspath ../../../components/libraries/uart)
+INC_PATHS += -I$(abspath ../../../components/libraries/util)
+INC_PATHS += -I$(abspath ../../../components/nfc/ndef/generic/record)
+INC_PATHS += -I$(abspath ../../../components/nfc/ndef/generic/message)
+INC_PATHS += -I$(abspath ../../../components/nfc/ndef/launchapp)
+INC_PATHS += -I$(abspath ../../../components/nfc/ndef/uri)
+INC_PATHS += -I$(abspath ../../../components/nfc/ndef/text)
+INC_PATHS += -I$(abspath ../../../components/nfc/t2t_lib)
+INC_PATHS += -I$(abspath ../../../components/nfc/ndef/text)
+INC_PATHS += -I$(abspath ../../../components/softdevice/common/softdevice_handler)
+INC_PATHS += -I$(abspath ../../../components/softdevice/s132/headers)
+INC_PATHS += -I$(abspath ../../../components/softdevice/s132/headers/nrf52)
+INC_PATHS += -I$(abspath ../../../components/toolchain)
+INC_PATHS += -I$(abspath ../../../components/toolchain/cmsis/include)
+INC_PATHS += -I$(abspath ../../../components/toolchain/gcc)
 
 OBJECT_DIRECTORY = _build
 LISTING_DIRECTORY = $(OBJECT_DIRECTORY)
@@ -269,8 +269,8 @@ ASMFLAGS += -DEMPL_TARGET_NRF52
 
 LIBS += \
 $(abspath ../../../libs/liblibmplmpu.a) \
-$(abspath ../../../sdk_components/nfc/t2t_lib/nfc_t2t_lib_gcc.a) \
-$(abspath ../../../sdk_components/toolchain/cmsis/dsp/GCC/libarm_cortexM4lf_math.a) \
+$(abspath ../../../components/nfc/t2t_lib/nfc_t2t_lib_gcc.a) \
+$(abspath ../../../components/toolchain/cmsis/dsp/GCC/libarm_cortexM4lf_math.a) \
 
 #function for removing duplicates in a list
 remduplicates = $(strip $(if $1,$(firstword $1) $(call remduplicates,$(filter-out $(firstword $1),$1))))
@@ -335,31 +335,30 @@ $(OUTPUT_BINARY_DIRECTORY)/$(OUTPUT_FILENAME).hex: $(OUTPUT_BINARY_DIRECTORY)/$(
 clean:
 	$(RM) $(BUILD_DIRECTORIES)
 
+test:
+	@echo ocd test
+	..\..\..\openOCD\bin\openocd.exe -f openocd.cfg
 ocd: thingy
 	@echo ocd Flashing: $(OUTPUT_BINARY_DIRECTORY)/$<.hex
 	..\..\..\openOCD\bin\openocd.exe -f openocd.cfg -c "program $(OUTPUT_BINARY_DIRECTORY)/$<.hex verify reset exit"
 13212:
 	@echo ocd Flashing: $(OUTPUT_BINARY_DIRECTORY)/$<.hex
-	..\..\..\openOCD\bin\openocd.exe -f openocd.cfg -c "program ../../../sdk_components/softdevice/s132/hex/s132_nrf52_4.0.2_softdevice.hex verify exit"
-test:
-	@echo ocd test
-	..\..\..\openOCD\bin\openocd.exe -f openocd.cfg
-
+	..\..\..\openOCD\bin\openocd.exe -f openocd.cfg -c "program ../../../components/softdevice/s132/hex/s132_nrf52_4.0.2_softdevice.hex verify exit"
 blinky:
 	@echo Flashing blinky
-	..\..\..\openOCD\bin\openocd.exe -f openocd.cfg -c "program C:/Users/colin/Desktop/nRF5_SDK_15.2.0/examples/peripheral/blinky/pca10040/s132/ses/Output/Release/Exe/blinky_pca10040_s132.hex verify reset exit"
+	..\..\..\openOCD\bin\openocd.exe -f openocd.cfg -c "program C:/projects/nRF5_SDK_15.2.0/examples/peripheral/blinky/pca10040/s132/ses/Output/Release/Exe/blinky_pca10040_s132.hex verify reset exit"
 blinkyBle:
 	@echo Flashing blinkyBle
-	..\..\..\openOCD\bin\openocd.exe -f openocd.cfg -c "program C:/Users/colin/Desktop/nRF5_SDK_15.2.0/examples/ble_peripheral/ble_app_blinky/pca10040/s132/ses/Output/Release/Exe/ble_app_blinky_pca10040_s132.hex verify reset exit"
+	..\..\..\openOCD\bin\openocd.exe -f openocd.cfg -c "program C:/projects/nRF5_SDK_15.2.0/examples/ble_peripheral/ble_app_blinky/pca10040/s132/ses/Output/Release/Exe/ble_app_blinky_pca10040_s132.hex verify reset exit"
 beacon:
 	@echo Flashing beacon
-	..\..\..\openOCD\bin\openocd.exe -f openocd.cfg -c "program C:/Users/colin/Desktop/nRF5_SDK_15.2.0/examples/ble_peripheral/ble_app_beacon/pca10040/s132/ses/Output/Release/Exe/ble_app_beacon_pca10040_s132.hex verify reset exit"
+	..\..\..\openOCD\bin\openocd.exe -f openocd.cfg -c "program C:/projects/nRF5_SDK_15.2.0/examples/ble_peripheral/ble_app_beacon/pca10040/s132/ses/Output/Release/Exe/ble_app_beacon_pca10040_s132.hex verify reset exit"
 mouse:
 	@echo Flashing mouse
-	..\..\..\openOCD\bin\openocd.exe -f openocd.cfg -c "program C:/Users/colin/Desktop/nRF5_SDK_15.2.0/examples/ble_peripheral/ble_app_hids_mouse/pca10040/s132/ses/Output/Release/Exe/ble_app_hids_mouse_pca10040_s132.hex verify reset exit"
+	..\..\..\openOCD\bin\openocd.exe -f openocd.cfg -c "program C:/projects/nRF5_SDK_15.2.0/examples/ble_peripheral/ble_app_hids_mouse/pca10040/s132/ses/Output/Release/Exe/ble_app_hids_mouse_pca10040_s132.hex verify reset exit"
 key:
 	@echo Flashing key
-	..\..\..\openOCD\bin\openocd.exe -f openocd.cfg -c "program C:/Users/colin/Desktop/nRF5_SDK_15.2.0/examples/ble_peripheral/ble_app_hids_keyboard/pca10040/s132/ses/Output/Release/Exe/ble_app_hids_keyboard_pca10040_s132.hex verify reset exit"
+	..\..\..\openOCD\bin\openocd.exe -f openocd.cfg -c "program C:/projects/nRF5_SDK_15.2.0/examples/ble_peripheral/ble_app_hids_keyboard/pca10040/s132/ses/Output/Release/Exe/ble_app_hids_keyboard_pca10040_s132.hex verify reset exit"
 13215:
-	@echo Flashing sessoft
-	..\..\..\openOCD\bin\openocd.exe -f openocd.cfg -c "program C:/Users/colin/Desktop/nRF5_SDK_15.2.0/components/softdevice/s132/hex/s132_nrf52_6.1.0_softdevice.hex verify exit"
+	@echo Flashing softdevice 132-15.2.0
+	..\..\..\openOCD\bin\openocd.exe -f openocd.cfg -c "program C:/projects/nRF5_SDK_15.2.0/components/softdevice/s132/hex/s132_nrf52_6.1.0_softdevice.hex verify exit"
