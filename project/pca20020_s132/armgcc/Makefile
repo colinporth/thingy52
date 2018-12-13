@@ -54,9 +54,6 @@ CFLAGS += -Wall -Werror -O3 -g3
 CFLAGS += -mfloat-abi=hard -mfpu=fpv4-sp-d16
 CFLAGS += -ffunction-sections -fdata-sections -fno-strict-aliasing
 CFLAGS += -fno-builtin --short-enums
-CFLAGS += -DNRF_LOG_USES_RTT
-CFLAGS += -DNRF_LOG_USES_RTT=1
-CFLAGS += -DNRF_LOG_ENABLED=1
 
 C_SOURCE_FILES += \
 $(abspath ../../../source/main.c) \
@@ -131,6 +128,7 @@ $(abspath ../../../components/drivers_nrf/pwm/nrf_drv_pwm.c) \
 $(abspath ../../../components/drivers_nrf/rng/nrf_drv_rng.c) \
 $(abspath ../../../components/drivers_nrf/saadc/nrf_drv_saadc.c) \
 $(abspath ../../../components/drivers_nrf/twi_master/nrf_drv_twi.c) \
+$(abspath ../../../components/drivers_nrf/uart/nrf_drv_uart.c) \
 $(abspath ../../../components/nfc/ndef/launchapp/nfc_launchapp_msg.c) \
 $(abspath ../../../components/nfc/ndef/launchapp/nfc_launchapp_rec.c) \
 $(abspath ../../../components/nfc/ndef/uri/nfc_uri_msg.c) \
