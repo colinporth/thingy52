@@ -345,6 +345,9 @@ ocd: thingy
 cli:
 	@echo Flashing cli
 	..\..\..\openOCD\bin\openocd.exe -f openocd.cfg -c "program C:/projects/nRF5_SDK_15.2.0/examples/peripheral/cli/pca10040/blank/ses/Output/Release/Exe/cli_pca10040.hex verify reset exit"
+libcli:
+	@echo Flashing libcli
+	..\..\..\openOCD\bin\openocd.exe -f openocd.cfg -c "program C:/projects/nRF5_SDK_15.2.0/examples/peripheral/experimental_cli_libuarte/pca10040/blank/ses/Output/Release/Exe/cli_libuarte_pca10040.hex verify reset exit"
 blinky:
 	@echo Flashing blinky
 	..\..\..\openOCD\bin\openocd.exe -f openocd.cfg -c "program C:/projects/nRF5_SDK_15.2.0/examples/peripheral/blinky/pca10040/s132/ses/Output/Release/Exe/blinky_pca10040_s132.hex verify reset exit"
