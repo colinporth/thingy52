@@ -119,17 +119,14 @@
   #if (NRF_LOG_BACKEND_SERIAL_USES_UART)
       uint32_t              ret_code;
       nrf_drv_uart_config_t uart_config = NRF_DRV_UART_DEFAULT_CONFIG;
-      uart_config.hwfc     =
-              (nrf_uart_hwfc_t)NRF_LOG_BACKEND_SERIAL_UART_FLOW_CONTROL;
+      uart_config.hwfc     = (nrf_uart_hwfc_t)NRF_LOG_BACKEND_SERIAL_UART_FLOW_CONTROL;
       uart_config.pseltxd  = NRF_LOG_BACKEND_SERIAL_UART_TX_PIN;
-      uart_config.pselrxd  = NRF_LOG_BACKEND_SERIAL_UART_RX_PIN;
-      uart_config.pselrts  = NRF_LOG_BACKEND_SERIAL_UART_RTS_PIN;
-      uart_config.pselcts  = NRF_LOG_BACKEND_SERIAL_UART_CTS_PIN;
-      uart_config.baudrate =
-          (nrf_uart_baudrate_t)NRF_LOG_BACKEND_SERIAL_UART_BAUDRATE;
+      uart_config.pselrxd  = NRF_UART_PSEL_DISCONNECTED;
+      uart_config.pselrts  = NRF_UART_PSEL_DISCONNECTED;
+      uart_config.pselcts  = NRF_UART_PSEL_DISCONNECTED;
+      uart_config.baudrate = (nrf_uart_baudrate_t)NRF_LOG_BACKEND_SERIAL_UART_BAUDRATE;
       nrf_drv_uart_uninit(&m_uart);
-      ret_code = nrf_drv_uart_init(&m_uart, &uart_config,
-                                   blocking ? NULL : uart_event_handler);
+      ret_code = nrf_drv_uart_init(&m_uart, &uart_config, blocking ? NULL : uart_event_handler);
       if (ret_code != NRF_SUCCESS)
       {
           return ret_code;
@@ -503,4 +500,4 @@
       return serial_get_byte();
   }
   //}}}
-#endif 
+#endif

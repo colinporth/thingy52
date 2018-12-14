@@ -272,6 +272,7 @@
       CODE_FOR_UART(nrf_uart_disable(p_instance->reg.p_uart););
   }
   //}}}
+
   //{{{
   ret_code_t nrf_drv_uart_init (const nrf_drv_uart_t* p_instance, nrf_drv_uart_config_t const* p_config,
                                nrf_uart_event_handler_t event_handler)

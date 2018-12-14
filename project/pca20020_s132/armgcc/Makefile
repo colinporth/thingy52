@@ -342,6 +342,9 @@ ocd: thingy
 13212:
 	@echo ocd Flashing: $(OUTPUT_BINARY_DIRECTORY)/$<.hex
 	..\..\..\openOCD\bin\openocd.exe -f openocd.cfg -c "program ../../../components/softdevice/s132/hex/s132_nrf52_4.0.2_softdevice.hex verify exit"
+cli:
+	@echo Flashing cli
+	..\..\..\openOCD\bin\openocd.exe -f openocd.cfg -c "program C:/projects/nRF5_SDK_15.2.0/examples/peripheral/cli/pca10040/blank/ses/Output/Release/Exe/cli_pca10040.hex verify reset exit"
 blinky:
 	@echo Flashing blinky
 	..\..\..\openOCD\bin\openocd.exe -f openocd.cfg -c "program C:/projects/nRF5_SDK_15.2.0/examples/peripheral/blinky/pca10040/s132/ses/Output/Release/Exe/blinky_pca10040_s132.hex verify reset exit"
