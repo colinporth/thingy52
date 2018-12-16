@@ -351,6 +351,9 @@ libcli:
 blinky:
 	@echo Flashing blinky
 	..\..\..\openOCD\bin\openocd.exe -f openocd.cfg -c "program C:/projects/nRF5_SDK_15.2.0/examples/peripheral/blinky/pca10040/s132/ses/Output/Release/Exe/blinky_pca10040_s132.hex verify reset exit"
+softblinky:
+	@echo Flashing softblinky
+	..\..\..\openOCD\bin\openocd.exe -f openocd.cfg -c "program C:/projects/nRF5_SDK_15.2.0/examples/peripheral/led_softblink/pca10040/blank/ses/Output/Release/Exe/led_softblink_pca10040.hex verify reset exit"
 blinkyBle:
 	@echo Flashing blinkyBle
 	..\..\..\openOCD\bin\openocd.exe -f openocd.cfg -c "program C:/projects/nRF5_SDK_15.2.0/examples/ble_peripheral/ble_app_blinky/pca10040/s132/ses/Output/Release/Exe/ble_app_blinky_pca10040_s132.hex verify reset exit"
