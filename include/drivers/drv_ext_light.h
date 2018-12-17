@@ -132,7 +132,7 @@ typedef struct {
 typedef struct {
   drv_ext_light_conf_t const * p_light_conf;          ///< Array of lights, each with their specific configuraion.
   uint8_t                      num_lights;            ///< Number of connected lights.
-  rv_ext_light_clkx_div_t     clkx_div;              ///< IO extender clock divider.
+  drv_ext_light_clkx_div_t     clkx_div;              ///< IO extender clock divider.
   drv_sx1509_cfg_t const     * p_twi_conf;            ///< pointer to TWI (I2C) configuration for communication between master and IO extender.
   uint8_t                      resync_pin;            ///< Pin used to resync IO extender counters. Use DRV_EXT_LIGHT_INVALID_RESYNC_PIN if unused.
   } drv_ext_light_init_t;

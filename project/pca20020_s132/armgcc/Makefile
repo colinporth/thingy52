@@ -332,22 +332,19 @@ $(OUTPUT_BINARY_DIRECTORY)/$(OUTPUT_FILENAME).hex: $(OUTPUT_BINARY_DIRECTORY)/$(
 
 clean:
 	$(RM) $(BUILD_DIRECTORIES)
-
 test:
 	@echo ocd test
 	..\..\..\openOCD\bin\openocd.exe -f openocd.cfg
-ocd: thingy
-	@echo ocd Flashing: $(OUTPUT_BINARY_DIRECTORY)/$<.hex
-	..\..\..\openOCD\bin\openocd.exe -f openocd.cfg -c "program $(OUTPUT_BINARY_DIRECTORY)/$<.hex verify reset exit"
-13212:
+12:
 	@echo ocd Flashing: $(OUTPUT_BINARY_DIRECTORY)/$<.hex
 	..\..\..\openOCD\bin\openocd.exe -f openocd.cfg -c "program ../../../components/softdevice/s132/hex/s132_nrf52_4.0.2_softdevice.hex verify exit"
+app: thingy
+	@echo ocd Flashing: $(OUTPUT_BINARY_DIRECTORY)/$<.hex
+	..\..\..\openOCD\bin\openocd.exe -f openocd.cfg -c "program $(OUTPUT_BINARY_DIRECTORY)/$<.hex verify reset exit"
+
 cli:
 	@echo Flashing cli with libuarte
 	..\..\..\openOCD\bin\openocd.exe -f openocd.cfg -c "program C:/projects/nRF5_SDK_15.2.0/examples/peripheral/experimental_cli_libuarte/pca10040/blank/ses/Output/Release/Exe/cli_libuarte_pca10040.hex verify reset exit"
-blinky:
-	@echo Flashing blinky
-	..\..\..\openOCD\bin\openocd.exe -f openocd.cfg -c "program C:/projects/nRF5_SDK_15.2.0/examples/peripheral/blinky/pca10040/s132/ses/Output/Release/Exe/blinky_pca10040_s132.hex verify reset exit"
 softblinky:
 	@echo Flashing softblinky
 	..\..\..\openOCD\bin\openocd.exe -f openocd.cfg -c "program C:/projects/nRF5_SDK_15.2.0/examples/peripheral/led_softblink/pca10040/blank/ses/Output/Release/Exe/led_softblink_pca10040.hex verify reset exit"
@@ -363,6 +360,9 @@ mouse:
 key:
 	@echo Flashing key
 	..\..\..\openOCD\bin\openocd.exe -f openocd.cfg -c "program C:/projects/nRF5_SDK_15.2.0/examples/ble_peripheral/ble_app_hids_keyboard/pca10040/s132/ses/Output/Release/Exe/ble_app_hids_keyboard_pca10040_s132.hex verify reset exit"
-13215:
+15:
 	@echo Flashing softdevice 132-15.2.0
 	..\..\..\openOCD\bin\openocd.exe -f openocd.cfg -c "program C:/projects/nRF5_SDK_15.2.0/components/softdevice/s132/hex/s132_nrf52_6.1.0_softdevice.hex verify exit"
+blinky:
+	@echo Flashing blinky
+	..\..\..\openOCD\bin\openocd.exe -f openocd.cfg -c "program C:/projects/nRF5_SDK_15.2.0/examples/peripheral/blinky/pca10040/s132/ses/Output/Release/Exe/blinky_pca10040_s132.hex verify reset exit"
