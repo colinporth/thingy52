@@ -343,10 +343,7 @@ ocd: thingy
 	@echo ocd Flashing: $(OUTPUT_BINARY_DIRECTORY)/$<.hex
 	..\..\..\openOCD\bin\openocd.exe -f openocd.cfg -c "program ../../../components/softdevice/s132/hex/s132_nrf52_4.0.2_softdevice.hex verify exit"
 cli:
-	@echo Flashing cli
-	..\..\..\openOCD\bin\openocd.exe -f openocd.cfg -c "program C:/projects/nRF5_SDK_15.2.0/examples/peripheral/cli/pca10040/blank/ses/Output/Release/Exe/cli_pca10040.hex verify reset exit"
-libcli:
-	@echo Flashing libcli
+	@echo Flashing cli with libuarte
 	..\..\..\openOCD\bin\openocd.exe -f openocd.cfg -c "program C:/projects/nRF5_SDK_15.2.0/examples/peripheral/experimental_cli_libuarte/pca10040/blank/ses/Output/Release/Exe/cli_libuarte_pca10040.hex verify reset exit"
 blinky:
 	@echo Flashing blinky
