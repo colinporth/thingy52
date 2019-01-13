@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016 - 2018, Nordic Semiconductor ASA
+ * Copyright (c) 2017 - 2018, Nordic Semiconductor ASA
  *
  * All rights reserved.
  *
@@ -37,55 +37,85 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  */
-#include "nrf_dfu_transport.h"
+#include "nrf_bootloader_wdt.h"
+#include "nrf_wdt.h"
+#include "nrf_bootloader_dfu_timers.h"
+#include "nrf_log_ctrl.h"
+
+#define NRF_LOG_MODULE_NAME nrf_bootloader_wdt
 #include "nrf_log.h"
+NRF_LOG_MODULE_REGISTER();
 
 
-#define DFU_TRANS_SECTION_ITEM_GET(i)       NRF_SECTION_ITEM_GET(dfu_trans, nrf_dfu_transport_t, (i))
-#define DFU_TRANS_SECTION_ITEM_COUNT        NRF_SECTION_ITEM_COUNT(dfu_trans, nrf_dfu_transport_t)
-
-NRF_SECTION_DEF(dfu_trans, const nrf_dfu_transport_t);
-
-
-uint32_t nrf_dfu_transports_init(nrf_dfu_observer_t observer)
+static void wdt_feed(void)
 {
-    uint32_t const num_transports = DFU_TRANS_SECTION_ITEM_COUNT;
-    uint32_t ret_val = NRF_SUCCESS;
-
-    NRF_LOG_DEBUG("Initializing transports (found: %d)", num_transports);
-
-    for (uint32_t i = 0; i < num_transports; i++)
+    if (nrf_wdt_started())
     {
-        nrf_dfu_transport_t * const trans = DFU_TRANS_SECTION_ITEM_GET(i);
-        ret_val = trans->init_func(observer);
-        if (ret_val != NRF_SUCCESS)
+        for (nrf_wdt_rr_register_t i = NRF_WDT_RR0; i < NRF_WDT_RR7; i++)
         {
-            NRF_LOG_DEBUG("Failed to initialize transport %d, error %d", i, ret_val);
-            break;
+            if (nrf_wdt_reload_request_is_enabled(i))
+            {
+                nrf_wdt_reload_request_set(i);
+            }
         }
     }
-
-    return ret_val;
 }
 
 
-uint32_t nrf_dfu_transports_close(nrf_dfu_transport_t const * p_exception)
+static void wdt_feed_timer_handler(void)
 {
-    uint32_t const num_transports = DFU_TRANS_SECTION_ITEM_COUNT;
-    uint32_t ret_val = NRF_SUCCESS;
+    NRF_LOG_INFO("Internal feed");
+    wdt_feed();
+}
 
-    NRF_LOG_DEBUG("Shutting down transports (found: %d)", num_transports);
 
-    for (uint32_t i = 0; i < num_transports; i++)
+void WDT_IRQHandler(void)
+{
+    nrf_wdt_event_clear(NRF_WDT_EVENT_TIMEOUT);
+    NRF_LOG_FINAL_FLUSH();
+}
+
+#define MAX_FLASH_OP_TIME_TICKS 3200 // ~100 ms
+
+void nrf_bootloader_wdt_init(void)
+{
+    static bool initialized = false;
+
+    if (initialized)
     {
-        nrf_dfu_transport_t * const trans = DFU_TRANS_SECTION_ITEM_GET(i);
-        ret_val = trans->close_func(p_exception);
-        if (ret_val != NRF_SUCCESS)
-        {
-            NRF_LOG_DEBUG("Failed to shutdown transport %d, error %d", i, ret_val);
-            break;
-        }
+        return;
     }
 
-    return ret_val;
+    if (nrf_wdt_started())
+    {
+        uint32_t wdt_ticks = nrf_wdt_reload_value_get();
+
+        NRF_LOG_INFO("WDT enabled CRV:%d ticks", wdt_ticks);
+
+        //wdt_ticks must be reduced to feed the watchdog before the timeout.
+        uint32_t reduced_timeout_ticks = MAX((int32_t)wdt_ticks - MAX_FLASH_OP_TIME_TICKS,
+                                             NRF_BOOTLOADER_MIN_TIMEOUT_TICKS);
+
+        /* initial watchdog feed */
+        wdt_feed();
+
+        NRF_LOG_INFO("Starting a timer (%d ticks) for feeding watchdog.", reduced_timeout_ticks);
+        nrf_bootloader_wdt_feed_timer_start(reduced_timeout_ticks, wdt_feed_timer_handler);
+
+        NVIC_EnableIRQ(WDT_IRQn);
+    }
+    else
+    {
+        NRF_LOG_INFO("WDT is not enabled");
+    }
+
+    initialized = true;
+}
+
+void nrf_bootloader_wdt_feed(void)
+{
+    if (nrf_wdt_started())
+    {
+        wdt_feed();
+    }
 }

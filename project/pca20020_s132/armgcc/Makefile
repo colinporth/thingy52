@@ -363,6 +363,12 @@ key:
 15:
 	@echo Flashing softdevice 132-15.2.0
 	..\..\..\openOCD\bin\openocd.exe -f openocd.cfg -c "program C:/projects/nRF5_SDK_15.2.0/components/softdevice/s132/hex/s132_nrf52_6.1.0_softdevice.hex verify exit"
-blinky:
-	@echo Flashing blinky
-	..\..\..\openOCD\bin\openocd.exe -f openocd.cfg -c "program C:/projects/nRF5_SDK_15.2.0/examples/peripheral/blinky/pca10040/s132/ses/Output/Release/Exe/blinky_pca10040_s132.hex verify reset exit"
+dongle:
+	@echo Flashing dongle
+	..\..\..\openOCD\bin\openocd.exe -f openocd.cfg -c "program C:/projects/nRF5_SDK_15.2.0/examples/peripheral/blinky/pca10059/mbr/ses/Output/Release/Exe/blinky_pca10059_mbr.hex verify reset exit"
+140:
+	@echo Flashing softdevice 140-15.2.0
+	..\..\..\openOCD\bin\openocd.exe -f openocd.cfg -c "program C:/projects/nRF5_SDK_15.2.0/components/softdevice/s140/hex/s140_nrf52_6.1.0_softdevice.hex verify exit"
+dongleBle:
+	@echo Flashing dongleBle
+	..\..\..\openOCD\bin\openocd.exe -f openocd.cfg -c "program C:/projects/nRF5_SDK_15.2.0/examples/ble_peripheral/ble_app_blinky/pca10059/s140/ses/Output/Release/Exe/ble_app_blinky_pca10059_s140.hex verify reset exit"

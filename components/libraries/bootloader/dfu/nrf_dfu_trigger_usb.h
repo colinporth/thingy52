@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016 - 2018, Nordic Semiconductor ASA
+ * Copyright (c) 2017 - 2018, Nordic Semiconductor ASA
  *
  * All rights reserved.
  *
@@ -37,55 +37,38 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  */
-#include "nrf_dfu_transport.h"
-#include "nrf_log.h"
+#ifndef NRF_DFU_TRIGGER_USB_H
+#define NRF_DFU_TRIGGER_USB_H
 
+#include "sdk_errors.h"
 
-#define DFU_TRANS_SECTION_ITEM_GET(i)       NRF_SECTION_ITEM_GET(dfu_trans, nrf_dfu_transport_t, (i))
-#define DFU_TRANS_SECTION_ITEM_COUNT        NRF_SECTION_ITEM_COUNT(dfu_trans, nrf_dfu_transport_t)
+/**
+ * @defgroup nrf_dfu_trigger_usb USB DFU trigger library
+ * @ingroup app_common
+ *
+ * @brief @tagAPI52840 USB DFU trigger library is used to enter the bootloader and read the firmware version.
+ *
+ * @details See @ref lib_dfu_trigger_usb for additional documentation.
+ * @{
+ */
 
-NRF_SECTION_DEF(dfu_trans, const nrf_dfu_transport_t);
+/**
+ * @brief Function for initializing the USB DFU trigger library.
+ *
+ * @note  If the USB is also used for other purposes, then this function must be called after USB is
+ *        initialized but before it is enabled. In this case, the configuration flag @ref
+ *        NRF_DFU_TRIGGER_USB_USB_SHARED must be set to 1.
+ *
+ * @note  Calling this again after the first success has no effect and returns @ref NRF_SUCCESS.
+ *
+ * @note  If @ref APP_USBD_CONFIG_EVENT_QUEUE_ENABLE is on (1), USB events must be handled manually.
+ *        See @ref app_usbd_event_queue_process.
+ *
+ * @retval NRF_SUCCESS  On successful initialization.
+ * @return An error code on failure, for example if called at a wrong time.
+ */
+ret_code_t nrf_dfu_trigger_usb_init(void);
 
+/** @} */
 
-uint32_t nrf_dfu_transports_init(nrf_dfu_observer_t observer)
-{
-    uint32_t const num_transports = DFU_TRANS_SECTION_ITEM_COUNT;
-    uint32_t ret_val = NRF_SUCCESS;
-
-    NRF_LOG_DEBUG("Initializing transports (found: %d)", num_transports);
-
-    for (uint32_t i = 0; i < num_transports; i++)
-    {
-        nrf_dfu_transport_t * const trans = DFU_TRANS_SECTION_ITEM_GET(i);
-        ret_val = trans->init_func(observer);
-        if (ret_val != NRF_SUCCESS)
-        {
-            NRF_LOG_DEBUG("Failed to initialize transport %d, error %d", i, ret_val);
-            break;
-        }
-    }
-
-    return ret_val;
-}
-
-
-uint32_t nrf_dfu_transports_close(nrf_dfu_transport_t const * p_exception)
-{
-    uint32_t const num_transports = DFU_TRANS_SECTION_ITEM_COUNT;
-    uint32_t ret_val = NRF_SUCCESS;
-
-    NRF_LOG_DEBUG("Shutting down transports (found: %d)", num_transports);
-
-    for (uint32_t i = 0; i < num_transports; i++)
-    {
-        nrf_dfu_transport_t * const trans = DFU_TRANS_SECTION_ITEM_GET(i);
-        ret_val = trans->close_func(p_exception);
-        if (ret_val != NRF_SUCCESS)
-        {
-            NRF_LOG_DEBUG("Failed to shutdown transport %d, error %d", i, ret_val);
-            break;
-        }
-    }
-
-    return ret_val;
-}
+#endif //NRF_DFU_TRIGGER_USB_H

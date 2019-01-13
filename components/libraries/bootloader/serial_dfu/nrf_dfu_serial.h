@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016 - 2018, Nordic Semiconductor ASA
+ * Copyright (c) 2017 - 2018, Nordic Semiconductor ASA
  *
  * All rights reserved.
  *
@@ -37,43 +37,73 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  */
-/**@file
- *
- *
- * @defgroup nrf_bootloader Bootloader modules
- * @{
- * @ingroup app_common
- * @brief Bootloader and DFU modules
- *
- * The bootloader module can be used to implement a basic bootloader that
- * can be extended with, for example, Device Firmware Update (DFU) support
- * or custom functionality.
-  */
 
-#ifndef NRF_BOOTLOADER_H__
-#define NRF_BOOTLOADER_H__
+#ifndef NRF_DFU_SERIAL_H__
+#define NRF_DFU_SERIAL_H__
 
 #include <stdint.h>
-#include "nrf_dfu.h"
+#include "sdk_errors.h"
+#include "nrf_dfu_req_handler.h"
+
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-/** @brief Function for initializing the bootloader.
+/**@file
  *
- * @details This function is the entry point of all bootloader operations.
- *          If DFU functionality is compiled in, the DFU process is initialized
- *          when running this function.
+ * @defgroup nrf_dfu_serial DFU Serial transports shared part
+ * @{
+ * @ingroup  nrf_dfu
+ * @brief    Shared part of Device Firmware Update (DFU) transport layers using serial interface (UART, USB CDC ACM).
  *
- * @note This function does not return unless an error occurred.
+ * @defgroup nrf_dfu_serial_uart DFU Serial UART transport
+ * @ingroup  nrf_dfu_serial
+ * @brief    Configuration for Device Firmware Update (DFU) transport layer using UART.
  *
- * @retval NRF_ERROR_INTERNAL  Something went wrong.
+ * @defgroup nrf_dfu_serial_usb DFU Serial USB CDC ACM transport
+ * @ingroup  nrf_dfu_serial
+ * @brief    Configuration for Device Firmware Update (DFU) transport layer using USB CDC ACM.
+ *
  */
-ret_code_t nrf_bootloader_init(nrf_dfu_observer_t observer);
+
+#define NRF_SERIAL_MAX_RESPONSE_SIZE (sizeof(nrf_dfu_response_t))
+
+/**
+ * Prototype for function for sending response over serial DFU transport.
+ */
+typedef ret_code_t (*nrf_serial_rsp_func_t)(uint8_t const * p_data, uint32_t length);
+
+/**
+ * Prototype for function for freeing RX buffer.
+ *
+ * Function is called when input data is processed.
+ */
+typedef void (*nrf_serial_rx_buf_free_func_t)(void * p_buf);
+
+
+/**@brief   DFU serial transport layer state.
+ *
+ * @details This structure contains status information related to the serial transport layer type.
+ */
+typedef struct
+{
+    uint16_t                      pkt_notif_target;
+    uint16_t                      pkt_notif_target_count;
+    nrf_serial_rsp_func_t         rsp_func;
+    nrf_serial_rx_buf_free_func_t payload_free_func;
+    uint32_t                      mtu;
+    uint8_t *                     p_rsp_buf;
+} nrf_dfu_serial_t;
+
+void nrf_dfu_serial_on_packet_received(nrf_dfu_serial_t       * p_transport,
+                                       uint8_t          const * p_data,
+                                       uint32_t                 length);
+
+/** @} */
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif // NRF_BOOTLOADER_H__
-/** @} */
+#endif // NRF_DFU_SERIAL_H__

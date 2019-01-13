@@ -37,55 +37,59 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  */
-#include "nrf_dfu_transport.h"
-#include "nrf_log.h"
+/**@file
+ *
+ * @defgroup nrf_dfu_svci_bond_sharing Supervisor call interface for bond sharing
+ * @{
+ * @ingroup  nrf_dfu
+ * @brief The Supervisor call interface is a thread-safe method to call into the current application or into an external application using a Supervisor instruction.
+ *
+ */
 
 
-#define DFU_TRANS_SECTION_ITEM_GET(i)       NRF_SECTION_ITEM_GET(dfu_trans, nrf_dfu_transport_t, (i))
-#define DFU_TRANS_SECTION_ITEM_COUNT        NRF_SECTION_ITEM_COUNT(dfu_trans, nrf_dfu_transport_t)
+#ifndef NRF_DFU_BLE_SVCI_BOND_SHARING_H__
+#define NRF_DFU_BLE_SVCI_BOND_SHARING_H__
 
-NRF_SECTION_DEF(dfu_trans, const nrf_dfu_transport_t);
+#include <stdbool.h>
+#include "nrf_svci.h"
+#include "nrf_svci_async_function.h"
+#include "sdk_config.h"
+#include "nrf_dfu_types.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 
-uint32_t nrf_dfu_transports_init(nrf_dfu_observer_t observer)
-{
-    uint32_t const num_transports = DFU_TRANS_SECTION_ITEM_COUNT;
-    uint32_t ret_val = NRF_SUCCESS;
+#define NRF_DFU_SVCI_SET_PEER_DATA        2
+#define NRF_DFU_SVCI_SET_ADV_NAME         3
 
-    NRF_LOG_DEBUG("Initializing transports (found: %d)", num_transports);
+#if defined(NRF_DFU_TRANSPORT_BLE) && NRF_DFU_TRANSPORT_BLE
 
-    for (uint32_t i = 0; i < num_transports; i++)
-    {
-        nrf_dfu_transport_t * const trans = DFU_TRANS_SECTION_ITEM_GET(i);
-        ret_val = trans->init_func(observer);
-        if (ret_val != NRF_SUCCESS)
-        {
-            NRF_LOG_DEBUG("Failed to initialize transport %d, error %d", i, ret_val);
-            break;
-        }
-    }
+/**@brief Sets up the async SVCI interface for exchanging peer data like bonding and the system attribute table.
+ *
+ * @details The peer data will be stored in flash by the bootloader. This requires memory management and
+ *          handling forwarding of system events and state from the main application to the bootloader.
+ *
+ * @note    This is only available in the buttonless DFU that supports bond sharing.
+ */
+NRF_SVCI_ASYNC_FUNC_DECLARE(NRF_DFU_SVCI_SET_PEER_DATA, nrf_dfu_set_peer_data, nrf_dfu_peer_data_t, nrf_dfu_peer_data_state_t);
 
-    return ret_val;
+/**@brief Sets up the async SVCI interface for exchanging advertisement name to use when entering DFU mode.
+ *
+ * @details The advertisement name will be stored in flash by the bootloader. This requires memory management
+ *          and handling forwarding of system events and state from the main application to the bootloader.
+ *
+ * @note    This is only available in the buttonless DFU that does not support bond sharing.
+ */
+NRF_SVCI_ASYNC_FUNC_DECLARE(NRF_DFU_SVCI_SET_ADV_NAME, nrf_dfu_set_adv_name, nrf_dfu_adv_name_t, nrf_dfu_set_adv_name_state_t);
+
+#endif // NRF_DFU_TRANSPORT_BLE
+
+#ifdef __cplusplus
 }
+#endif
 
+#endif // NRF_DFU_BLE_SVCI_BOND_SHARING_H__
 
-uint32_t nrf_dfu_transports_close(nrf_dfu_transport_t const * p_exception)
-{
-    uint32_t const num_transports = DFU_TRANS_SECTION_ITEM_COUNT;
-    uint32_t ret_val = NRF_SUCCESS;
-
-    NRF_LOG_DEBUG("Shutting down transports (found: %d)", num_transports);
-
-    for (uint32_t i = 0; i < num_transports; i++)
-    {
-        nrf_dfu_transport_t * const trans = DFU_TRANS_SECTION_ITEM_GET(i);
-        ret_val = trans->close_func(p_exception);
-        if (ret_val != NRF_SUCCESS)
-        {
-            NRF_LOG_DEBUG("Failed to shutdown transport %d, error %d", i, ret_val);
-            break;
-        }
-    }
-
-    return ret_val;
-}
+/** @} */

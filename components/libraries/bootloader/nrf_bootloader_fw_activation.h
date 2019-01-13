@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016 - 2018, Nordic Semiconductor ASA
+ * Copyright (c) 2018, Nordic Semiconductor ASA
  *
  * All rights reserved.
  *
@@ -39,52 +39,58 @@
  */
 /**@file
  *
- * @defgroup sdk_nrf_dfu_mbr MBR functions
+ * @defgroup nrf_bootloader_fw_activation Firmware activation
  * @{
- * @ingroup  nrf_dfu
+ * @ingroup  nrf_bootloader
  */
 
-#ifndef NRF_DFU_MBR_H__
-#define NRF_DFU_MBR_H__
+#ifndef NRF_BOOTLOADER_FW_ACTIVATION_H__
+#define NRF_BOOTLOADER_FW_ACTIVATION_H__
 
 #include <stdint.h>
+#include <stdbool.h>
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
-/** @brief Function for copying the bootloader using an MBR command.
+typedef enum
+{
+    ACTIVATION_NONE,                             //!< No new update was found.
+    ACTIVATION_SUCCESS,                          //!< Update was successfully activated.
+    ACTIVATION_SUCCESS_EXPECT_ADDITIONAL_UPDATE, //!< Update was successfully activated, but there might be additional update(s) to be transferred.
+    ACTIVATION_ERROR,                            //!< Activation of an update failed.
+} nrf_bootloader_fw_activation_result_t;
+
+/** @brief Function for activating a firmware received during DFU.
  *
- * @param[in] p_src         Source address of the bootloader data to copy.
- * @param[in] len           Length of the data to copy in bytes.
+ * @details     This function initiates or continues the DFU copy-back
+ *              routines. These routines are fail-safe operations to activate
+ *              either a new SoftDevice, bootloader, combination of SoftDevice and
+ *              bootloader, or a new application.
  *
- * @return  This function will return only if the command request could not be run.
- *          See @ref sd_mbr_command_copy_bl_t for possible return values.
+ * @details     This function relies on accessing MBR commands through supervisor calls.
+ *              It does not rely on the SoftDevice for flash operations.
+ *
+ * @note        When updating the bootloader or both bootloader and SoftDevice in combination,
+ *              this function does not return, but rather initiates a reboot to activate
+ *              the new bootloader.
+ *
+ * @retval  ACTIVATION_NONE                              If no update was found.
+ * @retval  ACTIVATION_SUCCESS                           If the firmware update was successfully activated.
+ * @retval  ACTIVATION_SUCCESS_EXPECT_ADDITIONAL_UPDATE  If the firmware update was successfully activated,
+ *                                                       but there are likely more updates to be transferred.
+ * @retval  ACTIVATION_ERROR                             If the firmware update could not be activated.
  */
-uint32_t nrf_dfu_mbr_copy_bl(uint32_t * p_src, uint32_t len);
+nrf_bootloader_fw_activation_result_t nrf_bootloader_fw_activate(void);
 
-
-/** @brief Function for initializing the SoftDevice using an MBR command.
- *
- * @retval  NRF_SUCCESS     If the SoftDevice was initialized successfully.
- *                          Any other return value indicates that the SoftDevice
- *                          could not be initialized.
- */
-uint32_t nrf_dfu_mbr_init_sd(void);
-
-
-/** @brief Function for setting the address of the IRQ table to the app's using an MBR command.
- *
- * @retval  NRF_SUCCESS  If the address of the new irq table was set. Any other
- *                       return value indicates that the address could not be set.
- */
-uint32_t nrf_dfu_mbr_irq_forward_address_set(void);
 
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif // NRF_DFU_MBR_H__
+#endif // NRF_BOOTLOADER_FW_ACTIVATION_H__
 
 /** @} */

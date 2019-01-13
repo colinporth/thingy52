@@ -37,55 +37,57 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  */
+/**@file
+ *
+ * @defgroup nrf_dfu_ble DFU BLE Service
+ * @{
+ * @ingroup  nrf_dfu
+ * @brief    Device Firmware Update (DFU) transport layer for <em>Bluetooth</em> low energy.
+ *
+ * @details  The Device Firmware Update (DFU) Service is a GATT-based service that can be used for
+ *           performing firmware updates over BLE. Note that this implementation uses
+ *           vendor-specific UUIDs for the service and characteristics, and is intended to demonstrate
+ *           firmware updates over BLE. See @ref lib_dfu_transport_ble "DFU Transport: BLE" for more information on the service and the profile.
+ */
+
+#ifndef NRF_DFU_BLE_H__
+#define NRF_DFU_BLE_H__
+
+#include <stdint.h>
+#include "ble_gatts.h"
+#include "ble.h"
 #include "nrf_dfu_transport.h"
-#include "nrf_log.h"
 
 
-#define DFU_TRANS_SECTION_ITEM_GET(i)       NRF_SECTION_ITEM_GET(dfu_trans, nrf_dfu_transport_t, (i))
-#define DFU_TRANS_SECTION_ITEM_COUNT        NRF_SECTION_ITEM_COUNT(dfu_trans, nrf_dfu_transport_t)
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-NRF_SECTION_DEF(dfu_trans, const nrf_dfu_transport_t);
+// This is a 16-bit UUID.
+#define BLE_DFU_SERVICE_UUID                 0xFE59                       //!< UUID of the DFU Service.
+
+// These UUIDs are used with the Nordic base address to create a 128-bit UUID (0x8EC9XXXXF3154F609FB8838830DAEA50).
+#define BLE_DFU_CTRL_PT_UUID                 0x0001                       //!< UUID of the DFU Control Point.
+#define BLE_DFU_PKT_CHAR_UUID                0x0002                       //!< UUID of the DFU Packet Characteristic.
 
 
-uint32_t nrf_dfu_transports_init(nrf_dfu_observer_t observer)
+/**@brief   DFU Service.
+ *
+ * @details This structure contains status information related to the service.
+ */
+typedef struct
 {
-    uint32_t const num_transports = DFU_TRANS_SECTION_ITEM_COUNT;
-    uint32_t ret_val = NRF_SUCCESS;
+    uint16_t                     service_handle;                        /**< Handle of the DFU Service (as provided by the SoftDevice). */
+    uint8_t                      uuid_type;                             /**< UUID type assigned to the DFU Service by the SoftDevice. */
+    ble_gatts_char_handles_t     dfu_pkt_handles;                       /**< Handles related to the DFU Packet Characteristic. */
+    ble_gatts_char_handles_t     dfu_ctrl_pt_handles;                   /**< Handles related to the DFU Control Point Characteristic. */
+} ble_dfu_t;
 
-    NRF_LOG_DEBUG("Initializing transports (found: %d)", num_transports);
 
-    for (uint32_t i = 0; i < num_transports; i++)
-    {
-        nrf_dfu_transport_t * const trans = DFU_TRANS_SECTION_ITEM_GET(i);
-        ret_val = trans->init_func(observer);
-        if (ret_val != NRF_SUCCESS)
-        {
-            NRF_LOG_DEBUG("Failed to initialize transport %d, error %d", i, ret_val);
-            break;
-        }
-    }
-
-    return ret_val;
+#ifdef __cplusplus
 }
+#endif
 
+#endif // NRF_DFU_BLE_H__
 
-uint32_t nrf_dfu_transports_close(nrf_dfu_transport_t const * p_exception)
-{
-    uint32_t const num_transports = DFU_TRANS_SECTION_ITEM_COUNT;
-    uint32_t ret_val = NRF_SUCCESS;
-
-    NRF_LOG_DEBUG("Shutting down transports (found: %d)", num_transports);
-
-    for (uint32_t i = 0; i < num_transports; i++)
-    {
-        nrf_dfu_transport_t * const trans = DFU_TRANS_SECTION_ITEM_GET(i);
-        ret_val = trans->close_func(p_exception);
-        if (ret_val != NRF_SUCCESS)
-        {
-            NRF_LOG_DEBUG("Failed to shutdown transport %d, error %d", i, ret_val);
-            break;
-        }
-    }
-
-    return ret_val;
-}
+/** @} */

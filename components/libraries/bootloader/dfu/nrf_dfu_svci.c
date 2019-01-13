@@ -37,55 +37,50 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  */
-#include "nrf_dfu_transport.h"
+
+#include <stdint.h>
+#include <stdbool.h>
 #include "nrf_log.h"
+#include "nrf_sdm.h"
+#include "app_util.h"
+
+#define APP_START_ADDR CODE_START
 
 
-#define DFU_TRANS_SECTION_ITEM_GET(i)       NRF_SECTION_ITEM_GET(dfu_trans, nrf_dfu_transport_t, (i))
-#define DFU_TRANS_SECTION_ITEM_COUNT        NRF_SECTION_ITEM_COUNT(dfu_trans, nrf_dfu_transport_t)
-
-NRF_SECTION_DEF(dfu_trans, const nrf_dfu_transport_t);
-
-
-uint32_t nrf_dfu_transports_init(nrf_dfu_observer_t observer)
+uint32_t nrf_dfu_svci_vector_table_set(void)
 {
-    uint32_t const num_transports = DFU_TRANS_SECTION_ITEM_COUNT;
-    uint32_t ret_val = NRF_SUCCESS;
+    uint32_t err_code;
 
-    NRF_LOG_DEBUG("Initializing transports (found: %d)", num_transports);
-
-    for (uint32_t i = 0; i < num_transports; i++)
+    if (NRF_UICR->NRFFW[0] != 0xFFFFFFFF)
     {
-        nrf_dfu_transport_t * const trans = DFU_TRANS_SECTION_ITEM_GET(i);
-        ret_val = trans->init_func(observer);
-        if (ret_val != NRF_SUCCESS)
+        NRF_LOG_INFO("Setting vector table to bootloader: 0x%08x", NRF_UICR->NRFFW[0]);
+        err_code = sd_softdevice_vector_table_base_set(NRF_UICR->NRFFW[0]);
+        if (err_code != NRF_SUCCESS)
         {
-            NRF_LOG_DEBUG("Failed to initialize transport %d, error %d", i, ret_val);
-            break;
+            NRF_LOG_ERROR("Failed running sd_softdevice_vector_table_base_set");
+            return err_code;
         }
+
+        return NRF_SUCCESS;
     }
 
-    return ret_val;
+    NRF_LOG_ERROR("No bootloader was found");
+    return NRF_ERROR_NO_MEM;
 }
 
 
-uint32_t nrf_dfu_transports_close(nrf_dfu_transport_t const * p_exception)
+uint32_t nrf_dfu_svci_vector_table_unset(void)
 {
-    uint32_t const num_transports = DFU_TRANS_SECTION_ITEM_COUNT;
-    uint32_t ret_val = NRF_SUCCESS;
+    uint32_t err_code;
 
-    NRF_LOG_DEBUG("Shutting down transports (found: %d)", num_transports);
-
-    for (uint32_t i = 0; i < num_transports; i++)
+    NRF_LOG_INFO("Setting vector table to main app: 0x%08x", APP_START_ADDR);
+    err_code = sd_softdevice_vector_table_base_set(APP_START_ADDR);
+    if (err_code != NRF_SUCCESS)
     {
-        nrf_dfu_transport_t * const trans = DFU_TRANS_SECTION_ITEM_GET(i);
-        ret_val = trans->close_func(p_exception);
-        if (ret_val != NRF_SUCCESS)
-        {
-            NRF_LOG_DEBUG("Failed to shutdown transport %d, error %d", i, ret_val);
-            break;
-        }
+        NRF_LOG_ERROR("Failed running sd_softdevice_vector_table_base_set");
+        return err_code;
     }
 
-    return ret_val;
+    return NRF_SUCCESS;
 }
+
